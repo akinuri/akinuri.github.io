@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Color Picker</title>
+		<link rel="stylesheet" type="text/css" media="screen" href="styles.css" />
+	<head>
+<body>
+
+<div id="container">
+	<div id="color">
+		<div id="preview">
+			<div class="layer blank"></div>
+			<div class="layer"></div>
+		</div>
+		<div id="IO">
+			<input type="text" id="cssHEX" />
+			<input type="text" id="cssRGB" />
+			<input type="text" id="cssHSL" />
+		</div>
+	</div>
+	<div id="sliders">
+		<table class="color-model rgb">
+			<tr id="red">
+				<td>R</td>
+				<td><input type="range" min="0" max="255" step="1" value="0" tabindex="-1" /></td>
+				<td><input type="number" value="0" min="0" max="255" step="1" tabindex="1" /></td>
+			</tr>
+			<tr id="green">
+				<td>G</td>
+				<td><input type="range" min="0" max="255" step="1" value="0" tabindex="-1" /></td>
+				<td><input type="number" value="0" min="0" max="255" step="1" tabindex="2" /></td>
+			</tr>
+			<tr id="blue">
+				<td>B</td>
+				<td><input type="range" min="0" max="255" step="1" value="0" tabindex="-1" /></td>
+				<td><input type="number" value="0" min="0" max="255" step="1" tabindex="3" /></td>
+			</tr>
+		</table>
+		<table class="color-model hsl">
+			<tr id="hue">
+				<td>H</td>
+				<td><input type="range" min="0" max="360" step="1" value="0" tabindex="-1" /></td>
+				<td><input type="number" value="0" min="0" max="360" step="1" tabindex="4" /> °</td>
+			</tr>
+			<tr id="saturation">
+				<td>S</td>
+				<td><input type="range" min="0" max="100" step="1" value="0" tabindex="-1" /></td>
+				<td><input type="number" value="0" min="0" max="100" step="1" tabindex="5" /> %</td>
+			</tr>
+			<tr id="lightness">
+				<td>L</td>
+				<td><input type="range" min="0" max="100" step="1" value="0" tabindex="-1" /></td>
+				<td><input type="number" value="0" min="0" max="100" step="1" tabindex="6" /> %</td>
+			</tr>
+		</table>
+		<table class="color-model alpha">
+			<tr id="alpha">
+				<td>A</td>
+				<td>
+					<div class="blank">
+						<input type="range" min="0" max="1" step="0.01" value="1" tabindex="-1" />
+					</div>
+				</td>
+				<td><input type="number" value="1" min="0" max="1" step="0.01" tabindex="7" /></td>
+			</tr>
+		</table>
+	</div>
+</div>
+
+<script src="jquery-2.2.0.min.js"></script>
+<script src="scripts/elements.js"></script>
+<script src="scripts/colors.js"></script>
+<script src="scripts/conversion.js"></script>
+<script src="scripts/program.js"></script>
+<script src="scripts/ui.js"></script>
+<script>
+	colorPicker();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,144 @@
+/* ==================== RESET ==================== */
+* {
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+}
+html, body {
+	overflow: auto;
+}
+body {
+	background: gainsboro;
+	font-size: 15px;
+	font-family: Consolas;
+	position: relative;
+}
+table td {
+	padding: 2px;
+}
+input[type="text"],
+input[type="number"] {
+	font-family: inherit;
+	font-size: inherit;
+	font-size: .9em;
+	padding: 2px;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+}
+input[type=number] {
+    -moz-appearance:textfield;
+}
+
+/* ==================== LAYOUT ==================== */
+#container {
+	margin: 10px auto;
+	padding: 20px;
+	background: rgb(250,250,250);
+	display: table;
+	box-shadow: 0 0 2px rgba(0,0,0,.2), 1px 1px 1px rgba(0,0,0,.1);
+	-webkit-user-select: none;
+	cursor: default;
+}
+#container > * {
+	float: left;
+	margin-right: 20px;
+}
+#container > *:last-child {
+	margin-right: 0;
+}
+.blank {
+	background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAABlBMVEXMzMz////TjRV2AAAAFUlEQVQY02NghAIGGBgggQG2HiYAAEUQAIEnpAxuAAAAAElFTkSuQmCC);
+}
+
+/* ==================== PREVIEW ==================== */
+#color {
+	width: 185px;
+}
+#color #preview {
+	height: 140px;
+	position: relative;
+	border: 1px solid rgba(0,0,0,.5);
+	margin-bottom: 10px;
+}
+#color #preview .layer {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+}
+#color #preview #result {
+	box-shadow: inset 0 0 0 1px rgba(255,255,255,.5);
+}
+#color #IO input {
+	width: 100%;
+	margin-bottom: 10px;
+}
+#color #IO input:last-child {
+	margin-bottom: 0;
+}
+
+/* ==================== SLIDERS ==================== */
+#sliders table {
+	margin-bottom: 15px;
+}
+#sliders table:last-child {
+	margin-bottom: 0;
+}
+#sliders input[type="number"] {
+	width: 40px;
+}
+#sliders input[type="range"] {
+	outline: 0;
+	display: block;
+	width: 128px;
+	height: 8px;
+	border: 1px solid black;
+	-webkit-appearance: none;
+}
+#sliders input[type=range]::-webkit-slider-thumb {
+	-webkit-appearance: none;
+	height: 20px;
+	width: 10px;
+	border-radius: 10px;
+	background: rgb(230,230,230);
+	border: 1px solid dimgray;
+	box-shadow: inset 0 0 2px rgba(255,255,255,1), 0 0 2px rgba(255,255,255,1);
+}
+#sliders input[type=range]::-moz-range-track {
+	background: transparent;
+}
+#sliders input[type=range]::-moz-range-thumb {
+	height: 20px;
+	width: 10px;
+	border-radius: 10px;
+	background: rgb(230,230,230);
+	border: 1px solid dimgray;
+	box-shadow: inset 0 0 2px rgba(255,255,255,1), 0 0 2px rgba(255,255,255,1);
+}
+/* =============== RGB SLIDERS =============== */
+#sliders #red input[type="range"] {
+	background: linear-gradient(to right, rgb(0,0,0) 0%, rgb(255,0,0) 100%);
+}
+#sliders #green input[type="range"] {
+	background: linear-gradient(to right, rgb(0,0,0) 0%, rgb(0,255,0) 100%);
+}
+#sliders #blue input[type="range"] {
+	background: linear-gradient(to right, rgb(0,0,0) 0%, rgb(0,0,255) 100%);
+}
+/* =============== HSL SLIDERS =============== */
+#sliders #hue input[type="range"] {
+	background-image: linear-gradient(to right, red 0%, yellow 16.66%, lime 33.33%, cyan 50%, blue 66.66%, violet 83.33%, red 100%);
+}
+#sliders #saturation input[type="range"] {
+	background: linear-gradient(to right, black 0%, black 100%);
+}
+#sliders #lightness input[type="range"] {
+	background: linear-gradient(to right, black 0%, white 100%);
+}
+/* =============== ALPHA SLIDERS =============== */
+#sliders #alpha input[type="range"] {
+	background: linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 100%);
+}
