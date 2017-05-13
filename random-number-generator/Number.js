@@ -1,8 +1,8 @@
 Number.isInteger = function isInteger(value, isString) {
     if (typeof value === "string" && isString) {
         if (value.match(/^[+-]?\d*\.?\d+(?:[eE][+-]?\d+)?$/)) {
-			return Number.isInteger(parseFloat(value, 10));
-		}
+            return Number.isInteger(parseFloat(value, 10));
+        }
     }
     return typeof value === "number" && isFinite(value) && Math.floor(value) === value;
 };
@@ -10,8 +10,8 @@ Number.isInteger = function isInteger(value, isString) {
 Number.isFloat = function isFloat(value, isString) {
     if (typeof value === "string" && isString) {
         if (value.match(/^[+-]?\d*\.?\d+(?:[eE][+-]?\d+)?$/)) {
-			return Number.isFloat(parseFloat(value));
-		}
+            return Number.isFloat(parseFloat(value));
+        }
     }
     return typeof value === "number" && isFinite(value) && value % 1 !== 0;
 };
