@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Random Number Generator</title>
+        <link rel="stylesheet" type="text/css" media="screen" href="" />
+        <style>
+            .noselect {
+                user-select: none;
+            }
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: inherit;
+            }
+            body {
+                background: gainsboro;
+                font-size: 15px;
+                font-family: Segoe UI, sans-serif;
+            }
+            #main {
+                display: table;
+                margin: 20px auto;
+                border: 1px solid hsl(0, 0%, 70%);
+                box-shadow: 0 0 2px rgba(0,0,0,.1);
+                box-sizing: border-box;
+                color: rgba(0,0,0,.75);
+                cursor: default;
+                background: rgb(250,250,250);
+            }
+            #title {
+                height: 30px;
+                line-height: 30px;
+                background: rgba(0,0,0,.1);
+                padding: 0 10px;
+                background-image: linear-gradient(to bottom, hsl(0,0%,95%) 0%, hsl(0,0%,90%) 100%);
+                border-bottom: 1px solid hsl(0, 0%, 70%);
+            }
+            #content {
+                padding: 20px;
+                width: 500px;
+                overflow: auto;
+            }
+            
+            
+            #controls tr td {
+                padding-bottom: 10px;
+            }
+            #controls tr:last-child td {
+                padding-bottom: 0;
+            }
+            #controls tr td:nth-child(2) {
+                padding-left: 5px;
+                padding-right: 10px;
+            }
+            
+            
+            input {
+                font-family: inherit;
+                font-size: inherit;
+            }
+            input[type="number"] {
+                padding: 2px;
+                width: 50px;
+                font-family: Cambria;
+            }
+            input[type="button"] {
+                padding: 3px 5px;
+                margin-top: 5px;
+                width: 100%;
+            }
+            
+            
+            #controls {
+                float: left;
+            }
+            #output {
+                float: left;
+                margin-left: 10px;
+                width: calc(100% - 125px - 10px);
+                padding-left: 10px;
+                min-height: 219px;
+                font-family: Cambria;
+                font-size: 1.2em;
+                overflow: auto;
+            }
+            #output table {
+                margin: auto;
+            }
+            #output table td {
+                padding: 5px;
+            }
+        </style>
+    <head>
+<body>
+
+<div id="main">
+    <div id="title" class="noselect">Random Number Generator</div>
+    <div id="content">
+        <table id="controls" class="noselect">
+            <tr>
+                <td>Rows</td>
+                <td>:</td>
+                <td><input type="number" value="3" id="rows" /></td>
+            </tr>
+            <tr>
+                <td>Cols</td>
+                <td>:</td>
+                <td><input type="number" value="6" id="cols" /></td>
+            </tr>
+            <tr>
+                <td>Min</td>
+                <td>:</td>
+                <td><input type="number" value="1" id="min" /></td>
+            </tr>
+            <tr>
+                <td>Max</td>
+                <td>:</td>
+                <td><input type="number" value="49" id="max" /></td>
+            </tr>
+            <tr>
+                <td>Unique</td>
+                <td>:</td>
+                <td><input type="checkbox" id="unique" checked /></td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <input type="button" value="Generate" id="generate" />
+                </td>
+            </tr>
+        </table>
+        <div id="output"></div>
+    </div>
+</div>
+
+<script src="Number.js"></script>
+<script src="random.js"></script>
+<script>
+    var rowsBox = document.getElementById("rows");
+    var colsBox = document.getElementById("cols");
+    var minBox  = document.getElementById("min");
+    var maxBox  = document.getElementById("max");
+    var unique  = document.getElementById("unique");
+    var output  = document.getElementById("output");
+    
+    document.getElementById("generate").onclick = function generateNumbers() {
+        var rows = parseInt(rowsBox.value, 10);
+        var cols = parseInt(colsBox.value, 10);
+        var min  = parseInt(minBox.value, 10);
+        var max  = parseInt(maxBox.value, 10);
+        var randomNumbers = [].random2d(rows, cols, min, max, unique.checked);
+        output.innerHTML = "";
+        output.appendChild(array2table(randomNumbers));
+    };
+    
+    function array2table(array) {
+        var table = document.createElement("table");
+        for (var i = 0; i < array.length; i++) {
+            var row = document.createElement("tr");
+            for (var j = 0; j < array[i].length; j++) {
+                var cell = document.createElement("td");
+                var value = array[i][j];
+                if (value < 10) {
+                    value = "0" + value;
+                }
+                value += ",";
+                cell.innerHTML = value;
+                row.appendChild(cell);
+            }
+            table.appendChild(row);
+        }
+        return table;
+    }
+</script>
+
+</body>
+</html>
