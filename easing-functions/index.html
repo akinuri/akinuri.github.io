@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Easing Functions</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: inherit;
+            line-height: inherit;
+            font-size: inherit;
+            font-family: inherit;
+        }
+        body {
+            font-family: sans-serif;
+            font-size: 15px;
+            box-sizing: border-box;
+            background-color: hsl(0, 0%, 90%);
+            overflow: hidden;
+        }
+        
+        #box {
+            box-shadow: 0 0 3px rgba(0,0,0,.2);
+            background-color: white;
+            margin: 20px auto;
+            width: 75%;
+            height: 100px;
+            position: relative;
+        }
+        
+        
+        .car {
+            display: table;
+            position: absolute;
+            bottom: 1px;
+            left: 0;
+            /* left: 50px; */
+        }
+        .car:hover { cursor: move; }
+        .car img   { display: block; }
+        .car .body {
+            width: 128px;
+        }
+        .car .tire {
+            width: 21px;
+            position: absolute;
+        }
+        .car .tire {
+            position: absolute;
+            bottom: 0;
+        }
+        .car .tire.back  { left: 13.3px; }
+        .car .tire.front { left: 96px; }
+        
+        .car.ghost {
+            opacity: .25;
+        }
+        
+        
+        #controls {
+            display: table;
+            margin: 20px auto;
+        }
+        
+        #user-input {
+            float: left;
+        }
+        
+        #output {
+            float: left;
+            margin-left: 20px;
+        }
+        
+        .ease {
+            display: table;
+            float: left;
+            margin-right: 20px;
+        }
+        .ease h3 {
+            text-align: center;
+        }
+        .ease input {
+            display: block;
+            width: 100%;
+            padding: 3px 10px;
+            margin: 5px 0;
+        }
+        
+        
+        #method {
+            margin-bottom: 6px;
+            text-align: center;
+        }
+        
+        canvas {
+            background-color: white;
+            box-shadow: 0 0 3px rgba(0,0,0,.2);
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="box">
+    
+    <div class="car ghost">
+        <img class="body" src="images/car-tireless.png" />
+        <img class="tire back" src="images/tire.png" />
+        <img class="tire front" src="images/tire.png" />
+    </div>
+    
+    <div class="car real">
+        <img class="body" src="images/car-tireless.png" />
+        <img class="tire back" src="images/tire.png" />
+        <img class="tire front" src="images/tire.png" />
+    </div>
+    
+</div>
+
+<div id="controls">
+
+    <div id="user-input">
+        <div id="ease" class="ease">
+            <h3>&nbsp;</h3>
+            <input type="button" value="linear" />
+        </div>
+        <div id="ease-in" class="ease">
+            <h3>easeIn</h3>
+            <input type="button" value="sine" />
+            <input type="button" value="quad" />
+            <input type="button" value="cubic" />
+            <input type="button" value="quart" />
+            <input type="button" value="quint" />
+            <input type="button" value="expo" />
+            <input type="button" value="circ" />
+            <input type="button" value="back" />
+            <input type="button" value="elastic" />
+            <input type="button" value="bounce" />
+        </div>
+
+        <div id="ease-out" class="ease">
+            <h3>easeOut</h3>
+            <input type="button" value="sine" />
+            <input type="button" value="quad" />
+            <input type="button" value="cubic" />
+            <input type="button" value="quart" />
+            <input type="button" value="quint" />
+            <input type="button" value="expo" />
+            <input type="button" value="circ" />
+            <input type="button" value="back" />
+            <input type="button" value="elastic" />
+            <input type="button" value="bounce" />
+        </div>
+
+        <div id="ease-out" class="ease">
+            <h3>easeInOut</h3>
+            <input type="button" value="sine" />
+            <input type="button" value="quad" />
+            <input type="button" value="cubic" />
+            <input type="button" value="quart" />
+            <input type="button" value="quint" />
+            <input type="button" value="expo" />
+            <input type="button" value="circ" />
+            <input type="button" value="back" />
+            <input type="button" value="elastic" />
+            <input type="button" value="bounce" />
+        </div>
+    </div>
+    
+    <div id="output">
+        <h3 id="method">current method</h3>
+        <canvas id="graph-position"></canvas>
+        <canvas id="graph-speed"></canvas>
+    </div>
+    
+</div>
+
+
+
+<script src="scripts/jquery-3.2.1.min.js"></script>
+<script src="scripts/jquery-ui.min.js"></script>
+<script src="scripts/easing.js"></script>
+<script src="scripts/ui.js"></script>
+<script src="scripts/graph-position.js"></script>
+<script src="scripts/graph-speed.js"></script>
+
+<script>
+    String.prototype.toInt = function stringToInteger(radix) {
+        return parseInt(this, radix);
+    }
+    String.prototype.toFloat = function stringToFloat() {
+        return parseFloat(this);
+    }
+    
+    function Car(query) {
+        this.elem  = document.querySelector(query);
+        this.width = getComputedStyle(this.elem).width.toInt();
+        this.left  = function () {
+            return getComputedStyle(this.elem).left.toInt();
+        };
+        this.tires   = {
+            back     : this.elem.querySelector(".tire.back"),
+            front    : this.elem.querySelector(".tire.front"),
+        };
+        this.tires.radius = getComputedStyle(this.tires.back).width.toInt();
+        this.tires.circum = 2 * Math.PI * this.tires.radius;
+        this.initial      = this.left();
+        this.pos          = null;
+        this.reset        = function () {
+            this.elem.style.left = this.initial = this.pos = 0;
+        };
+    }
+    
+    var ghostCar = new Car(".car.ghost");
+    var realCar  = new Car(".car.real");
+    
+    var fps      = 60;
+    var duration = 3;
+    var frames   = fps * duration;
+    var tick     = duration / frames;
+    
+    var start    = realCar.left();
+    var end      = $("#box").css("width").toInt() - realCar.width;
+    var distance = end - start;
+    var tElapsed = 0;
+    
+    var easing   = false;
+    var method   = null;
+    
+    var coorPos = {
+        x : tElapsed / duration * ctxPos.size,
+        y : ctxPos.size - (realCar.left() / distance * ctxPos.size),
+    };
+    
+    var speed    = Math.abs(realCar.pos - realCar.left());
+    var maxSpeed = distance / 20;
+    
+    var coorSpeed = {
+        x : tElapsed / duration * ctxSpeed.size,
+        y : ctxSpeed.size - (speed / maxSpeed * ctxSpeed.size),
+    };
+    
+    function move() {
+        tElapsed += tick;
+        
+        ghostCar.pos = linear(tElapsed, start, distance, duration);
+        realCar.pos  = (window[method](tElapsed, start, distance, duration)).toFixed(2).toFloat();
+        
+        coorPos = {
+            x : tElapsed / duration * ctxPos.size,
+            y : ctxPos.size - (realCar.left() - realCar.initial) / distance * ctxPos.size,
+        };
+        ctxPos.lineTo(coorPos.x, coorPos.y);
+        ctxPos.stroke();
+        
+        speed = Math.abs(realCar.pos - realCar.left());
+        coorSpeed = {
+            x : tElapsed / duration * ctxSpeed.size,
+            y : ctxSpeed.size - (speed / maxSpeed * ctxSpeed.size),
+        };
+        ctxSpeed.lineTo(coorSpeed.x, coorSpeed.y);
+        ctxSpeed.stroke();
+        
+        if (tElapsed < duration) {
+            
+            var ghostShift = ghostCar.pos - start;
+            var realShift  = realCar.pos - start;
+            
+            var ghostRotation = ghostShift / ghostCar.tires.circum * 360;
+            var realRotation  = realShift / realCar.tires.circum * 360;
+            
+            ghostCar.elem.style.left = ghostCar.pos + "px";
+            ghostCar.tires.back.style.transform  = "rotate(" + ghostRotation + "deg)";
+            ghostCar.tires.front.style.transform = "rotate(" + ghostRotation + "deg)";
+            
+            realCar.elem.style.left = realCar.pos + "px";
+            realCar.tires.back.style.transform  = "rotate(" + realRotation + "deg)";
+            realCar.tires.front.style.transform = "rotate(" + realRotation + "deg)";
+            
+            requestAnimationFrame(move);
+        } else {
+            easing = false;
+            tElapsed = 0;
+        }
+    }
+    
+</script>
+
+</body>
+</html>
