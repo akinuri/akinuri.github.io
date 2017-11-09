@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Local Fonts</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: inherit;
+            line-height: inherit;
+            font-size: inherit;
+            font-family: inherit;
+        }
+        .noselect {
+            user-select: none;
+        }
+        body {
+            box-sizing: border-box;
+            background-color: hsl(0, 0%, 90%);
+            font-family: Arial;
+        }
+        
+        #input {
+            display: block;
+            width: 100%;
+            border: none;
+            padding: 20px;
+            height: calc(15px + 2 * 20px);
+            min-height: calc(15px + 2 * 20px);
+            resize: none;
+            background-color: white;
+            box-shadow: 0 1px 5px rgba(0,0,0,.5);
+            z-index: 100;
+            font-size: 15px;
+            text-align: center;
+            line-height: 1;
+            position: fixed;
+            top: 0;
+        }
+        
+        #output {
+            height: calc(100vh - 55px);
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: 55px;
+        }
+        .tile {
+            margin: 20px;
+            width: calc(25% - 2 * 20px);
+            position: relative;
+        }
+        .tile .fontName {
+            padding: 4px 5px 2px;
+            color: rgba(0,0,0,0.4);
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(0,0,0,0.2);
+        }
+        .tile .demo {
+            font-size: 2em;
+            overflow: hidden;
+            max-height: 250px;
+        }
+    </style>
+</head>
+<body>
+
+<textarea id="input">The quick brown fox jumps over the lazy dog.</textarea>
+
+<object id="flash" width="300" height="100" data="flash/getFonts.swf">Flash could not load.</object>
+
+<div id="output"></div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="element.js"></script>
+
+<script>
+    var output = $("#output");
+    
+    var start = performance.now();
+    
+    function getFontList(fontList) {
+        $("#flash").remove();
+        
+        fontList.forEach(function (fontName) {
+            var cell = elem("div", {"class":"tile"}, [
+                        elem("div", {"class":"fontName"}, fontName),
+                        elem("div", {"class":"demo", "style":"font-family: \"" + fontName.replace(/"/g, '\\"') + "\", Consolas;"}),
+                    ]);
+            output.append(cell);
+        });
+        
+        updateCells($("#input").val());
+        
+        end = performance.now();
+        console.log("Loaded in " + (end - start) / 100 + " seconds."); // execution time, not render!
+    }
+    
+    function updateCells(text) {
+        output.children().each(function (i, cell) {
+            cell.children[1].innerText = text;
+        });
+    }
+    
+    $("#input").change(function () {
+        updateCells($("#input").val())
+    });
+</script>
+
+</body>
+</html>
