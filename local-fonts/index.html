@@ -94,7 +94,7 @@
         fontList.forEach(function (fontName) {
             var cell = elem("div", {"class":"tile"}, [
                         elem("div", {"class":"fontName"}, fontName),
-                        elem("div", {"class":"demo", "style":"font-family: \"" + fontName.replace(/"/g, '\\"') + "\", Consolas;"}),
+                        elem("div", {"class":"demo", "style":"font-family: \"" + fontName.replace(/"/g, '\\"') + "\", Consolas, Arial;"}),
                     ]);
             output.append(cell);
         });
