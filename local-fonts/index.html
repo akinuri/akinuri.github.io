@@ -76,7 +76,7 @@
 
 <textarea id="input">The quick brown fox jumps over the lazy dog.</textarea>
 
-<object id="flash" width="300" height="100" data="flash/getFonts.swf">Flash could not load.</object>
+<embed id="flash" type="application/x-shockwave-flash" src="flash/getFonts.swf" width="300" height="100" >Flash could not load.</embed>
 
 <div id="output"></div>
 
@@ -94,7 +94,7 @@
         fontList.forEach(function (fontName) {
             var cell = elem("div", {"class":"tile"}, [
                         elem("div", {"class":"fontName"}, fontName),
-                        elem("div", {"class":"demo", "style":"font-family: \"" + fontName.replace(/"/g, '\\"') + "\", Consolas, Arial;"}),
+                        elem("div", {"class":"demo", "style":"font-family: \"" + fontName.replace(/"/g, '\\"') + "\", Consolas;"}),
                     ]);
             output.append(cell);
         });
