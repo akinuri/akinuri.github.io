@@ -3,14 +3,11 @@
 <head>
     <meta charset="utf-8">
     <title>CSS Editor</title>
-    <meta name="description" content="">
-    <meta name="keywords" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="styles.css" />
-    <link href="fontawesome/css/fontawesome-all.css" rel="stylesheet">
+    <link rel="stylesheet" href="fontawesome/css/fontawesome-all.css" />
 </head>
 <body>
-
 
 <div id="app">
     
@@ -49,16 +46,15 @@
 
 </div>
 
-
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-<script src="element.js"></script>
-
-<link href="codemirror/lib/codemirror.css" rel="stylesheet" />
-<link href="codemirror/lib/custom_css.css" rel="stylesheet" />
+<link rel="stylesheet" href="codemirror/lib/codemirror.css" />
+<link rel="stylesheet" href="codemirror/lib/custom_css.css" />
 <script src="codemirror/lib/codemirror.js"></script>
 <script src="codemirror/mode/css/css.js"></script>
+
+<script src="element.js"></script>
 
 <script>
     
@@ -158,6 +154,16 @@
     
     var myCodeMirror = CodeMirror.fromTextArea($code[0], {
         lineNumbers: true,
+        tabSize: 4,
+        indentUnit: 4,
+        
+        // https://github.com/codemirror/CodeMirror/issues/988#issuecomment-37095621
+        extraKeys: {
+            Tab: function(cm) {
+                var spaces = Array(cm.getOption("indentUnit") + 1).join(" ");
+                cm.replaceSelection(spaces, "end", "+input");
+            }
+        },
     });
     
     

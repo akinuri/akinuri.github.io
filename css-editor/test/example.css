@@ -1,0 +1,46 @@
+/* ===== RESET ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: inherit;
+    line-height: inherit;
+    font-size: inherit;
+    font-family: inherit;
+}
+
+
+/* ===== GENERAL ===== */
+body {
+    font-family: sans-serif;
+    /* box-sizing: border-box; */
+    background-color: hsl(0, 0%, 90%);
+    font-size: 13px;
+}
+
+
+/* ===== HEADER ===== */
+
+header {
+    background-color: hsl(0, 0%, 20%);
+    height: 50px;
+}
+
+
+/* ===== MAIN ===== */
+
+main {
+    width: 1200px;
+    height: 800px;
+    display: table;
+    margin: 20px auto;
+    background-color: white;
+    box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+
+
+/* ===== FOOTER ===== */
+
+footer {
+    height: 300px;
+    background-color: hsl(0, 0%, 20%);
+}
