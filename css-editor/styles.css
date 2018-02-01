@@ -1,0 +1,117 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: inherit;
+    line-height: inherit;
+    font-size: inherit;
+    font-family: inherit;
+}
+body {
+    font-family: sans-serif;
+    box-sizing: border-box;
+    background-color: hsl(0, 0%, 90%);
+    font-size: 13px;
+}
+
+#app {
+    display: flex;
+    margin: 20px;
+}
+
+.panel {
+    background-color: white;
+    padding: 15px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    margin-right: 20px;
+    color: rgba(0,0,0,.75);
+}
+.panel:last-child {
+    margin-right: 0;
+}
+
+
+#sections {
+    user-select: none;
+    width: 250px;
+    min-height: 200px;
+}
+
+.panel h2 {
+    font-size: 14px;
+    /* border-bottom: 1px solid rgba(0,0,0,.2); */
+    /* margin-bottom: 10px; */
+    /* padding: 5px; */
+    /* padding-bottom: 5px; */
+}
+
+#sections ul {
+    list-style: none;
+}
+
+#sections ul li {
+    line-height: 1.5;
+    padding: 5px 10px;
+}
+
+#sections ul li:hover {
+    color: rgba(0,0,0,.9);
+    background-color: rgba(0,0,0,.05);
+}
+
+#sections ul li.active {
+    color: rgba(0,0,0,1);
+    background-color: rgba(0,0,0,.1);
+}
+
+#sections ul li.new {
+    user-select: text;
+}
+
+
+.clearfix {
+    clear: both;
+}
+
+
+#editor {
+    flex: 1;
+    position: relative;
+}
+
+.panel .header {
+    border-bottom: 1px solid rgba(0,0,0,.2);
+    margin-bottom: 10px;
+    padding: 5px;
+    padding-bottom: 5px;
+}
+.panel .header h2 {
+    margin-top: 5px;
+    float: left;
+}
+
+.controls {
+    float: right;
+}
+
+.panel button {
+    padding: 3px;
+    width: 25px;
+}
+
+
+.CodeMirror,
+#code {
+    height: calc(100% - 37px);
+    padding: 10px;
+    font-family: monospace;
+    width: 100%;
+    /* height: 550px !important; */
+    background-color: rgba(0,0,0,.025) !important;
+    border: 1px solid rgba(0,0,0,.1);
+    overflow: auto;
+    cursor: text;
+}
+
+#parse {
+    padding: 3px 8px;
+}

@@ -1,0 +1,23 @@
+/* class */
+.cm-s-default .cm-qualifier {color: hsl(0, 75%, 60%);}
+.cm-s-default .cm-keyword {color: hsla(0, 100%, 50%, 1); font-weight: bold;}
+
+/* value */
+.cm-s-default .cm-atom {color: hsl(0, 0%, 20%);}
+.cm-s-default .cm-number {color: hsl(0, 0%, 20%);}
+
+/* comment */
+.cm-s-default .cm-comment {color: green;}
+
+/* id */
+.cm-s-default .cm-builtin {color: hsl(220, 100%, 50%);}
+
+/* tag */
+.cm-s-default .cm-tag {color: hsl(240, 100%, 60%);}
+
+
+.cm-s-default .cm-property {color: hsl(230, 40%, 60%);}
+
+
+/* :after */
+.cm-s-default .cm-variable-3 {color: hsl(40, 100%, 40%);}
