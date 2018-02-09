@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>CSV Viewer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: inherit;
+            color: inherit;
+            font-size: inherit;
+            font-family: inherit;
+            line-height: inherit;
+        }
+        body {
+            font-family: sans-serif;
+            box-sizing: border-box;
+            background-color: hsl(0, 0%, 90%);
+            font-size: 14px;
+        }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+        
+        
+        .dropzone.overlay {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            background-color: rgba(255,255,255,.75);
+            padding: 20px;
+            display: none;
+            z-index: 9999;
+        }
+        .dropzone.overlay .box {
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            border: 5px dashed hsla(120, 50%, 50%, .5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .dropzone.overlay .box .caption {
+            font-size: 50px;
+            color: hsla(120, 30%, 50%, 1);
+            user-select: none;
+        }
+        
+        header {
+            background-color: hsl(0, 0%, 60%);
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-bottom: 1px solid rgba(0,0,0,.1);
+            box-shadow: 0 2px 5px rgba(0,0,0,.3);
+            position: relative;
+            z-index: 100;
+        }
+        
+        main {
+            min-height: 100px;
+            overflow: auto;
+            position: relative;
+            z-index: 1;
+            height: calc(100% - 60px);
+        }
+        
+        #searchBox {
+            min-width: 320px;
+            max-width: 640px;
+            width: 50%;
+            padding: 7px 8px;
+            letter-spacing: .5px;
+            outline: 0;
+            color: hsla(0, 0%, 100%, 0.7);
+            text-shadow: 0 1px 1px rgba(0,0,0,.2);
+            border: 1px solid rgba(0,0,0,.2);
+            background-color: rgba(255,255,255,.1);
+            box-shadow: inset 0 1px 5px rgba(0,0,0,.15),
+                        0 1px 0 rgba(255,255,255,.05);
+            border-radius: 2px;
+        }
+        
+        #searchBox:focus {
+            text-shadow: 0 1px 1px rgba(0,0,0,.4);
+            color: hsla(0, 0%, 100%, 0.9);
+            border: 1px solid rgba(0,0,0,.3);
+            background-color: rgba(255,255,255,.2);
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            background-color: hsl(0, 0%, 98%);
+        }
+        table tr td {
+            border: 1px solid hsl(0, 0%, 80%);
+            height: 30px;
+            padding: 5px;
+            max-width: 100px;
+            text-align: center;
+        }
+        table tr:not(.selected):hover td {
+            background-color: hsla(220, 100%, 50%,.05);
+        }
+        table tr.selected {
+            background-color: hsla(220, 100%, 50%,.1);
+        }
+        table tr:first-child td {
+            border-top: 0;
+        }
+        table tr td.index {
+            color: rgba(0,0,0,.5);
+        }
+    </style>
+</head>
+<body>
+
+
+<header>
+    <input type="text" id="searchBox" />
+</header>
+
+
+<main>
+    <table id="data"></table>
+</main>
+
+
+<div class="dropzone overlay">
+    <div class="box">
+        <div class="caption">
+            <p>Drop .csv file here</p>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="element.js"></script>
+
+<script>
+    
+    var $dropzone = $(".dropzone.overlay");
+    
+    $(document).on("dragstart drag dragenter dragover dragleave dragend drop", function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    })
+    .on("dragenter", function() {
+        $dropzone.show();
+    })
+    .on("dragleave drop", function(e) {
+        if (!document.contains(e.relatedTarget)) {
+            $dropzone.hide();
+        }
+    });
+    
+    $dropzone.on("drop", function(e) {
+        var file = e.originalEvent.dataTransfer.files[0];
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            $data.html("");
+            var text  = e.target.result;
+            var lines = text.split(/\r?\n/);
+            lines.forEach(function (line, index) {
+                var record = null;
+                var line   = line.trim();
+                if (line != "") {
+                    if (line.includes("\"")) {
+                        record = CSVtoArray(line);
+                    } else {
+                        record = line.split(",");
+                    }
+                    record.pop();
+                    records.push(record);
+                    var row = elem("tr", null, [
+                            elem("td", {"class":"index"}, index+1),
+                            elem("td", null, record[0]),
+                            elem("td", null, record[1]),
+                        ]);
+                    $data.append(row);
+                }
+            });
+            rows = Array.from($data[0].getElementsByTagName("tr"));
+        };
+        reader.readAsText(file);
+    });
+    
+    
+    function CSVtoArray(text) {
+        var re_valid = /^\s*(?:'[^'\\]*(?:\\[\S\s][^'\\]*)*'|"[^"\\]*(?:\\[\S\s][^"\\]*)*"|[^,'"\s\\]*(?:\s+[^,'"\s\\]+)*)\s*(?:,\s*(?:'[^'\\]*(?:\\[\S\s][^'\\]*)*'|"[^"\\]*(?:\\[\S\s][^"\\]*)*"|[^,'"\s\\]*(?:\s+[^,'"\s\\]+)*)\s*)*$/;
+        var re_value = /(?!\s*$)\s*(?:'([^'\\]*(?:\\[\S\s][^'\\]*)*)'|"([^"\\]*(?:\\[\S\s][^"\\]*)*)"|([^,'"\s\\]*(?:\s+[^,'"\s\\]+)*))\s*(?:,|$)/g;
+        if (!re_valid.test(text)) return null;
+        var a = [];
+        text.replace(re_value,
+            function(m0, m1, m2, m3) {
+                if      (m1 !== undefined) a.push(m1.replace(/\\'/g, "'"));
+                else if (m2 !== undefined) a.push(m2.replace(/\\"/g, '"'));
+                else if (m3 !== undefined) a.push(m3);
+                return '';
+            });
+        if (/,\s*$/.test(text)) a.push('');
+        return a;
+    };
+    
+    
+    
+    var records = [];
+    
+    var $data = $("#data");
+    var row = elem("tr", {}, [
+            elem("td", {"class":"index"}, "index"),
+            elem("td", null, "column-1"),
+            elem("td", null, "column-2"),
+        ]);
+    $data.append(row);
+    
+    
+    
+    
+    $data.on("click", "tr", function () {
+        $data.find("tr").removeClass("selected");
+        $(this).addClass("selected");
+    });
+    
+    
+    
+    
+    
+    var $seachBox = $("#searchBox");
+    
+    var updateTimeout = null;
+    var prevSearch    = null;
+    
+    $seachBox.on("keyup", function (e) {
+        var currentSearch = this.value;
+        if (prevSearch || e.originalEvent.code == "KeyV" && e.originalEvent.ctrlKey == true) {
+            if (prevSearch != currentSearch) {
+                clearTimeout(updateTimeout);
+                updateTimeout = setTimeout(function () {
+                    prevSearch = currentSearch;
+                    queryData(currentSearch);
+                }, 500);
+            }
+        } else {
+            prevSearch = currentSearch;
+        }
+    });
+    
+    
+    
+    function queryData(string) {
+        var result = [];
+        records.forEach(function (record) {
+            if (record.toString().includes(string)) {
+                result.push(record);
+            }
+        });
+        $data.html("");
+        result.forEach(function (record, index) {
+            var row = elem("tr", null, [
+                    elem("td", {"class":"index"}, index+1),
+                    elem("td", null, record[0]),
+                    elem("td", null, record[1]),
+                ]);
+            $data.append(row);
+        });
+    }
+    
+</script>
+
+</body>
+</html>
