@@ -54,7 +54,7 @@
         }
         
         header {
-            background-color: hsl(0, 0%, 60%);
+            background-color: hsl(0, 0%, 50%);
             height: 60px;
             display: flex;
             justify-content: center;
@@ -80,13 +80,18 @@
             padding: 7px 8px;
             letter-spacing: .5px;
             outline: 0;
-            color: hsla(0, 0%, 100%, 0.7);
+            color: hsla(0, 0%, 100%, 0.6);
             text-shadow: 0 1px 1px rgba(0,0,0,.2);
-            border: 1px solid rgba(0,0,0,.2);
+            border: 1px solid rgba(0,0,0,.25);
             background-color: rgba(255,255,255,.1);
             box-shadow: inset 0 1px 5px rgba(0,0,0,.15),
                         0 1px 0 rgba(255,255,255,.05);
             border-radius: 2px;
+        }
+        
+        #searchBox::placeholder {
+            color: hsla(0, 0%, 100%, 0.25);
+            text-shadow: 0 1px 1px rgba(0,0,0,.1);
         }
         
         #searchBox:focus {
@@ -126,7 +131,7 @@
 
 
 <header>
-    <input type="text" id="searchBox" />
+    <input type="text" id="searchBox" placeholder="Seach" />
 </header>
 
 
@@ -236,29 +241,27 @@
     
     
     
-    var $seachBox = $("#searchBox");
+    var $searchBox = $("#searchBox");
     
     var updateTimeout = null;
     var prevSearch    = null;
     
-    $seachBox.on("keyup", function (e) {
+    $searchBox.on("keyup", function (e) {
         var currentSearch = this.value;
-        if (prevSearch || e.originalEvent.code == "KeyV" && e.originalEvent.ctrlKey == true) {
-            if (prevSearch != currentSearch) {
-                clearTimeout(updateTimeout);
-                updateTimeout = setTimeout(function () {
-                    prevSearch = currentSearch;
-                    queryData(currentSearch);
-                }, 500);
-            }
-        } else {
-            prevSearch = currentSearch;
+        if (prevSearch != currentSearch) {
+            clearTimeout(updateTimeout);
+            updateTimeout = setTimeout(function () {
+                prevSearch = currentSearch;
+                queryData(currentSearch);
+            }, 500);
         }
+        
     });
     
     
     
     function queryData(string) {
+        console.log("query", string);
         var result = [];
         records.forEach(function (record) {
             if (record.toString().includes(string)) {
