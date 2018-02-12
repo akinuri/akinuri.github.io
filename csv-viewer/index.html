@@ -54,7 +54,7 @@
         }
         
         header {
-            background-color: hsl(0, 0%, 50%);
+            background-color: hsl(0, 0%, 25%);
             height: 60px;
             display: flex;
             justify-content: center;
@@ -73,32 +73,31 @@
             height: calc(100% - 60px);
         }
         
+
+        
         #searchBox {
             min-width: 320px;
             max-width: 640px;
             width: 50%;
-            padding: 7px 8px;
+            padding: 7px;
+            color: rgba(255,255,255,.5);
             letter-spacing: .5px;
-            outline: 0;
-            color: hsla(0, 0%, 100%, 0.6);
-            text-shadow: 0 1px 1px rgba(0,0,0,.2);
-            border: 1px solid rgba(0,0,0,.25);
+            text-shadow: 0 1px rgba(0,0,0,.2);
+            border: 1px solid rgba(0,0,0,.5);
             background-color: rgba(255,255,255,.1);
-            box-shadow: inset 0 1px 5px rgba(0,0,0,.15),
-                        0 1px 0 rgba(255,255,255,.05);
-            border-radius: 2px;
-        }
-        
-        #searchBox::placeholder {
-            color: hsla(0, 0%, 100%, 0.25);
-            text-shadow: 0 1px 1px rgba(0,0,0,.1);
+            box-shadow: inset 0 1px 5px rgba(0,0,0,.4), 0 1px 0 rgba(255,255,255,.05);
+            outline: 0;
         }
         
         #searchBox:focus {
-            text-shadow: 0 1px 1px rgba(0,0,0,.4);
-            color: hsla(0, 0%, 100%, 0.9);
-            border: 1px solid rgba(0,0,0,.3);
+            color: rgba(255,255,255,.8);
+            text-shadow: 0 1px rgba(0,0,0,.4);
             background-color: rgba(255,255,255,.2);
+        }
+        
+        #searchBox::placeholder {
+            color: hsla(0, 0%, 100%, 0.3);
+            text-shadow: 0 1px 1px rgba(0,0,0,.1);
         }
         
         table {
