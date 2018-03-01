@@ -40,6 +40,17 @@ function parseCSS() {
         }
     });
     
+    for (var section in CSS) {
+        if (typeof CSS[section] == "object") {
+            if (!Object.keys(CSS[section]).includes(section)) {
+                CSS[section][section] = "";
+            }
+        }
+    }
+    
+    // console.log(items);
+    // console.log(sections);
+    
     items.forEach(function (item) {
         if (item instanceof Array) {
             var parent = item.shift();
@@ -51,6 +62,7 @@ function parseCSS() {
             $sectionList.append( elem("li", null, item) );
         }
     });
+    
     $code.html("");
     myCodeMirror.setValue("");
 }
@@ -123,9 +135,9 @@ function copyCSS() {
             } else {
                 parent = section[0];
             }
-            section.forEach(function (name) {
-                if (CSS[parent][name] != "") {
-                    cssText.push( sectionSeperator(name, parent) + EOL(2) + CSS[parent][name] + EOL(2) + sectionSeperatorEnd );
+            section.forEach(function (sectionName) {
+                if (CSS[parent][sectionName] != "") {
+                    cssText.push( sectionSeperator(sectionName, parent) + EOL(2) + CSS[parent][sectionName] + EOL(2) + sectionSeperatorEnd );
                 }
             });
         } else {
