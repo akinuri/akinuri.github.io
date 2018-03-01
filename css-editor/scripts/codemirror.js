@@ -16,17 +16,26 @@ var myCodeMirror = CodeMirror.fromTextArea($code[0], {
     tabSize     : 4,
     indentUnit  : 4,
     styleActiveLine: true,
-    
     // https://github.com/codemirror/CodeMirror/issues/988#issuecomment-37095621
     extraKeys   : {
         Tab: function(cm) {
             var spaces = Array(cm.getOption("indentUnit") + 1).join(" ");
             cm.replaceSelection(spaces, "end", "+input");
+        },
+        "Ctrl-Q": function() {
+            commentSelection();
         }
     },
 });
 
+function getSelectedRange() {
+    return { from: myCodeMirror.getCursor(true), to: myCodeMirror.getCursor(false) };
+}
 
+function commentSelection() {
+    var range = getSelectedRange();
+    myCodeMirror.toggleComment(range.from, range.to);
+}  
 
 var updateTimeout = null;
 
