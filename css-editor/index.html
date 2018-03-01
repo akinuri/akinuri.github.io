@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="styles.css" />
     <link rel="stylesheet" href="fontawesome/css/fontawesome-all.css" />
+    <link rel="stylesheet" href="codemirror/lib/codemirror.css" />
+    <link rel="stylesheet" href="codemirror/lib/custom_css.css" />
 </head>
 <body>
 
@@ -15,13 +17,13 @@
         <div class="header">
             <h2>Sections</h2>
             <div class="controls clear">
-                <button id="addSection" onclick="addSection();" title="Add new section">
+                <button id="addSection" title="Add new section">
                     <i class="fas fa-plus"></i>
                 </button>
-                <button id="delSection" onclick="delSection();" title="Delete selected section">
+                <button id="delSection" title="Delete selected section">
                     <i class="fas fa-trash"></i>
                 </button>
-                <button id="editSection" onclick="renameSection();" title="Rename selected section">
+                <button id="renameSection" title="Rename selected section">
                     <i class="fas fa-pencil-alt"></i>
                 </button>
             </div>
@@ -49,301 +51,27 @@
 <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-<link rel="stylesheet" href="codemirror/lib/codemirror.css" />
-<link rel="stylesheet" href="codemirror/lib/custom_css.css" />
 <script src="codemirror/lib/codemirror.js"></script>
+<script src="codemirror/lib/active-line.js"></script>
 <script src="codemirror/mode/css/css.js"></script>
 
-<script src="element.js"></script>
+<script src="scripts/jquery.caret.js"></script>
+
+<script src="scripts/element.js"></script>
+<script src="scripts/utils.js"></script>
+<script src="scripts/codemirror.js"></script>
+<script src="scripts/io.js"></script>
+<script src="scripts/section-list.js"></script>
+<script src="scripts/section-list-controls.js"></script>
 
 <script>
     
     $(".clear").after("<div class='clearfix'></div>");
     
-    
-    
-    String.prototype.insert = function (index, string) {
-        if (index > 0)
-            return this.substring(0, index) + string + this.substring(index, this.length);
-        else
-            return string + this;
-    };
-    
-    var TAB_CHAR = " ".repeat(4);
-    
-    var $code = $("#code");
-    
-    $code.on("keydown", function (e) {
-        
-        if (e.originalEvent.key == "Tab") {
-            e.preventDefault();
-            var text = this.value;
-            text = text.insert(this.selectionStart, TAB_CHAR);
-            this.value = text;
-        }
-        
-    });
-    
-    
-    
-    RegExp.global = function (re) {
-        var pattern	= re.source;
-        var flags	= re.global ? re.flags : re.flags += "g";
-        return new RegExp(pattern, flags);
-    };
-    
-    String.prototype.matches = function (regex) {
-        var result = {
-            matches : [],
-            groups  : [],
-        };
-        var match	= null;
-        var regex	= RegExp.global(regex);
-        while (match = regex.exec(this)) {
-            result.matches.push( match[0] );
-            result.groups.push(  match[1] );
-        }
-        return result;
-    };
-    
-    
-    var CSS = {};
-    
-    var $sectionList = $("#sectionList");
-    
-    function parseCSS() {
-        $sectionList.html("");
-        
-        var cssText = myCodeMirror.getValue();
-        
-        var headers = cssText.matches(/\/\* =* (.*) =* \*\//).groups;
-        
-        var sections = cssText.split(/\/\* =* .* =* \*\//).filter(function (str) {
-            return str.trim() != "";
-        });
-        
-        for (var i = 0; i < headers.length; i++) {
-            CSS[headers[i]] = sections[i].trim();
-            $sectionList.append( elem("li", null, headers[i]) );
-        }
-        $code.html("");
-        myCodeMirror.setValue("");
-    }
-    
-    
-    
-    $sectionList.on("click", "li", function () {
-        $sectionList.find("li").removeClass("active");
-        this.classList.add("active");
-        
-        if (!this.classList.contains("new")) {
-            var sectionName = this.innerText;
-            myCodeMirror.setValue("");
-            myCodeMirror.setValue(CSS[sectionName]);
-            myCodeMirror.scrollTo(0, 0);
-            $(myCodeMirror.display.wrapper).find(".CodeMirror-vscrollbar")[0].scrollTo(0,0);
-        } else {
-            
-            
-            
-        }
-        
-        
-    });
-    
-    
-    var myCodeMirror = CodeMirror.fromTextArea($code[0], {
-        lineNumbers: true,
-        tabSize: 4,
-        indentUnit: 4,
-        
-        // https://github.com/codemirror/CodeMirror/issues/988#issuecomment-37095621
-        extraKeys: {
-            Tab: function(cm) {
-                var spaces = Array(cm.getOption("indentUnit") + 1).join(" ");
-                cm.replaceSelection(spaces, "end", "+input");
-            }
-        },
-    });
-    
-    
-    
-    
-    $sectionList.sortable();
-    $sectionList.disableSelection();
-    
-    
-    function getActiveSection() {
-        var active = $sectionList.find("li.active");
-        if (active.length > 0) {
-            return active;
-        }
-        return null;
-    }
-    
-    function getNewSection() {
-        var new_ = $sectionList.find("li.new");
-        if (new_.length > 0) {
-            return new_;
-        }
-        return null;
-    }
-    
-    function delSection() {
-        var activeSection = getActiveSection();
-        var sectionName = activeSection.text();
-        activeSection.remove();
-        delete CSS[sectionName];
-        myCodeMirror.setValue("");
-    }
-    
-    function addSection() {
-        $sectionList.find("li").removeClass("active");
-        $sectionList.append( elem("li", {"contenteditable":"", "class":"new active"},) );
-        $sectionList.sortable("disable");
-        $sectionList.enableSelection();
-        var newSec = getNewSection();
-        if (newSec) {
-            newSec.focus();
-        }
-    }
-    
-    function renameSection() {
-        var activeSection = getActiveSection();
-        
-        if (activeSection) {
-            $sectionList.sortable("disable");
-            $sectionList.enableSelection();
-            
-            activeSection.addClass("renaming");
-            activeSection.attr("contenteditable", "");
-            
-            activeSection.attr("data-old-name", activeSection.text());
-            
-            activeSection.focus();
-        }
-    }
-    
-    
-    
-    
-    $sectionList.on("keypress", "li.renaming", function (e) {
-        if (e.originalEvent.key == "Enter") {
-            this.removeAttribute("contenteditable");
-            this.classList.remove("renaming");
-            
-            $sectionList.sortable("enable");
-            $sectionList.disableSelection();
-            
-            var newSectionName = this.innerText.toUpperCase();
-            this.innerText = newSectionName;
-            
-            var oldSectionName = this.dataset.oldName;
-            
-            CSS[newSectionName] = CSS[oldSectionName];
-            
-            delete CSS[oldSectionName];
-        }
-    });
-    
-    
-    $sectionList.on("keypress", "li.new", function (e) {
-        if (e.originalEvent.key == "Enter") {
-            this.removeAttribute("contenteditable");
-            this.classList.remove("new");
-            
-            $sectionList.sortable("enable");
-            $sectionList.disableSelection();
-            
-            var sectionName  = this.innerText.toUpperCase();
-            this.innerText   = sectionName;
-            CSS[sectionName] = "";
-            
-            myCodeMirror.setValue(CSS[sectionName]);
-            setTimeout(function () {
-                myCodeMirror.focus();
-            }, 100);
-        }
-    });
-    
-    $sectionList.on("blur", "li.new", function (e) {
-        this.removeAttribute("contenteditable");
-        this.classList.remove("new");
-        
-        $sectionList.sortable("enable");
-        $sectionList.disableSelection();
-        
-        var sectionName  = this.innerText.toUpperCase();
-        this.innerText   = sectionName;
-        CSS[sectionName] = "";
-        
-        myCodeMirror.setValue(CSS[sectionName]);
-        setTimeout(function () {
-            myCodeMirror.focus();
-        }, 100);
-    });
-    
-    
-    function EOL(n) {
-        return "\r\n".repeat(n);
-    }
-    
-    function copyCSS() {
-        
-        var sections = $sectionList.find("li").map(function () {
-            return this.innerText;
-        }).get();
-        
-        var seperators = sections.map(function (sectionName) {
-            return "/* ==================== " + sectionName + " ==================== */";
-        });
-        
-        cssText = [];
-        
-        sections.forEach(function (sectionName, index) {
-            var section = seperators[index] + EOL(1) + CSS[sectionName];
-            cssText.push(section);
-        });
-        
-        cssText = cssText.join( EOL(5) );
-        
-        var textarea = elem("textarea", {"style":"opacity: 0; position: absolute; top: 0;"}, cssText);
-        document.body.appendChild(textarea);
-        textarea.select();
-        
-        try {
-            var successful = document.execCommand("copy");
-            textarea.remove();
-        } catch (err) {
-            console.log('Oops, unable to copy');
-        }
-        
-    }
-    
-    
-    
-    var updateTimeout = null;
-    myCodeMirror.on("keyup", function () {
-        var activeSection = getActiveSection();
-        if (activeSection) {
-            var sectionName  = activeSection.text();
-            var currentRules = myCodeMirror.getValue();
-            if (currentRules != CSS[sectionName]) {
-                clearTimeout(updateTimeout);
-                updateTimeout = setTimeout(function () {
-                    CSS[sectionName] = currentRules;
-                }, 500);
-            }
-        }
-    });
-    
-    
-    
     $(window).on("load resize", function () {
         $(".CodeMirror").css("height", (window.innerHeight - 40 - 30 - 46 - (window.innerHeight * 0.1)) );
     });
     
-        
 </script>
 
 </body>

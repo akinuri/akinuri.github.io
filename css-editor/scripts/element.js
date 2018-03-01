@@ -38,8 +38,6 @@ elem.append = function (parent, children, isHTML) {
             elem.append(parent, children());
         }
         
-        
-        
     } else {
         
         if (children instanceof HTMLElement || children instanceof Text) {
