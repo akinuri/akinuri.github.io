@@ -3,34 +3,43 @@ function parseCSS() {
     $sectionList.html("");
     var cssText = myCodeMirror.getValue();
     var sections = cssText.matches(/\/\* =* ((?!SECTION END).*?) =* \*\/(.*?)\/\* =* SECTION END =* \*\//gs);
+    
     var items = [];
+    
     sections.forEach(function (section) {
         var header = section.groups[0];
         var cssText = section.groups[1].trim();
         if (header.includes(">")) {
+            
             var parts = header.split(">");
             var parent = parts[0].trim();
             var child  = parts[1].trim();
+            
             if (!CSS[parent]) {
                 CSS[parent] = {};
             }
             CSS[parent][child] = cssText;
+            
             var childPushed = false;
+            
             for (var i = 0; i < items.length; i++) {
-                if (items[i] instanceof Array && items[i].includes(parent) && parent != child) {
+                if (items[i] instanceof Array && items[i][0] == parent && parent != child) {
                     items[i].push(child);
                     childPushed = true;
                     break;
                 }
             }
+            
             if (!childPushed && parent != child) {
                 items.push([parent, child]);
             }
+            
         } else {
             CSS[header] = cssText;
             items.push(header);
         }
     });
+    
     items.forEach(function (item) {
         if (item instanceof Array) {
             var parent = item.shift();
