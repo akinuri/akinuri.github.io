@@ -21,7 +21,7 @@ String.prototype.matches = function (regex) {
             index  : match.index,
             input  : match.input,
         };
-        if (match.length > 1) {
+        if (match.length > 0) {
             result.groups = [];
             match.forEach(function (g) {
                 result.groups.push(g);

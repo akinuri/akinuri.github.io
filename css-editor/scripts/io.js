@@ -1,14 +1,23 @@
 function parseCSS() {
     CSS = {};
     $sectionList.html("");
+    
     var cssText = myCodeMirror.getValue();
-    var sections = cssText.matches(/\/\* =* ((?!SECTION END).*?) =* \*\/(.*?)\/\* =* SECTION END =* \*\//gs);
+    
+    var headers  = cssText.matches(/\/\*\s=*?\s(.*?)\s=*?\s\*\//g);
+    var sections = cssText.split(/\/\*\s=*?\s.*?\s=*?\s\*\//).map(function (item) {
+        return item.trim();
+    }).filter(function (item) {
+        return item != "";
+    });
     
     var items = [];
     
-    sections.forEach(function (section) {
-        var header = section.groups[0];
-        var cssText = section.groups[1].trim();
+    sections.forEach(function (section, index) {
+        
+        var header = headers[index].groups[0];
+        var cssText = section;
+        
         if (header.includes(">")) {
             
             var parts = header.split(">");
@@ -48,9 +57,6 @@ function parseCSS() {
         }
     }
     
-    // console.log(items);
-    // console.log(sections);
-    
     items.forEach(function (item) {
         if (item instanceof Array) {
             var parent = item.shift();
@@ -79,8 +85,6 @@ function sectionSeperator(section, parent) {
     }
     return "/* ==================== " + section + " ==================== */";
 }
-
-var sectionSeperatorEnd = "/* ========== SECTION END ========== */";
 
 Array.prototype.move2begin = function (item) {
     this.splice(0, 0, this.splice(this.indexOf(item), 1)[0]);
@@ -137,14 +141,14 @@ function copyCSS() {
             }
             section.forEach(function (sectionName) {
                 if (CSS[parent][sectionName] != "") {
-                    cssText.push( sectionSeperator(sectionName, parent) + EOL(2) + CSS[parent][sectionName] + EOL(2) + sectionSeperatorEnd );
+                    cssText.push( sectionSeperator(sectionName, parent) + EOL(2) + CSS[parent][sectionName] + EOL(2) );
                 }
             });
         } else {
-            cssText.push( sectionSeperator(section) + EOL(2) + CSS[section] + EOL(2) + sectionSeperatorEnd );
+            cssText.push( sectionSeperator(section) + EOL(2) + CSS[section] + EOL(2) );
         }
     });
-    cssText = cssText.join( EOL(5) );
+    cssText = cssText.join( EOL(2) );
     copy2clipboard(cssText);
 }
 
