@@ -53,7 +53,7 @@ body {
 
 #controls {
     border-top: 1px solid rgba(0,0,0,.1);
-    padding: 1em;
+    padding: .5em;
 }
 #controls input {
     background-color: rgba(0,0,0,0.05);
@@ -75,8 +75,8 @@ body {
 }
 
 #controls input:first-child:not(:last-child) {
-    margin-right: .25em;
+    margin-right: .5em;
 }
 #controls input:not(:first-child):not(:last-child) {
-    margin-right: .25em;
+    margin-right: .5em;
 }
