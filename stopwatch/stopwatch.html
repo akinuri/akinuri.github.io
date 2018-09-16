@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Stopwatch</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="styles.css" rel="stylesheet" />
+</head>
+<body>
+
+<div id="app">
+    
+    <div id="timer">
+        <div id="currentTime">00:00:00.000</div>
+        <div id="lastElapsed">00:00:00.000</div>
+    </div>
+
+    <div id="laps">
+        <table></table>
+    </div>
+
+    <div id="controls">
+        <div id="start">
+            <input type="button" value="START" id="startWatch" />
+        </div>
+        <div id="stop" hidden>
+            <input type="button" value="STOP" id="stopWatch" />
+            <input type="button" value="LAP" id="addLap" />
+        </div>
+        <div id="resume" hidden>
+            <input type="button" value="RESUME" id="resumeWatch" />
+            <input type="button" value="SAVE" id="saveLaps" />
+            <input type="button" value="RESET" id="resetWatch" />
+        </div>
+    </div>
+    
+</div>
+
+<script src="ext/Duration.js"></script>
+<script src="ext/element.js"></script>
+<script src="ext/datetime.js"></script>
+<script src="stopwatch.js"></script>
+
+<script>
+    function downloadCSV(data) {
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(new Blob([data], {type: 'text/csv'}));
+        a.download = "stopwatch " + Date.datetime(true) + ".csv";
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+</script>
+
+</body>
+</html>

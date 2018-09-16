@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+[hidden] {
+    display: none !important;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: inherit;
+    color: inherit;
+    font-size: inherit;
+    font-family: inherit;
+    line-height: inherit;
+}
+body {
+    box-sizing: border-box;
+    background-color: hsl(0, 0%, 100%);
+    font-family: 'Roboto', sans-serif;
+}
+
+#app {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#timer {
+    text-align: center;
+    margin: 2em 0;
+}
+#timer #currentTime {
+    font-size: 2.5em;
+}
+#timer #lastElapsed {
+    font-size: 1.5em;
+    margin-top: 0.5em;
+}
+
+#laps {
+    border-top: 1px solid rgba(0,0,0,.1);
+    padding-top: .5em;
+    flex-grow: 1;
+    overflow: auto;
+}
+#laps table {
+    margin: auto;
+}
+#laps table td {
+    padding: 0.5em 1em;
+}
+
+#controls {
+    border-top: 1px solid rgba(0,0,0,.1);
+    padding: 1em;
+}
+#controls input {
+    background-color: rgba(0,0,0,0.05);
+    border: none;
+    padding: 0.5em 1em;
+    width: 100%;
+    outline: none;
+}
+#controls input:hover {
+    background-color: rgba(0,0,0,0.075);
+}
+#controls input:active {
+    background-color: rgba(0,0,0,0.1);
+}
+#controls #start,
+#controls #stop,
+#controls #resume {
+    display: flex;
+}
+
+#controls input:first-child:not(:last-child) {
+    margin-right: .25em;
+}
+#controls input:not(:first-child):not(:last-child) {
+    margin-right: .25em;
+}
