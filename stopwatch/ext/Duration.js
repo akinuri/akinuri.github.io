@@ -1,9 +1,9 @@
 function Duration(num) {
-    this.ms = null;
-    this.s  = null;
-    this.m  = null;
-    this.h  = null;
-    this.d  = null;
+    this.ms = 0;
+    this.s  = 0;
+    this.m  = 0;
+    this.h  = 0;
+    this.d  = 0;
     this.parse(num);
 }
 
@@ -16,27 +16,27 @@ Duration.constants = {
 };
 
 Duration.prototype.parse = function num2duration(num) {
-    var remainder = 0;
+    var remainder = num;
     
-    this.d = Math.floor(num / Duration.constants.d);
-    remainder  = num % Duration.constants.d;
-    if (this.d == 0)
-        remainder = num;
+    if (remainder >= Duration.constants.d) {
+        this.d = Math.floor(remainder / Duration.constants.d);
+        remainder = remainder % Duration.constants.d;
+    }
     
-    this.h = Math.floor(remainder / Duration.constants.h);
-    remainder  = remainder % Duration.constants.h;
-    if (this.h == 0)
-        remainder = num;
+    if (remainder >= Duration.constants.h) {
+        this.h = Math.floor(remainder / Duration.constants.h);
+        remainder = remainder % Duration.constants.h;
+    }
     
-    this.m = Math.floor(remainder / Duration.constants.m);
-    remainder  = remainder % Duration.constants.m;
-    if (this.m == 0)
-        remainder = num;
+    if (remainder >= Duration.constants.m) {
+        this.m = Math.floor(remainder / Duration.constants.m);
+        remainder = remainder % Duration.constants.m;
+    }
     
-    this.s = Math.floor(remainder / Duration.constants.s);
-    remainder  = remainder % Duration.constants.s;
-    if (this.s == 0)
-        remainder = num;
+    if (remainder >= Duration.constants.s) {
+        this.s = Math.floor(remainder / Duration.constants.s);
+        remainder = remainder % Duration.constants.s;
+    }
     
     this.ms = remainder;
 };
