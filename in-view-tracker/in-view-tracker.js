@@ -59,24 +59,59 @@ function ViewTracker(el, callbacks, throttleDelay) {
     
     this._prevVisibility = null;
     
+    this.stateStack = [];
+    
+    // [peek, left]
+    // [peek, enter, leave, left]
+    // [enter, leave, left]
+    
     this.events = {
         callbacks : callbacks,
         handlers  : {
             enter : function () {
                 if (self._prevVisibility == null) {
                     if (self.visibility.visible == "whole") {
+                        self.stateStack.push("enter");
                         self.events.callbacks.enter();
                     }
                 } else {
-                    if (self.visibility.visible == "whole" && self._prevVisibility.visible != "whole") {
-                        self.events.callbacks.enter();
+                    if (self._prevVisibility.visible != "whole" && self.visibility.visible == "whole") {
+                        if (self.stateStack.includes("enter")) {
+                            self.stateStack.push("reenter");
+                            if (self.events.callbacks.reenter) {
+                                self.events.callbacks.reenter();
+                            }
+                        } else {
+                            self.stateStack.push("enter");
+                            self.events.callbacks.enter();
+                        }
                     }
                 }
             },
-            exit : function () {
-                if (self._prevVisibility != null) {
-                    if (self.visibility.visible != "whole" && self._prevVisibility.visible == "whole") {
-                        self.events.callbacks.exit();
+            left : function () {
+                if (self._prevVisibility && self._prevVisibility.visible != "none" && self.visibility.visible == "none") {
+                    self.stateStack.push("left");
+                    self.events.callbacks.left();
+                    self.stateStack = [];
+                }
+            },
+            peek : function () {
+                if (self._prevVisibility == null) {
+                    if (["top", "bottom"].includes(self.visibility.visible)) {
+                        self.stateStack.push("peek");
+                        self.events.callbacks.peek();
+                    }
+                } else {
+                    if (["top", "bottom"].includes(self.visibility.visible) && !["top", "bottom"].includes(self._prevVisibility.visible)) {
+                        if (self.stateStack.includes("peek") || self.stateStack.includes("enter")) {
+                            self.stateStack.push("leave");
+                            if (self.events.callbacks.leave) {
+                                self.events.callbacks.leave();
+                            }
+                        } else {
+                            self.stateStack.push("peek");
+                            self.events.callbacks.peek();
+                        }
                     }
                 }
             },
@@ -86,14 +121,21 @@ function ViewTracker(el, callbacks, throttleDelay) {
     if (this.events.callbacks) {
         window.addEventListener("scroll", throttle(function () {
             self.trackVisibility(el);
-            if (self.events.callbacks.enter) {
+            if (self.events.callbacks.enter || self.events.callbacks.reenter) {
                 self.events.handlers.enter();
             }
-            if (self.events.callbacks.exit) {
-                self.events.handlers.exit();
+            if (self.events.callbacks.peek) {
+                self.events.handlers.peek();
+            }
+            if (self.events.callbacks.left) {
+                self.events.handlers.left();
             }
             self._prevVisibility = self.visibility;
         }, throttleDelay || 200));
+        window.addEventListener("resize", throttle(function () {
+            self.trackVisibility(el);
+            self._prevVisibility = self.visibility;
+        }, throttleDelay * 2 || 500));
     }
     
 }

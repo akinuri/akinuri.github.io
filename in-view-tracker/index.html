@@ -28,7 +28,7 @@
             height: 50vh;
         }
         .section {
-            min-height: 25vh;
+            min-height: 40vh;
             display: flex;
             align-items: center;
             padding: 5vw;
@@ -45,6 +45,7 @@
         .section.green      { background-color: hsl(120, 50%, 70%); }
         .section.magenta    { background-color: hsl(300, 50%, 70%); }
         .section.blue       { background-color: hsl(240, 50%, 70%); }
+        .section.yellow     { background-color: hsl(60, 50%, 70%);  }
         .section.video {
             height: auto;
             display: block;
@@ -53,6 +54,7 @@
         video {
             display: block;
             margin: 0 auto;
+            max-width: 100%;
         }
     </style>
 </head>
@@ -69,12 +71,12 @@
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Scelerisque eu ultrices vitae auctor eu augue ut. Massa sed elementum tempus egestas sed sed. Ornare aenean euismod elementum nisi quis eleifend quam. Et odio pellentesque diam volutpat commodo sed. Venenatis urna cursus eget nunc scelerisque viverra mauris. Non consectetur a erat nam at lectus urna duis convallis. Non quam lacus suspendisse faucibus interdum posuere lorem ipsum. Dui accumsan sit amet nulla facilisi. Ornare quam viverra orci sagittis. In pellentesque massa placerat duis.</p>
     </div>
     
-    <div class="section video">
-        <video muted="muted" src="videos/1400x788_04_ScrollAnimationTechnology_fahrerlebnis_v015.mp4">Sorry, your browser doesn't support embedded videos.</video>
-    </div>
-    
     <div class="section green">
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Scelerisque eu ultrices vitae auctor eu augue ut.</p>
+    </div>
+    
+    <div class="section video">
+        <video muted="muted" src="videos/1400x788_04_ScrollAnimationTechnology_fahrerlebnis_v015.mp4">Sorry, your browser doesn't support embedded videos.</video>
     </div>
     
     <div class="section magenta">
@@ -82,6 +84,10 @@
     </div>
     
     <div class="section blue">
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Scelerisque eu ultrices vitae auctor eu augue ut. Massa sed elementum tempus egestas sed sed. Ornare aenean euismod elementum nisi quis eleifend quam. Et odio pellentesque diam volutpat commodo sed. Venenatis urna cursus eget nunc scelerisque viverra mauris. Non consectetur a erat nam at lectus urna duis convallis. Non quam lacus suspendisse faucibus interdum posuere lorem ipsum. Dui accumsan sit amet nulla facilisi. Ornare quam viverra orci sagittis. In pellentesque massa placerat duis.</p>
+    </div>
+    
+    <div class="section yellow">
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Scelerisque eu ultrices vitae auctor eu augue ut. Massa sed elementum tempus egestas sed sed. Ornare aenean euismod elementum nisi quis eleifend quam. Et odio pellentesque diam volutpat commodo sed. Venenatis urna cursus eget nunc scelerisque viverra mauris. Non consectetur a erat nam at lectus urna duis convallis. Non quam lacus suspendisse faucibus interdum posuere lorem ipsum. Dui accumsan sit amet nulla facilisi. Ornare quam viverra orci sagittis. In pellentesque massa placerat duis.</p>
     </div>
 </main>
@@ -100,15 +106,30 @@
     });
     
     var vt = new ViewTracker(video, {
+        "peek" : function () {
+            console.log("peek");
+        },
         "enter" : function () {
+            console.log("enter");
             video.play();
         },
-        "exit" : function () {
+        "reenter" : function () {
+            console.log("reenter");
+            if (video.currentTime != video.duration) {
+                video.play();
+            }
+        },
+        "leave" : function () {
+            console.log("leave");
             video.pause();
-            video.currentTime = 0;
+        },
+        "left" : function () {
+            console.log("left");
+            if (video.currentTime == video.duration) {
+                video.currentTime = 0;
+            }
         },
     });
-    
 </script>
 
 </body>
