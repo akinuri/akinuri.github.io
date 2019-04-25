@@ -6,8 +6,18 @@
 <body>
 
 <video>
-    <!-- <source src="videos/1400x788_04_ScrollAnimationTechnology_fahrerlebnis_v015.mp4" type="video/mp4"> -->
-    <source src="videos/sintel-trailer.mp4" type="video/mp4">
+    <source src="videos/fahrerlebnis_kfd_1.mp4" type="video/mp4">
+    <!-- <source src="videos/fahrerlebnis_kfd_25.mp4" type="video/mp4"> -->
+    <!-- <source src="videos/sintel-trailer.mp4" type="video/mp4"> -->
+    <!-- <source src="videos/sintel-trailer.ogv" type="video/ogv"> -->
+    <!-- <source src="videos/sintel-trailer.webm" type="video/webm"> -->
+    Sorry, your browser doesn't support embedded videos.
+</video>
+
+<video>
+    <source src="videos/fahrerlebnis_kfd_25.mp4" type="video/mp4">
+    <!-- <source src="videos/fahrerlebnis_kfd_25.mp4" type="video/mp4"> -->
+    <!-- <source src="videos/sintel-trailer.mp4" type="video/mp4"> -->
     <!-- <source src="videos/sintel-trailer.ogv" type="video/ogv"> -->
     <!-- <source src="videos/sintel-trailer.webm" type="video/webm"> -->
     Sorry, your browser doesn't support embedded videos.
@@ -15,14 +25,16 @@
 
 <script>
     
-    var video = document.querySelector("video");
+    var videos = document.querySelectorAll("video");
     
-    video.addEventListener("click", function () {
-        if (video.paused) {
-            video.play();
-        } else {
-            video.pause();
-        }
+    Array.from(videos).forEach(function (video) {
+        video.addEventListener("click", function () {
+            if (video.paused) {
+                video.play();
+            } else {
+                video.pause();
+            }
+        });
     });
     
 </script>
