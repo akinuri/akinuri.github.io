@@ -2,32 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    <style>
+        * {
+            margin: 0;
+            box-sizing: border-box;
+        }
+        video {
+            display: block;
+            margin: 1em;
+            max-width: calc(100% - 2em);
+        }
+    </style>
 </head>
 <body>
 
 <video>
     <source src="videos/fahrerlebnis_kfd_1.mp4" type="video/mp4">
-    <!-- <source src="videos/fahrerlebnis_kfd_25.mp4" type="video/mp4"> -->
-    <!-- <source src="videos/sintel-trailer.mp4" type="video/mp4"> -->
-    <!-- <source src="videos/sintel-trailer.ogv" type="video/ogv"> -->
-    <!-- <source src="videos/sintel-trailer.webm" type="video/webm"> -->
     Sorry, your browser doesn't support embedded videos.
 </video>
 
 <video>
     <source src="videos/fahrerlebnis_kfd_25.mp4" type="video/mp4">
-    <!-- <source src="videos/fahrerlebnis_kfd_25.mp4" type="video/mp4"> -->
-    <!-- <source src="videos/sintel-trailer.mp4" type="video/mp4"> -->
-    <!-- <source src="videos/sintel-trailer.ogv" type="video/ogv"> -->
-    <!-- <source src="videos/sintel-trailer.webm" type="video/webm"> -->
     Sorry, your browser doesn't support embedded videos.
 </video>
 
 <script>
-    
-    var videos = document.querySelectorAll("video");
-    
-    Array.from(videos).forEach(function (video) {
+    Array.from(document.querySelectorAll("video")).forEach(function (video) {
         video.addEventListener("click", function () {
             if (video.paused) {
                 video.play();
@@ -36,7 +36,6 @@
             }
         });
     });
-    
 </script>
 
 </body>
