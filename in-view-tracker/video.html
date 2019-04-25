@@ -15,7 +15,8 @@
     var video = document.querySelector("video");
     
     video.addEventListener("click", function () {
-        video.play();
+        // video.play();
+        video.currentTime = video.duration / 2;
         alert(video.currentTime);
     });
     
