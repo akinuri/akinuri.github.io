@@ -1,6 +1,7 @@
 function inView(el) {
     var elemRect = el.getBoundingClientRect();
-    var element = {
+    var target = {
+        element : el,
         height  : elemRect.height,
         top     : elemRect.top + scrollY,
         bottom  : elemRect.top + scrollY + elemRect.height,
@@ -13,27 +14,27 @@ function inView(el) {
     var visibility = {
         visible : "none",
         amount  : 0,
-        overflow : element.height > viewport.height ? true : false,
+        overflow : target.height > viewport.height ? true : false,
     };
-    if (viewport.top < element.top && element.top < viewport.bottom) {
-        if (element.bottom < viewport.bottom) {
+    if (viewport.top < target.top && target.top < viewport.bottom) {
+        if (target.bottom < viewport.bottom) {
             visibility.visible = "whole";
             visibility.amount = 1;
         } else {
             visibility.visible = "top";
-            visibility.amount = parseFloat( ((viewport.bottom - element.top) / element.height).toFixed(2) );
+            visibility.amount = parseFloat( ((viewport.bottom - target.top) / target.height).toFixed(2) );
         }
     }
-    else if (viewport.top < element.bottom && element.bottom < viewport.bottom) {
-        if (element.top > viewport.top) {
+    else if (viewport.top < target.bottom && target.bottom < viewport.bottom) {
+        if (target.top > viewport.top) {
             visibility.visible = "whole";
             visibility.amount = 1;
         } else {
             visibility.visible = "bottom";
-            visibility.amount = parseFloat( ((element.bottom - viewport.top) / element.height).toFixed(2) );
+            visibility.amount = parseFloat( ((target.bottom - viewport.top) / target.height).toFixed(2) );
         }
     }
-    return {element, viewport, visibility};
+    return {target, viewport, visibility};
 }
 
 
@@ -72,18 +73,18 @@ function ViewTracker(el, callbacks, throttleDelay) {
                 if (self._prevVisibility == null) {
                     if (self.visibility.visible == "whole") {
                         self.stateStack.push("enter");
-                        self.events.callbacks.enter();
+                        self.events.callbacks.enter.call(self);
                     }
                 } else {
                     if (self._prevVisibility.visible != "whole" && self.visibility.visible == "whole") {
                         if (self.stateStack.includes("enter")) {
                             self.stateStack.push("reenter");
                             if (self.events.callbacks.reenter) {
-                                self.events.callbacks.reenter();
+                                self.events.callbacks.reenter.call(self);
                             }
                         } else {
                             self.stateStack.push("enter");
-                            self.events.callbacks.enter();
+                            self.events.callbacks.enter.call(self);
                         }
                     }
                 }
@@ -91,7 +92,7 @@ function ViewTracker(el, callbacks, throttleDelay) {
             left : function () {
                 if (self._prevVisibility && self._prevVisibility.visible != "none" && self.visibility.visible == "none") {
                     self.stateStack.push("left");
-                    self.events.callbacks.left();
+                    self.events.callbacks.left.call(self);
                     self.stateStack = [];
                 }
             },
@@ -99,18 +100,18 @@ function ViewTracker(el, callbacks, throttleDelay) {
                 if (self._prevVisibility == null) {
                     if (["top", "bottom"].includes(self.visibility.visible)) {
                         self.stateStack.push("peek");
-                        self.events.callbacks.peek();
+                        self.events.callbacks.peek.call(self);
                     }
                 } else {
                     if (["top", "bottom"].includes(self.visibility.visible) && !["top", "bottom"].includes(self._prevVisibility.visible)) {
                         if (self.stateStack.includes("peek") || self.stateStack.includes("enter")) {
                             self.stateStack.push("leave");
                             if (self.events.callbacks.leave) {
-                                self.events.callbacks.leave();
+                                self.events.callbacks.leave.call(self);
                             }
                         } else {
                             self.stateStack.push("peek");
-                            self.events.callbacks.peek();
+                            self.events.callbacks.peek.call(self);
                         }
                     }
                 }
@@ -124,7 +125,7 @@ function ViewTracker(el, callbacks, throttleDelay) {
             if (self.events.callbacks.enter || self.events.callbacks.reenter) {
                 self.events.handlers.enter();
             }
-            if (self.events.callbacks.peek) {
+            if (self.events.callbacks.peek || self.events.callbacks.leave) {
                 self.events.handlers.peek();
             }
             if (self.events.callbacks.left) {
@@ -142,10 +143,7 @@ function ViewTracker(el, callbacks, throttleDelay) {
 
 ViewTracker.prototype.trackVisibility = function trackVisibility(el) {
     var iv = inView(el);
-    this.element = iv.element;
+    this.target = iv.target;
     this.viewport = iv.viewport;
     this.visibility = iv.visibility;
 };
-
-
-
