@@ -28,8 +28,8 @@
 
 <script>
     function disableAutoplay(video) {
-        console.warn("Disabled autoplay on videos.");
         if (video.autoplay) {
+            console.warn("Disabling autoplay on videos.");
             video.pause();
             video.currentTime = 0;
             video.removeAttribute("autoplay");
