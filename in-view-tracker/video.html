@@ -22,13 +22,24 @@
     Sorry, your browser doesn't support embedded videos.
 </video>
 
-<video poster="videos/poster.jpg" preload="metadata" playsinline muted>
+<video poster="videos/poster.jpg" preload="metadata" playsinline muted autoplay>
     <source src="videos/fahrerlebnis_kfd_25.mp4" type="video/mp4">
     <source src="videos/fahrerlebnis_kfd_25.webm" type="video/webm">
     Sorry, your browser doesn't support embedded videos.
 </video>
 
 <script>
+    function disableAutoplay(video) {
+        console.warn("Disabled autoplay on videos.");
+        if (video.autoplay) {
+            video.pause();
+            video.currentTime = 0;
+            video.removeAttribute("autoplay");
+            video.autoplay = false;
+            video.load();
+            video.removeEventListener("play", video.dacb);
+        }
+    }
     Array.from(document.querySelectorAll("video")).forEach(function (video) {
         video.addEventListener("click", function () {
             if (video.paused) {
@@ -37,6 +48,8 @@
                 video.pause();
             }
         });
+        video.dacb = disableAutoplay.bind(null, video);
+        video.addEventListener("play", video.dacb);
     });
 </script>
 
