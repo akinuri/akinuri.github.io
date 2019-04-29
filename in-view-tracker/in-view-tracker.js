@@ -16,8 +16,8 @@ function inView(el) {
         amount  : 0,
         overflow : target.height > viewport.height ? true : false,
     };
-    if (viewport.top < target.top && target.top < viewport.bottom) {
-        if (target.bottom < viewport.bottom) {
+    if (viewport.top <= target.top && target.top < viewport.bottom) {
+        if (target.bottom <= viewport.bottom) {
             visibility.visible = "whole";
             visibility.amount = 1;
         } else {
@@ -25,8 +25,8 @@ function inView(el) {
             visibility.amount = parseFloat( ((viewport.bottom - target.top) / target.height).toFixed(2) );
         }
     }
-    else if (viewport.top < target.bottom && target.bottom < viewport.bottom) {
-        if (target.top > viewport.top) {
+    else if (viewport.top < target.bottom && target.bottom <= viewport.bottom) {
+        if (target.top >= viewport.top) {
             visibility.visible = "whole";
             visibility.amount = 1;
         } else {
