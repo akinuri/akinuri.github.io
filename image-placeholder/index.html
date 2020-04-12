@@ -95,8 +95,12 @@
     
     <table>
         <tr>
-            <td>Font</td>
-            <td><input type="text" id="font" value="900 {fontSize}px 'Font Awesome 5 Free'" /></td>
+            <td>Font family</td>
+            <td><input type="text" id="fontFamily" value="Font Awesome 5 Free" /></td>
+        </tr>
+        <tr>
+            <td>Font weight</td>
+            <td><input type="text" id="fontWeight" value="900" /></td>
         </tr>
         <tr>
             <td>Font size</td>
@@ -163,10 +167,11 @@
     /* ============================== PROCESSES ============================== */
     
     let processControls = {
-        font     : document.querySelector("#font"),
-        fontSize : document.querySelector("#fontSize"),
-        fontPosX : document.querySelector("#fontPosX"),
-        fontPosY : document.querySelector("#fontPosY"),
+        fontFamily  : document.querySelector("#fontFamily"),
+        fontWeight  : document.querySelector("#fontWeight"),
+        fontSize    : document.querySelector("#fontSize"),
+        fontPosX    : document.querySelector("#fontPosX"),
+        fontPosY    : document.querySelector("#fontPosY"),
     };
     
     let largeCanvas  = document.querySelector("#largeCanvas");
@@ -187,7 +192,7 @@
         largeCanvas.width  = outputControls.width.value;
         largeCanvas.height = outputControls.height.value;
         
-        largeContext.font = processControls.font.value.replace("{fontSize}", processControls.fontSize.value);
+        largeContext.font = processControls.fontWeight.value + " " + processControls.fontSize.value + "px '" + processControls.fontFamily.value + "'";
         largeContext.fillStyle = outputControls.iconColor.value;
         largeContext.fillText(String.fromCharCode(outputControls.icon.value), processControls.fontPosX.value, processControls.fontPosY.value);
         
@@ -254,7 +259,8 @@
     outputControls.iconSize.addEventListener("input", debounce(draw, 500));
     outputControls.iconColor.addEventListener("input", debounce(draw, 500));
     
-    processControls.font.addEventListener("input", debounce(draw, 500));
+    processControls.fontFamily.addEventListener("input", debounce(draw, 500));
+    processControls.fontWeight.addEventListener("input", debounce(draw, 500));
     processControls.fontSize.addEventListener("input", debounce(draw, 500));
     processControls.fontPosX.addEventListener("input", debounce(draw, 500));
     processControls.fontPosY.addEventListener("input", debounce(draw, 500));
