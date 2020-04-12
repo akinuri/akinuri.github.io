@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Image Placeholder Generator</title>
+    <link rel="stylesheet" type="text/css" href="font-awesome/css/all.css" />
+    <style>
+        body {
+            background-color: hsl(0, 0%, 95%);
+            display: flex;
+        }
+        
+        canvas {
+            background: white;
+            background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQMAAAAlPW0iAAAABlBMVEXMzMz////TjRV2AAAAEUlEQVQI12P4z8CAFWEX/Q8Afr8P8erzE9cAAAAASUVORK5CYII=);
+            box-shadow: 0 1px 2px hsla(0, 0%, 0%, 0.5);
+            image-rendering: pixelated;
+            /* transform: scale(0.8); */
+            /* transform-origin: top left; */
+            zoom: 0.8; /* this counters the scale up (125%) of my screen */
+            display: block;
+        }
+        input {
+            padding: 0.25em;
+            width: 10em;
+        }
+        table {
+            margin-top: 0.5em;
+        }
+        
+        #process {
+            margin-left: 2em;
+        }
+        #canvases {
+            display: flex;
+            align-items: flex-end;
+        }
+        #canvases canvas {
+            display: block;
+            margin-right: 1em;
+        }
+    </style>
+</head>
+<body>
+
+
+
+<div id="output">
+    
+    <canvas id="outputCanvas"></canvas>
+    
+    <table>
+        <tr>
+            <td>Width</td>
+            <td><input type="number" id="width" value="256" /></td>
+        </tr>
+        <tr>
+            <td>Height</td>
+            <td><input type="number" id="height" value="256" /></td>
+        </tr>
+        <tr>
+            <td>Background</td>
+            <td>
+                <input type="text" id="background" value="hsl(0, 0%, 80%)" />
+            </td>
+        </tr>
+        <tr>
+            <td>Icon</td>
+            <td><input type="text" id="icon" value="0xf007" /></td>
+        </tr>
+        <tr>
+            <td>Icon size</td>
+            <td><input type="number" id="iconSize" value="160" /></td>
+        </tr>
+        <tr>
+            <td>Icon color</td>
+            <td>
+                <input type="text" id="iconColor" value="hsl(0, 0%, 60%)" />
+            </td>
+        </tr>
+    </table>
+    
+</div>
+
+
+
+<div id="process">
+    
+    <div id="canvases">
+        <canvas id="largeCanvas"></canvas>
+        <canvas id="detectCanvas"></canvas>
+        <canvas id="cropCanvas"></canvas>
+        <canvas id="iconCanvas"></canvas>
+    </div>
+    
+    <table>
+        <tr>
+            <td>Font</td>
+            <td><input type="text" id="font" value="900 {fontSize}px 'Font Awesome 5 Free'" /></td>
+        </tr>
+        <tr>
+            <td>Font size</td>
+            <td><input type="number" id="fontSize" value="200" /></td>
+        </tr>
+        <tr>
+            <td>Font pos X</td>
+            <td><input type="number" id="fontPosX" value="40" /></td>
+        </tr>
+        <tr>
+            <td>Font pos Y</td>
+            <td><input type="number" id="fontPosY" value="205" /></td>
+        </tr>
+    </table>
+    
+</div>
+
+
+
+<script src="ImageProcessing.js"></script>
+<script>
+    
+    let outputCanvas  = document.querySelector("#outputCanvas");
+    let outputContext = outputCanvas.getContext("2d");
+    
+    let outputControls = {
+        width       : document.querySelector("#width"),
+        height      : document.querySelector("#height"),
+        background  : document.querySelector("#background"),
+        foreground  : document.querySelector("#foreground"),
+        color       : document.querySelector("#color"),
+        icon        : document.querySelector("#icon"),
+        iconSize    : document.querySelector("#iconSize"),
+        iconColor   : document.querySelector("#iconColor"),
+    };
+    
+    
+    function draw() {
+        
+        // RESET
+        outputCanvas.width  = outputControls.width.value;
+        outputCanvas.height = outputControls.height.value;
+        outputContext.clearRect(0, 0, outputCanvas.width, outputCanvas.height);
+        
+        // BACKGROUND
+        outputContext.beginPath();
+        outputContext.rect(0, 0, outputCanvas.width, outputCanvas.height);
+        outputContext.fillStyle = outputControls.background.value;
+        outputContext.fill();
+        
+        // ICON
+        let iconCanvas = drawFontIcon();
+        
+        // center
+        let translateX = (outputCanvas.width - iconCanvas.width) / 2;
+        let translateY = (outputCanvas.height - iconCanvas.height) / 2;
+        outputContext.translate(translateX, translateY);
+        
+        outputContext.drawImage(iconCanvas, 0, 0);
+    }
+    
+    
+    
+    /* ============================== PROCESSES ============================== */
+    
+    let processControls = {
+        font     : document.querySelector("#font"),
+        fontSize : document.querySelector("#fontSize"),
+        fontPosX : document.querySelector("#fontPosX"),
+        fontPosY : document.querySelector("#fontPosY"),
+    };
+    
+    let largeCanvas  = document.querySelector("#largeCanvas");
+    let largeContext = largeCanvas.getContext("2d");
+    
+    let detectCanvas  = document.querySelector("#detectCanvas");
+    let detectContext = detectCanvas.getContext("2d");
+    
+    let cropCanvas  = document.querySelector("#cropCanvas");
+    let cropContext = cropCanvas.getContext("2d");
+    
+    let iconCanvas  = document.querySelector("#iconCanvas");
+    let iconContext = iconCanvas.getContext("2d");
+    
+    function drawFontIcon() {
+        
+        // DRAW
+        largeCanvas.width  = outputControls.width.value;
+        largeCanvas.height = outputControls.height.value;
+        
+        largeContext.font = processControls.font.value.replace("{fontSize}", processControls.fontSize.value);
+        largeContext.fillStyle = outputControls.iconColor.value;
+        largeContext.fillText(String.fromCharCode(outputControls.icon.value), processControls.fontPosX.value, processControls.fontPosY.value);
+        
+        
+        // DETECT
+        detectCanvas.width  = outputControls.width.value;
+        detectCanvas.height = outputControls.height.value;
+        
+        detectContext.drawImage(largeCanvas, 0, 0);
+        
+        let iconBox = findEdges(detectContext);
+        
+        detectContext.beginPath();
+        detectContext.rect(iconBox.left, iconBox.top, iconBox.width, iconBox.height);
+        detectContext.lineWidth = 2;
+        detectContext.strokeStyle = "red";
+        detectContext.stroke();
+        
+        
+        // CROP
+        cropCanvas.width  = iconBox.width;
+        cropCanvas.height = iconBox.height;
+        
+        let iconData = largeContext.getImageData(iconBox.left, iconBox.top, iconBox.width, iconBox.height);
+        cropContext.putImageData(iconData, 0, 0);
+        
+        
+        // FIT
+        iconCanvas.width  = outputControls.iconSize.value;
+        iconCanvas.height = outputControls.iconSize.value;
+        
+        let newIconDimensions = resize(iconBox.width, iconBox.height, outputControls.iconSize.value, outputControls.iconSize.value);
+        
+        let scaleX = newIconDimensions.width  / iconBox.width;
+        let scaleY = newIconDimensions.height / iconBox.height;
+        iconContext.scale(scaleX, scaleY);
+        
+        let translateX = (iconCanvas.width - newIconDimensions.width) / 2;
+        let translateY = (iconCanvas.height - newIconDimensions.height) / 2;
+        iconContext.translate(translateX, translateY);
+        
+        iconContext.drawImage(cropCanvas, 0, 0);
+        
+        return iconCanvas;
+    }
+    
+    
+    
+    function debounce(callback, delay) {
+        var timeoutHandler = null;
+        return function () {
+            clearTimeout(timeoutHandler);
+            timeoutHandler = setTimeout(function () {
+                callback();
+            }, delay);
+        }
+    }
+    
+    
+    outputControls.width.addEventListener("input", debounce(draw, 500));
+    outputControls.height.addEventListener("input", debounce(draw, 500));
+    outputControls.background.addEventListener("input", debounce(draw, 500));
+    outputControls.icon.addEventListener("input", debounce(draw, 500));
+    outputControls.iconSize.addEventListener("input", debounce(draw, 500));
+    outputControls.iconColor.addEventListener("input", debounce(draw, 500));
+    
+    processControls.font.addEventListener("input", debounce(draw, 500));
+    processControls.fontSize.addEventListener("input", debounce(draw, 500));
+    processControls.fontPosX.addEventListener("input", debounce(draw, 500));
+    processControls.fontPosY.addEventListener("input", debounce(draw, 500));
+    
+    draw();
+    
+</script>
+
+</body>
+</html>
