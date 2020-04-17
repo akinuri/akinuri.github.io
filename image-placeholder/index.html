@@ -39,6 +39,10 @@
             display: block;
             margin-right: 1em;
         }
+        
+        #buttons {
+            margin-top: 1em;
+        }
     </style>
 </head>
 <body>
@@ -65,8 +69,8 @@
             </td>
         </tr>
         <tr>
-            <td>Icon</td>
-            <td><input type="text" id="icon" value="0xf007" /></td>
+            <td>Icon (unicode)</td>
+            <td><input type="text" id="icon" value="f007" /></td>
         </tr>
         <tr>
             <td>Icon size</td>
@@ -79,6 +83,11 @@
             </td>
         </tr>
     </table>
+    
+    <div id="buttons">
+        <button onclick="javascript: downloadCanvasImage(outputCanvas, 'png')">Download PNG</button>
+        <button onclick="javascript: downloadCanvasImage(outputCanvas, 'jpeg')">Download JPEG</button>
+    </div>
     
 </div>
 
@@ -194,7 +203,7 @@
         
         largeContext.font = processControls.fontWeight.value + " " + processControls.fontSize.value + "px '" + processControls.fontFamily.value + "'";
         largeContext.fillStyle = outputControls.iconColor.value;
-        largeContext.fillText(String.fromCharCode(outputControls.icon.value), processControls.fontPosX.value, processControls.fontPosY.value);
+        largeContext.fillText(String.fromCharCode("0x" + outputControls.icon.value), processControls.fontPosX.value, processControls.fontPosY.value);
         
         
         // DETECT
@@ -239,6 +248,14 @@
         return iconCanvas;
     }
     
+    
+    function downloadCanvasImage(canvas, type) {
+        let image = canvas.toDataURL("image/" + type);
+        let anchor = document.createElement("a");
+        anchor.download = processControls.fontFamily.value.toLowerCase().replace(/ /g, "-") + "-" + outputControls.icon.value;
+        anchor.href = image;
+        anchor.click();
+    }
     
     
     function debounce(callback, delay) {
