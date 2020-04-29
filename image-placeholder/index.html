@@ -235,13 +235,13 @@
         
         let newIconDimensions = resize(iconBox.width, iconBox.height, outputControls.iconSize.value, outputControls.iconSize.value);
         
+        let translateX = (iconCanvas.width  - newIconDimensions.width)  / 2;
+        let translateY = (iconCanvas.height - newIconDimensions.height) / 2;
+        iconContext.translate(translateX, translateY);
+        
         let scaleX = newIconDimensions.width  / iconBox.width;
         let scaleY = newIconDimensions.height / iconBox.height;
         iconContext.scale(scaleX, scaleY);
-        
-        let translateX = (iconCanvas.width - newIconDimensions.width) / 2;
-        let translateY = (iconCanvas.height - newIconDimensions.height) / 2;
-        iconContext.translate(translateX, translateY);
         
         iconContext.drawImage(cropCanvas, 0, 0);
         
