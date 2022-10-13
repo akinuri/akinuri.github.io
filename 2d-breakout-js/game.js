@@ -20,28 +20,35 @@ let leftPressed = false;
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
+document.addEventListener("mousemove", mouseMoveHandler, false);
 
 let brickRowCount = 3;
 let brickColumnCount = 5;
 let brickWidth = 75;
 let brickHeight = 20;
 let brickPadding = 10;
-let brickOffsetTop = 30;
+let brickOffsetTop = 40;
 let brickOffsetLeft = 30;
 
 let bricks = [];
-for (var c = 0; c < brickColumnCount; c++) {
-    bricks[c] = [];
-    for (var r = 0; r < brickRowCount; r++) {
-        bricks[c][r] = { x: 0, y: 0 };
+for (let columnIndex = 0; columnIndex < brickColumnCount; columnIndex++) {
+    bricks[columnIndex] = [];
+    for (let rowIndex = 0; rowIndex < brickRowCount; rowIndex++) {
+        bricks[columnIndex][rowIndex] = { x: 0, y: 0, intact: true };
     }
 }
+
+let score = 0;
+let lives = 3;
 
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBricks();
     drawBall();
     drawPaddle();
+    collisionDetection();
+    drawScore();
+    drawLives();
     if (ballX + ballDeltaX > canvas.width-ballRadius || ballX + ballDeltaX < ballRadius) {
         ballDeltaX = -ballDeltaX;
     }
@@ -51,10 +58,20 @@ function draw() {
         if (ballX > paddleX && ballX < paddleX + paddleWidth) {
             ballDeltaY = -ballDeltaY;
         } else {
-            clearTimeout(timeout);
-            alert("GAME OVER");
-            document.location.reload();
-            return;
+            lives--;
+            if (!lives) {
+                cancelAnimationFrame(raf);
+                alert("GAME OVER");
+                document.location.reload();
+                return;
+            }
+            else {
+                ballX = canvas.width / 2;
+                ballY = canvas.height - paddleHeight - paddleMargin - ballRadius;
+                ballDeltaX = 2 * Math.round(Math.random()) ? 1 : -1;
+                ballDeltaY = -2;
+                paddleX = (canvas.width - paddleWidth) / 2;
+            }
         }
     }
     if (rightPressed) {
@@ -71,7 +88,7 @@ function draw() {
     }
     ballX += ballDeltaX;
     ballY += ballDeltaY;
-    timeout = setTimeout(draw, 10);
+    raf = requestAnimationFrame(draw);
 }
-let timeout = null;
+let raf = null;
 draw();
