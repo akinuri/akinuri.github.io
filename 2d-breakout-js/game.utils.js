@@ -95,3 +95,7 @@ function drawLives() {
     ctx.fillStyle = "black";
     ctx.fillText(`Lives: ${lives}`, canvas.width - 65, 22);
 }
+
+function getPixelInTime(pixelsPerSecond, elapsedFrameTime) {
+    return elapsedFrameTime / 1000 * pixelsPerSecond;
+}

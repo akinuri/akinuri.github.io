@@ -12,8 +12,8 @@ let paddleX = (canvas.width - paddleWidth) / 2;
 const ballRadius = 10;
 let ballX = canvas.width / 2;
 let ballY = canvas.height - paddleHeight - paddleMargin - ballRadius;
-let ballDeltaX = 2 * Math.round(Math.random()) ? 1 : -1;
-let ballDeltaY = -2;
+let ballDeltaX = (ballRadius * 10) * (Math.round(Math.random()) ? 1 : -1);
+let ballDeltaY = (ballRadius * 10) * -1;
 
 let rightPressed = false;
 let leftPressed = false;
@@ -41,54 +41,62 @@ for (let columnIndex = 0; columnIndex < brickColumnCount; columnIndex++) {
 let score = 0;
 let lives = 3;
 
-function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawBricks();
-    drawBall();
-    drawPaddle();
-    collisionDetection();
-    drawScore();
-    drawLives();
-    if (ballX + ballDeltaX > canvas.width-ballRadius || ballX + ballDeltaX < ballRadius) {
-        ballDeltaX = -ballDeltaX;
-    }
-    if (ballY + ballDeltaY < ballRadius) {
-        ballDeltaY = -ballDeltaY;
-    } else if (ballY + ballDeltaY > canvas.height - ballRadius) {
-        if (ballX > paddleX && ballX < paddleX + paddleWidth) {
-            ballDeltaY = -ballDeltaY;
-        } else {
-            lives--;
-            if (!lives) {
-                cancelAnimationFrame(raf);
-                alert("GAME OVER");
-                document.location.reload();
-                return;
+let fps = 60, lastFrameTime = Date.now(), fpsInterval = 1000 / fps;
+
+function draw(force=false) {
+    let currentFrameTime = Date.now();
+    let elapsedFrameTime = currentFrameTime - lastFrameTime;
+    if (force || elapsedFrameTime > fpsInterval ) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawBricks();
+        drawBall();
+        drawPaddle();
+        collisionDetection();
+        drawScore();
+        drawLives();
+        if (ballX + ballRadius > canvas.width - ballRadius || ballX - ballRadius < 0) {
+            ballDeltaX *= -1;
+        }
+        if (ballY - ballRadius < 0) {
+            ballDeltaY *= -1;
+        }
+        else if (ballY + ballRadius > canvas.height - ballRadius) {
+            if (ballX > paddleX && ballX < paddleX + paddleWidth) {
+                ballDeltaY *= -1;
+            } else {
+                lives--;
+                if (!lives) {
+                    cancelAnimationFrame(raf);
+                    alert("GAME OVER");
+                    document.location.reload();
+                    return;
+                }
+                else {
+                    ballX = canvas.width / 2;
+                    ballY = canvas.height - paddleHeight - paddleMargin - ballRadius;
+                    ballDeltaX = (ballRadius * 10) * (Math.round(Math.random()) ? 1 : -1);
+                    ballDeltaY = (ballRadius * 10) * -1;
+                    paddleX = (canvas.width - paddleWidth) / 2;
+                }
             }
-            else {
-                ballX = canvas.width / 2;
-                ballY = canvas.height - paddleHeight - paddleMargin - ballRadius;
-                ballDeltaX = 2 * Math.round(Math.random()) ? 1 : -1;
-                ballDeltaY = -2;
-                paddleX = (canvas.width - paddleWidth) / 2;
+        }
+        if (rightPressed) {
+            paddleX += paddleSpeed * paddleSensitivity;
+            if (paddleX + paddleWidth > canvas.width){
+                paddleX = canvas.width - paddleWidth;
             }
         }
-    }
-    if (rightPressed) {
-        paddleX += paddleSpeed * paddleSensitivity;
-        if (paddleX + paddleWidth > canvas.width){
-            paddleX = canvas.width - paddleWidth;
+        else if (leftPressed) {
+            paddleX -= paddleSpeed * paddleSensitivity;
+            if (paddleX < 0){
+                paddleX = 0;
+            }
         }
+        ballX += getPixelInTime(ballDeltaX, elapsedFrameTime);
+        ballY += getPixelInTime(ballDeltaY, elapsedFrameTime);
+        lastFrameTime = currentFrameTime - (elapsedFrameTime % fpsInterval);
     }
-    else if (leftPressed) {
-        paddleX -= paddleSpeed * paddleSensitivity;
-        if (paddleX < 0){
-            paddleX = 0;
-        }
-    }
-    ballX += ballDeltaX;
-    ballY += ballDeltaY;
     raf = requestAnimationFrame(draw);
 }
 let raf = null;
-draw();
+draw(true);
