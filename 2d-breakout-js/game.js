@@ -1,4 +1,3 @@
-
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -20,7 +19,7 @@ let leftPressed = false;
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
-document.addEventListener("mousemove", mouseMoveHandler, false);
+canvas.addEventListener("mousemove", mouseMoveHandler, false);
 
 let brickRowCount = 3;
 let brickColumnCount = 5;
@@ -41,6 +40,8 @@ for (let columnIndex = 0; columnIndex < brickColumnCount; columnIndex++) {
 let score = 0;
 let lives = 3;
 
+let gameState = "idle"; // idle|running|paused|over ?
+
 let fps = 60, lastFrameTime = Date.now(), fpsInterval = 1000 / fps;
 
 function draw(force=false) {
@@ -48,12 +49,25 @@ function draw(force=false) {
     let elapsedFrameTime = currentFrameTime - lastFrameTime;
     if (force || elapsedFrameTime > fpsInterval ) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawScore();
+        drawLives();
         drawBricks();
         drawBall();
         drawPaddle();
+        if (gameState == "idle") {
+            drawStartScreen();
+            return;
+        }
+        if (gameState == "paused") {
+            drawPauseScreen();
+            return;
+        }
         collisionDetection();
-        drawScore();
-        drawLives();
+        if (score === brickRowCount * brickColumnCount) {
+            drawGameOverScreen("You win! :)");
+            gameState = "over";
+            return;
+        }
         if (ballX + ballRadius > canvas.width - ballRadius || ballX - ballRadius < 0) {
             ballDeltaX *= -1;
         }
@@ -66,9 +80,8 @@ function draw(force=false) {
             } else {
                 lives--;
                 if (!lives) {
-                    cancelAnimationFrame(raf);
-                    alert("GAME OVER");
-                    document.location.reload();
+                    drawGameOverScreen("You lose :(");
+                    gameState = "over";
                     return;
                 }
                 else {
@@ -100,3 +113,26 @@ function draw(force=false) {
 }
 let raf = null;
 draw(true);
+
+window.addEventListener("keypress", (e) => {
+    if (e.code == "Space") {
+        if (gameState == "idle") {
+            gameState = "running";
+            lastFrameTime = Date.now();
+            draw();
+        }
+        else if (gameState == "running") {
+            gameState = "paused";
+        }
+        else if (gameState == "paused") {
+            gameState = "running";
+            lastFrameTime = Date.now();
+            draw();
+        }
+        else if (gameState == "over") {
+            resetGame("running");
+            lastFrameTime = Date.now();
+            draw();
+        }
+    }
+});
