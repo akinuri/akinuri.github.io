@@ -43,16 +43,6 @@ function drawBricks() {
     ctx.restore();
 }
 
-function drawBall() {
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(ballX, ballY, ballRadius, 0, Math.PI * 2);
-    ctx.fillStyle = "hsl(120, 60%, 50%)";
-    ctx.fill();
-    ctx.closePath();
-    ctx.restore();
-}
-
 function drawPaddle() {
     ctx.save();
     ctx.beginPath();
@@ -69,12 +59,12 @@ function collisionDetection() {
             const brick = bricks[columnIndex][rowIndex];
             if (brick.intact) {
                 if (
-                    ballX > brick.x &&
-                    ballX < brick.x + brickWidth &&
-                    ballY > brick.y &&
-                    ballY < brick.y + brickHeight
+                    ball.x > brick.x &&
+                    ball.x < brick.x + brickWidth &&
+                    ball.y > brick.y &&
+                    ball.y < brick.y + brickHeight
                 ) {
-                    ballDeltaY *= -1;
+                    ball.ySpeed *= -1;
                     brick.intact = false;
                     score++;
                 }
@@ -184,8 +174,13 @@ function resetGame(state) {
             bricks[columnIndex][rowIndex] = { x: 0, y: 0, intact: true };
         }
     }
-    ballX = canvas.width / 2;
-    ballY = canvas.height - paddleHeight - paddleMargin - ballRadius;
+    ball.init(
+        10,
+        canvas.width / 2,
+        canvas.height - paddleHeight - paddleMargin - 10,
+        (10 * 10) * (Math.round(Math.random()) ? 1 : -1),
+        (10 * 10) * -1,
+    );
     paddleX = (canvas.width - paddleWidth) / 2;
     score = 0;
     lives = 3;

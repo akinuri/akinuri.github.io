@@ -8,11 +8,13 @@ const paddleSpeed = paddleWidth * 0.1;
 const paddleSensitivity = 0.5;
 let paddleX = (canvas.width - paddleWidth) / 2;
 
-const ballRadius = 10;
-let ballX = canvas.width / 2;
-let ballY = canvas.height - paddleHeight - paddleMargin - ballRadius;
-let ballDeltaX = (ballRadius * 10) * (Math.round(Math.random()) ? 1 : -1);
-let ballDeltaY = (ballRadius * 10) * -1;
+let ball = new Ball(
+    10,
+    canvas.width / 2,
+    canvas.height - paddleHeight - paddleMargin - 10,
+    (10 * 10) * (Math.round(Math.random()) ? 1 : -1),
+    (10 * 10) * -1,
+);
 
 let rightPressed = false;
 let leftPressed = false;
@@ -52,7 +54,7 @@ function draw(force=false) {
         drawScore();
         drawLives();
         drawBricks();
-        drawBall();
+        ball.draw();
         drawPaddle();
         if (gameState == "idle") {
             drawStartScreen();
@@ -68,15 +70,18 @@ function draw(force=false) {
             gameState = "over";
             return;
         }
-        if (ballX + ballRadius > canvas.width - ballRadius || ballX - ballRadius < 0) {
-            ballDeltaX *= -1;
+        if (
+            ball.x + ball.radius > canvas.width - ball.radius
+            || ball.x - ball.radius < 0
+        ) {
+            ball.xSpeed *= -1;
         }
-        if (ballY - ballRadius < 0) {
-            ballDeltaY *= -1;
+        if (ball.y - ball.radius < 0) {
+            ball.ySpeed *= -1;
         }
-        else if (ballY + ballRadius > canvas.height - ballRadius) {
-            if (ballX > paddleX && ballX < paddleX + paddleWidth) {
-                ballDeltaY *= -1;
+        else if (ball.y + ball.radius > canvas.height - ball.radius) {
+            if (ball.x > paddleX && ball.x < paddleX + paddleWidth) {
+                ball.ySpeed *= -1;
             } else {
                 lives--;
                 if (!lives) {
@@ -85,10 +90,13 @@ function draw(force=false) {
                     return;
                 }
                 else {
-                    ballX = canvas.width / 2;
-                    ballY = canvas.height - paddleHeight - paddleMargin - ballRadius;
-                    ballDeltaX = (ballRadius * 10) * (Math.round(Math.random()) ? 1 : -1);
-                    ballDeltaY = (ballRadius * 10) * -1;
+                    ball.init(
+                        10,
+                        canvas.width / 2,
+                        canvas.height - paddleHeight - paddleMargin - 10,
+                        (10 * 10) * (Math.round(Math.random()) ? 1 : -1),
+                        (10 * 10) * -1,
+                    );
                     paddleX = (canvas.width - paddleWidth) / 2;
                 }
             }
@@ -105,8 +113,7 @@ function draw(force=false) {
                 paddleX = 0;
             }
         }
-        ballX += getPixelInTime(ballDeltaX, elapsedFrameTime);
-        ballY += getPixelInTime(ballDeltaY, elapsedFrameTime);
+        ball.move(elapsedFrameTime);
         lastFrameTime = currentFrameTime - (elapsedFrameTime % fpsInterval);
     }
     raf = requestAnimationFrame(draw);
