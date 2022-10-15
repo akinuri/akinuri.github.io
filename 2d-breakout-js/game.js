@@ -1,17 +1,18 @@
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
-const paddleWidth = 70;
-const paddleHeight = 10;
-const paddleMargin = paddleHeight;
-const paddleSpeed = paddleWidth * 0.1;
-const paddleSensitivity = 0.5;
-let paddleX = (canvas.width - paddleWidth) / 2;
+let paddle = new Paddle(
+    70,
+    10,
+    (canvas.width - 70) / 2,
+    10,
+    4,
+);
 
 let ball = new Ball(
     10,
     canvas.width / 2,
-    canvas.height - paddleHeight - paddleMargin - 10,
+    canvas.height - paddle.height - paddle.bottomMargin - 10,
     (10 * 10) * (Math.round(Math.random()) ? 1 : -1),
     (10 * 10) * -1,
 );
@@ -55,7 +56,7 @@ function draw(force=false) {
         drawLives();
         drawBricks();
         ball.draw();
-        drawPaddle();
+        paddle.draw();
         if (gameState == "idle") {
             drawStartScreen();
             return;
@@ -80,7 +81,7 @@ function draw(force=false) {
             ball.ySpeed *= -1;
         }
         else if (ball.y + ball.radius > canvas.height - ball.radius) {
-            if (ball.x > paddleX && ball.x < paddleX + paddleWidth) {
+            if (ball.x > paddle.x && ball.x < paddle.x + paddle.width) {
                 ball.ySpeed *= -1;
             } else {
                 lives--;
@@ -93,24 +94,24 @@ function draw(force=false) {
                     ball.init(
                         10,
                         canvas.width / 2,
-                        canvas.height - paddleHeight - paddleMargin - 10,
+                        canvas.height - paddle.height - paddle.bottomMargin - 10,
                         (10 * 10) * (Math.round(Math.random()) ? 1 : -1),
                         (10 * 10) * -1,
                     );
-                    paddleX = (canvas.width - paddleWidth) / 2;
+                    paddle.x = (canvas.width - paddle.width) / 2;
                 }
             }
         }
         if (rightPressed) {
-            paddleX += paddleSpeed * paddleSensitivity;
-            if (paddleX + paddleWidth > canvas.width){
-                paddleX = canvas.width - paddleWidth;
+            paddle.x += paddle.speed;
+            if (paddle.x + paddle.width > canvas.width){
+                paddle.x = canvas.width - paddle.width;
             }
         }
         else if (leftPressed) {
-            paddleX -= paddleSpeed * paddleSensitivity;
-            if (paddleX < 0){
-                paddleX = 0;
+            paddle.x -= paddle.speed;
+            if (paddle.x < 0){
+                paddle.x = 0;
             }
         }
         ball.move(elapsedFrameTime);

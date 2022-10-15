@@ -17,10 +17,10 @@ function keyUpHandler(e) {
 }
 
 function mouseMoveHandler(e) {
-    const relativeX = e.clientX - canvas.offsetLeft;
-    if (relativeX > 0 && relativeX < canvas.width) {
-        paddleX = relativeX - paddleWidth / 2;
-    }
+    const relativeX = e.offsetX;
+    paddle.x = relativeX - paddle.width / 2;
+    paddle.x = Math.max(paddle.x, 0);
+    paddle.x = Math.min(paddle.x, canvas.width - paddle.width);
 }
 
 function drawBricks() {
@@ -40,16 +40,6 @@ function drawBricks() {
             }
         }
     }
-    ctx.restore();
-}
-
-function drawPaddle() {
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(paddleX, canvas.height - paddleHeight - paddleMargin, paddleWidth, paddleHeight);
-    ctx.fillStyle = "hsl(210, 60%, 50%)";
-    ctx.fill();
-    ctx.closePath();
     ctx.restore();
 }
 
@@ -177,11 +167,11 @@ function resetGame(state) {
     ball.init(
         10,
         canvas.width / 2,
-        canvas.height - paddleHeight - paddleMargin - 10,
+        canvas.height - paddle.height - paddle.bottomMargin - 10,
         (10 * 10) * (Math.round(Math.random()) ? 1 : -1),
         (10 * 10) * -1,
     );
-    paddleX = (canvas.width - paddleWidth) / 2;
+    paddle.x = (canvas.width - paddle.width) / 2;
     score = 0;
     lives = 3;
     gameState = state || "idle";
