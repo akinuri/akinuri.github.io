@@ -24,21 +24,15 @@ document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 canvas.addEventListener("mousemove", mouseMoveHandler, false);
 
-let brickRowCount = 3;
-let brickColumnCount = 5;
-let brickWidth = 75;
-let brickHeight = 20;
-let brickPadding = 10;
-let brickOffsetTop = 40;
-let brickOffsetLeft = 30;
-
-let bricks = [];
-for (let columnIndex = 0; columnIndex < brickColumnCount; columnIndex++) {
-    bricks[columnIndex] = [];
-    for (let rowIndex = 0; rowIndex < brickRowCount; rowIndex++) {
-        bricks[columnIndex][rowIndex] = { x: 0, y: 0, intact: true };
-    }
-}
+let bricks = new Bricks(
+    3,
+    5,
+    75,
+    20,
+    10,
+    40,
+    30,
+);
 
 let score = 0;
 let lives = 3;
@@ -54,7 +48,7 @@ function draw(force=false) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawScore();
         drawLives();
-        drawBricks();
+        bricks.draw();
         ball.draw();
         paddle.draw();
         if (gameState == "idle") {
@@ -66,7 +60,7 @@ function draw(force=false) {
             return;
         }
         collisionDetection();
-        if (score === brickRowCount * brickColumnCount) {
+        if (score === bricks.rowCount * bricks.columnCount) {
             drawGameOverScreen("You win! :)");
             gameState = "over";
             return;

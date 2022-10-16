@@ -23,39 +23,19 @@ function mouseMoveHandler(e) {
     paddle.x = Math.min(paddle.x, canvas.width - paddle.width);
 }
 
-function drawBricks() {
-    ctx.save();
-    for (let columnIndex = 0; columnIndex < brickColumnCount; columnIndex++) {
-        for (let rowIndex = 0; rowIndex < brickRowCount; rowIndex++) {
-            if (bricks[columnIndex][rowIndex].intact) {
-                let brickX = (columnIndex * (brickWidth + brickPadding)) + brickOffsetLeft;
-                let brickY = (rowIndex * (brickHeight + brickPadding)) + brickOffsetTop;
-                bricks[columnIndex][rowIndex].x = brickX;
-                bricks[columnIndex][rowIndex].y = brickY;
-                ctx.beginPath();
-                ctx.rect(brickX, brickY, brickWidth, brickHeight);
-                ctx.fillStyle = "hsl(0, 60%, 50%)";
-                ctx.fill();
-                ctx.closePath();
-            }
-        }
-    }
-    ctx.restore();
-}
-
 function collisionDetection() {
-    for (let columnIndex = 0; columnIndex < brickColumnCount; columnIndex++) {
-        for (let rowIndex = 0; rowIndex < brickRowCount; rowIndex++) {
-            const brick = bricks[columnIndex][rowIndex];
-            if (brick.intact) {
+    for (let colIndex = 0; colIndex < bricks.columnCount; colIndex++) {
+        for (let rowIndex = 0; rowIndex < bricks.rowCount; rowIndex++) {
+            const brick = bricks.bricks[colIndex][rowIndex];
+            if (brick.isIntact) {
                 if (
                     ball.x > brick.x &&
-                    ball.x < brick.x + brickWidth &&
+                    ball.x < brick.x + brick.width &&
                     ball.y > brick.y &&
-                    ball.y < brick.y + brickHeight
+                    ball.y < brick.y + brick.height
                 ) {
                     ball.ySpeed *= -1;
-                    brick.intact = false;
+                    brick.isIntact = false;
                     score++;
                 }
             }
@@ -157,13 +137,7 @@ function drawGameOverScreen(text1) {
 }
 
 function resetGame(state) {
-    bricks = [];
-    for (let columnIndex = 0; columnIndex < brickColumnCount; columnIndex++) {
-        bricks[columnIndex] = [];
-        for (let rowIndex = 0; rowIndex < brickRowCount; rowIndex++) {
-            bricks[columnIndex][rowIndex] = { x: 0, y: 0, intact: true };
-        }
-    }
+    bricks.build();
     ball.init(
         10,
         canvas.width / 2,
