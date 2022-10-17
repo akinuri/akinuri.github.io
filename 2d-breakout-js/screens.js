@@ -1,16 +1,17 @@
 function drawScore() {
     ctx.save();
-    ctx.font = "16px Arial";
+    ctx.font = "24px Arial";
     ctx.fillStyle = "black";
-    ctx.fillText(`Score: ${score}`, 8, 22);
+    ctx.fillText(`Score: ${score}`, 24*0.66, 24*1.5);
     ctx.restore();
 }
 
 function drawLives() {
     ctx.save();
-    ctx.font = "16px Arial";
+    ctx.font = "24px Arial";
     ctx.fillStyle = "black";
-    ctx.fillText(`Lives: ${lives}`, canvas.width - 65, 22);
+    let textMeasure = ctx.measureText("Lives: _");
+    ctx.fillText(`Lives: ${lives}`, canvas.width - textMeasure.width - 24*0.66, 25*1.5);
     ctx.restore();
 }
 

@@ -92,11 +92,11 @@ function getPixelInTime(pixelsPerSecond, elapsedFrameTime) {
 function resetGame(state) {
     bricks.build();
     ball.init(
-        10,
+        15,
         canvas.width / 2,
-        canvas.height - paddle.height - paddle.bottomMargin - 10,
-        (10 * 10) * (Math.round(Math.random()) ? 1 : -1),
-        (10 * 10) * -1,
+        canvas.height - paddle.height - paddle.bottomMargin - 15,
+        canvas.width / 2 * (Math.round(Math.random()) ? 1 : -1),
+        canvas.width / 2 * -1,
     );
     paddle.x = (canvas.width - paddle.width) / 2;
     paddle.dir = 0;
