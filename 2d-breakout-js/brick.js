@@ -19,7 +19,6 @@ class Brick {
         ctx.rect(this.x, this.y, this.width, this.height);
         ctx.fillStyle = "hsl(0, 60%, 50%)";
         ctx.fill();
-        ctx.closePath();
         ctx.restore();
     }
     

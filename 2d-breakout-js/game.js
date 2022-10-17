@@ -48,6 +48,11 @@ function draw(force=false) {
     let elapsedFrameTime = currentFrameTime - lastFrameTime;
     if (force || elapsedFrameTime > fpsInterval ) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        ctx.beginPath();
+        ctx.fillStyle = "hsl(0, 0%, 95%)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.restore();
         drawScore();
         drawLives();
         bricks.draw();

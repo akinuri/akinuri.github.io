@@ -21,7 +21,6 @@ function drawStartScreen() {
     ctx.rect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "hsl(0, 0%, 0%, 0.5)";
     ctx.fill();
-    ctx.closePath();
     ctx.font = "32px Arial";
     ctx.fillStyle = "white";
     let text = "Press space key to start";
@@ -39,7 +38,6 @@ function drawPauseScreen() {
     ctx.rect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "hsl(0, 0%, 0%, 0.5)";
     ctx.fill();
-    ctx.closePath();
     ctx.font = "32px Arial";
     ctx.fillStyle = "hsl(0, 0%, 100%)";
     ctx.strokeStyle = "hsl(0, 0%, 0%, 0.5)";
@@ -68,7 +66,6 @@ function drawGameOverScreen(text1) {
     ctx.rect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "hsl(0, 0%, 0%, 0.5)";
     ctx.fill();
-    ctx.closePath();
     ctx.font = "32px Arial";
     ctx.fillStyle = "hsl(0, 0%, 100%)";
     let textOffset = 24;

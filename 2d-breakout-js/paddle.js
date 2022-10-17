@@ -29,7 +29,6 @@ class Paddle {
         );
         ctx.fillStyle = this.fillStyle;
         ctx.fill();
-        ctx.closePath();
         ctx.restore();
     }
     
