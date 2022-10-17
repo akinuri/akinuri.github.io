@@ -1,21 +1,21 @@
 class Paddle {
     
-    constructor(width, height, bottomMargin, speed, fillStyle) {
+    constructor(width, height, x, bottomMargin, speed, dir, fillStyle) {
         this.init(...arguments);
     }
     
-    init(width, height, x, bottomMargin, speed, fillStyle) {
+    init(width, height, x, bottomMargin, speed, dir, fillStyle) {
         this.width = width;
         this.height = height;
         this.x = x;
         this.bottomMargin = bottomMargin;
         this.speed = speed;
+        this.dir = dir || 0;
         this.fillStyle = fillStyle || "hsl(210, 60%, 50%)";
     }
     
     move(elapsedFrameTime) {
-        // FIXME: unlike ball, paddle is still using ppf instead of pps
-        this.x += getPixelInTime(this.speed, elapsedFrameTime);
+        this.x += getPixelInTime(this.speed * this.dir, elapsedFrameTime);
     }
     
     draw() {

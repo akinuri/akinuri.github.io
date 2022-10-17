@@ -6,7 +6,7 @@ let paddle = new Paddle(
     10,
     (canvas.width - 70) / 2,
     10,
-    4,
+    (10 * 10 * 3),
 );
 
 let ball = new Ball(
@@ -17,8 +17,7 @@ let ball = new Ball(
     (10 * 10) * -1,
 );
 
-let rightPressed = false;
-let leftPressed = false;
+let paddleDirKeyPresses = [];
 
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
@@ -93,20 +92,21 @@ function draw(force=false) {
                         (10 * 10) * -1,
                     );
                     paddle.x = (canvas.width - paddle.width) / 2;
+                    paddle.dir = 0;
                 }
             }
         }
-        if (rightPressed) {
-            paddle.x += paddle.speed;
-            if (paddle.x + paddle.width > canvas.width){
-                paddle.x = canvas.width - paddle.width;
-            }
+        paddle.dir = 0;
+        switch (paddleDirKeyPresses[0] ?? null) {
+            case "right": paddle.dir = 1; break;
+            case "left": paddle.dir = -1; break;
         }
-        else if (leftPressed) {
-            paddle.x -= paddle.speed;
-            if (paddle.x < 0){
-                paddle.x = 0;
-            }
+        paddle.move(elapsedFrameTime);
+        if (paddle.x < 0) {
+            paddle.x = 0;
+        }
+        if (paddle.x + paddle.width > canvas.width) {
+            paddle.x = canvas.width - paddle.width;
         }
         ball.move(elapsedFrameTime);
         lastFrameTime = currentFrameTime - (elapsedFrameTime % fpsInterval);
