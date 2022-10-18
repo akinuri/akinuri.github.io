@@ -47,12 +47,7 @@ function draw(force=false) {
     let currentFrameTime = Date.now();
     let elapsedFrameTime = currentFrameTime - lastFrameTime;
     if (force || elapsedFrameTime > fpsInterval ) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.save();
-        ctx.beginPath();
-        ctx.fillStyle = "hsl(0, 0%, 95%)";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.restore();
+        resetCanvas();
         drawScore();
         drawLives();
         bricks.draw();
@@ -68,6 +63,12 @@ function draw(force=false) {
         }
         collisionDetection();
         if (score === bricks.rowCount * bricks.columnCount) {
+            resetCanvas();
+            drawScore();
+            drawLives();
+            bricks.draw();
+            ball.draw();
+            paddle.draw();
             drawGameOverScreen("You win! :)");
             gameState = "over";
             return;
@@ -96,8 +97,8 @@ function draw(force=false) {
                         15,
                         canvas.width / 2,
                         canvas.height - paddle.height - paddle.bottomMargin - 15,
-                        canvas.width / 2 * (Math.round(Math.random()) ? 1 : -1),
-                        canvas.width / 2 * -1,
+                        canvas.width / 3 * (Math.round(Math.random()) ? 1 : -1),
+                        canvas.width / 3 * -1,
                     );
                     paddle.x = (canvas.width - paddle.width) / 2;
                     paddle.dir = 0;
