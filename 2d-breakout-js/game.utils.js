@@ -65,41 +65,25 @@ function mouseMoveHandler(e) {
     paddle.x = Math.min(paddle.x, canvas.width - paddle.width);
 }
 
-function collisionDetection() {
-    for (let colIndex = 0; colIndex < bricks.columnCount; colIndex++) {
-        for (let rowIndex = 0; rowIndex < bricks.rowCount; rowIndex++) {
-            const brick = bricks.bricks[colIndex][rowIndex];
-            if (brick.isIntact) {
-                if (
-                    ball.x > brick.x &&
-                    ball.x < brick.x + brick.width &&
-                    ball.y > brick.y &&
-                    ball.y < brick.y + brick.height
-                ) {
-                    ball.ySpeed *= -1;
-                    brick.isIntact = false;
-                    score++;
-                }
-            }
-        }
-    }
-}
-
 function getPixelInTime(pixelsPerSecond, elapsedFrameTime) {
     return elapsedFrameTime / 1000 * pixelsPerSecond;
 }
 
-function resetGame(state) {
-    bricks.build();
+function resetBallAndPaddle() {
     ball.init(
         15,
         canvas.width / 2,
-        canvas.height - paddle.height - paddle.bottomMargin - 15,
-        canvas.width / 2 * (Math.round(Math.random()) ? 1 : -1),
-        canvas.width / 2 * -1,
+        paddle.y - 15,
+        canvas.width / 3 * (Math.round(Math.random()) ? 1 : -1),
+        canvas.width / 3 * -1,
     );
     paddle.x = (canvas.width - paddle.width) / 2;
     paddle.dir = 0;
+}
+
+function resetGame(state) {
+    bricks.build();
+    resetBallAndPaddle();
     score = 0;
     lives = 3;
     gameState = state || "idle";
@@ -112,4 +96,25 @@ function resetCanvas() {
     ctx.fillStyle = "hsl(0, 0%, 95%)";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.restore();
+}
+
+function gameStateHandler() {
+    if (gameState == "idle") {
+        gameState = "running";
+        lastFrameTime = Date.now();
+        draw();
+    }
+    else if (gameState == "running") {
+        gameState = "paused";
+    }
+    else if (gameState == "paused") {
+        gameState = "running";
+        lastFrameTime = Date.now();
+        draw();
+    }
+    else if (["over-win", "over-lose"].includes(gameState)) {
+        resetGame("running");
+        lastFrameTime = Date.now();
+        draw();
+    }
 }
