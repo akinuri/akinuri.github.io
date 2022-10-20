@@ -2,7 +2,7 @@ function drawScore() {
     ctx.save();
     ctx.font = "24px Arial";
     ctx.fillStyle = "black";
-    ctx.fillText(`Score: ${score}`, 24*0.66, 24*1.5);
+    ctx.fillText(`Score: ${game.score}`, 24*0.66, 24*1.5);
     ctx.restore();
 }
 
@@ -11,7 +11,7 @@ function drawLives() {
     ctx.font = "24px Arial";
     ctx.fillStyle = "black";
     let textMeasure = ctx.measureText("Lives: _");
-    ctx.fillText(`Lives: ${lives}`, canvas.width - textMeasure.width - 24*0.66, 25*1.5);
+    ctx.fillText(`Lives: ${game.lives}`, canvas.width - textMeasure.width - 24*0.66, 25*1.5);
     ctx.restore();
 }
 

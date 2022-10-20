@@ -1,4 +1,4 @@
-function keyDownHandler(e) {
+function paddleKeyDownHandler(e) {
     let targetKeys = ["Right", "ArrowRight", "Left", "ArrowLeft"];
     if (!targetKeys.includes(e.key)) {
         return;
@@ -28,7 +28,7 @@ function keyDownHandler(e) {
     }
 }
 
-function keyUpHandler(e) {
+function paddleKUpHandler(e) {
     let targetKeys = ["Right", "ArrowRight", "Left", "ArrowLeft"];
     if (!targetKeys.includes(e.key)) {
         return;
@@ -58,7 +58,7 @@ function keyUpHandler(e) {
     }
 }
 
-function mouseMoveHandler(e) {
+function paddleMouseMoveHandler(e) {
     const relativeX = e.offsetX;
     paddle.x = relativeX - paddle.width / 2;
     paddle.x = Math.max(paddle.x, 0);
@@ -84,9 +84,9 @@ function resetBallAndPaddle() {
 function resetGame(state) {
     bricks.build();
     resetBallAndPaddle();
-    score = 0;
+    game.score = 0;
     lives = 3;
-    gameState = state || "idle";
+    game.state = state || "idle";
 }
 
 function resetCanvas() {
@@ -99,22 +99,22 @@ function resetCanvas() {
 }
 
 function gameStateHandler() {
-    if (gameState == "idle") {
-        gameState = "running";
-        lastFrameTime = Date.now();
-        draw();
+    if (game.state == "idle") {
+        game.state = "running";
+        app.lastFrameTime = Date.now();
+        app.main(true);
     }
-    else if (gameState == "running") {
-        gameState = "paused";
+    else if (game.state == "running") {
+        game.state = "paused";
     }
-    else if (gameState == "paused") {
-        gameState = "running";
-        lastFrameTime = Date.now();
-        draw();
+    else if (game.state == "paused") {
+        game.state = "running";
+        app.lastFrameTime = Date.now();
+        app.main(true);
     }
-    else if (["over-win", "over-lose"].includes(gameState)) {
+    else if (["over-win", "over-lose"].includes(game.state)) {
         resetGame("running");
-        lastFrameTime = Date.now();
-        draw();
+        app.lastFrameTime = Date.now();
+        app.main(true);
     }
 }
