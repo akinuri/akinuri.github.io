@@ -46,6 +46,38 @@ window.addEventListener("auxclick", (e) => {
     if (e.button == 1) gameStateHandler();
 });
 
+let sounds = {
+    hit: "sounds/mixkit-wood-hard-hit-2182-trimmed.wav",
+    overLose: "sounds/mixkit-arcade-retro-game-over-213.wav",
+    overWin: "sounds/mixkit-arcade-game-complete-or-approved-mission-205.wav",
+};
+for (let soundName in sounds) {
+    let soundPath = sounds[soundName];
+    let audio = new Audio();
+    audio.preload = "auto";
+    audio.addEventListener("canplaythrough", () => {
+        console.log("canplaythrough " + soundPath);
+    });
+    audio.src = soundPath;
+    sounds[soundName] = audio;
+}
+
+let lastSoundPlayTime = Date.now();
+let soundPlayOffset = 50;
+function playSound(sound, ignoreTime=false) {
+    let currentSoundTime = Date.now();
+    let elapsedSoundTime = currentSoundTime - lastSoundPlayTime;
+    if (ignoreTime || elapsedSoundTime > soundPlayOffset) {
+        lastSoundPlayTime = currentSoundTime;
+        if (sound instanceof Audio) {
+            sound = sound.cloneNode(true);
+        } else if (typeof sound == "string") {
+            sound = new Audio(sound);
+        }
+        sound.play();
+    }
+}
+
 let app = new App(60, function draw(elapsedFrameTime) {
     resetCanvas();
     drawScore();
@@ -63,10 +95,12 @@ let app = new App(60, function draw(elapsedFrameTime) {
     }
     if (game.state == "over-win") {
         drawGameOverScreen("You win! :)");
+        playSound(sounds.overWin, true);
         return false;
     }
     if (game.state == "over-lose") {
         drawGameOverScreen("You lose :(");
+        playSound(sounds.overLose, true);
         return false;
     }
     let touchedBrick = CollisionMonitor.doesBallTouchAnyBrick(
@@ -78,6 +112,7 @@ let app = new App(60, function draw(elapsedFrameTime) {
         touchedBrick.isIntact = false;
         ball.ySpeed *= -1;
         game.score++;
+        playSound(sounds.hit);
     }
     if (game.score === bricks.rowCount * bricks.columnCount) {
         game.state = "over-win";
@@ -86,12 +121,14 @@ let app = new App(60, function draw(elapsedFrameTime) {
     }
     if (CollisionMonitor.doesBallTouchVerticalWalls(ball, canvas)) {
         ball.xSpeed *= -1;
+        playSound(sounds.hit);
     }
     if (
         CollisionMonitor.doesBallTouchTopWall(ball, canvas)
         || CollisionMonitor.doesBallTouchPaddle(ball, paddle)
     ) {
         ball.ySpeed *= -1;
+        playSound(sounds.hit);
     }
     else if (CollisionMonitor.doesBallTouchBottomWall(ball, canvas)) {
         game.lives--;
