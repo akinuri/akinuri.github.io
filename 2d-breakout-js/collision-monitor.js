@@ -10,8 +10,8 @@ let CollisionMonitor = {
         return ball.y - ball.radius <= 0;
     },
     
-    doesBallTouchBottomWall : function (ball, canvas) {
-        return ball.y >= canvas.height - ball.radius;
+    doesBallTouchSpikes : function (ball, spikes) {
+        return ball.y + ball.radius >= canvas.height - spikes.height;
     },
     
     doesBallTouchPaddle : function (ball, paddle) {

@@ -85,7 +85,7 @@ function resetGame(state) {
     bricks.build();
     resetBallAndPaddle();
     game.score = 0;
-    lives = 3;
+    game.lives = 3;
     game.state = state || "idle";
 }
 
