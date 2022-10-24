@@ -12,7 +12,10 @@ class App {
         this.callback = callback;
     }
     
-    main(ignoreTime=false) {
+    main(ignoreTime=false, restartTime=false) {
+        if (restartTime) {
+            this.lastFrameTime = Date.now();
+        }
         let currentFrameTime = Date.now();
         let elapsedFrameTime = currentFrameTime - this.lastFrameTime;
         let shouldContinue = true;

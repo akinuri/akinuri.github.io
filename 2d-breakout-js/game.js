@@ -34,8 +34,11 @@ let bricks = new Bricks(
 let game = {
     score: 0,
     lives: 3,
-    state: "idle", // idle|running|paused|over-win|over-lose
+    state: "idle", // idle|running|paused|over-win|over-lose|ball-popped
 };
+let ballPopBeforeDelay = 500;
+let ballPopAfterDelay = 500;
+let ballLastPopTime = null;
 
 let paddleDirKeyPresses = [];
 document.addEventListener("keydown", paddleKeyDownHandler, false);
@@ -89,6 +92,14 @@ let app = new App(60, function draw(elapsedFrameTime) {
     ball.draw();
     paddle.draw();
     spikes.draw();
+    if (game.state == "ball-popped") {
+        let currentFrameTime = Date.now();
+        if (currentFrameTime - ballLastPopTime >= ballPopAfterDelay) {
+            game.state == "running";
+        } else {
+            return false;
+        }
+    }
     if (game.state == "idle") {
         drawStartScreen();
         return false;
@@ -142,7 +153,17 @@ let app = new App(60, function draw(elapsedFrameTime) {
             app.main(true);
             return false;
         } else {
-            resetBallAndPaddle();
+            game.state = "ball-popped";
+            setTimeout(() => {
+                resetBallAndPaddle();
+                ballLastPopTime = Date.now();
+                app.main(true);
+                setTimeout(() => {
+                    game.state = "running";
+                    app.main(true, true);
+                }, ballPopAfterDelay);
+            }, ballPopBeforeDelay);
+            return false;
         }
     }
     paddle.dir = 0;
