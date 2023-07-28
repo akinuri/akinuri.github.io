@@ -41,7 +41,7 @@
     
     <div class="bg-white p-4 shadow rounded flex gap-4 flex-col relative">
         <h2 class="text-lg font-medium">CSS</h2>
-        <button class="flex gap-1 bg-gray-100 rounded shadow px-2 py-1 absolute right-2 top-2 hover:bg-gray-200 active:bg-gray-300">
+        <button id="copy-css-btn" class="flex gap-1 bg-gray-100 rounded shadow px-2 py-1 absolute right-2 top-2 hover:bg-gray-200 active:bg-gray-300">
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -58,7 +58,10 @@
             </svg>
             <span>Copy</span>
         </button>
-        <pre class="text-xs language-css"><code>.scrollbar::-webkit-scrollbar {
+        <style>
+            body pre code.hljs { padding: 0; }
+        </style>
+        <pre class="text-xs language-css max-h-[70vh] overflow-auto"><code>.scrollbar::-webkit-scrollbar {
     width: 10px;
     height: 10px;
 }
@@ -77,8 +80,7 @@
 }
 .scrollbar::-webkit-scrollbar-thumb:active {
     background-color: hsla(0, 0%, 65%, 0.95);
-}
-</code></pre>
+}</code></pre>
     </div>
     
 </div>
@@ -86,6 +88,12 @@
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/color-brewer.min.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
 <script>hljs.highlightAll();</script>
+<script>
+    let copyCssBtn = document.querySelector("#copy-css-btn");
+    copyCssBtn.addEventListener("click", () => {
+        navigator.clipboard.writeText(copyCssBtn.parentElement.querySelector("pre").innerText);
+    });
+</script>
 
 </body>
 </html>
