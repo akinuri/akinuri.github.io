@@ -5,7 +5,37 @@
     <title>Custom Scrollbar Designer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="scrollbar.css">
+    <script>
+        let scripts2load = {
+            "https://raw.githubusercontent.com/akinuri/js-lib/master/html/qs.js" : {
+                import : ["qs", "qsa"],
+            },
+            "https://raw.githubusercontent.com/akinuri/js-lib/master/event/on.js" : {
+                import : ["on"],
+            },
+            "https://raw.githubusercontent.com/alexei/sprintf.js/master/dist/sprintf.min.js" : {
+                import : ["sprintf"],
+            },
+        };
+        for (let script in scripts2load) {
+            let config = scripts2load[script];
+            fetch(script, {cache: "no-cache"})
+                .then((response) => response.text())
+                .then((text) => {
+                    eval(text);
+                    config.loaded = true;
+                    config.import.forEach(imp => {
+                        window[imp] = eval(imp);
+                    });
+                    window.dispatchEvent(new CustomEvent("ScriptLoaded", {detail: {src: script}}));
+                });
+        }
+        window.addEventListener("ScriptLoaded", () => {
+            if (Object.values(scripts2load).every(config => config.loaded)) {
+                window.dispatchEvent(new Event("AllScriptsLoaded"));
+            }
+        });
+    </script>
 </head>
 <body class="bg-slate-100">
 
@@ -15,7 +45,7 @@
     
     <div class="bg-white p-4 shadow rounded flex gap-4 flex-col">
         <h2 class="text-lg font-medium">Preview</h2>
-        <div class="overflow-auto scrollbar min-h-[30rem] max-h-[70vh]">
+        <div class="overflow-auto min-h-[30rem] max-h-[70vh] preview">
             <div class="flex gap-4 flex-col w-[125%]">
                 
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam at laoreet quam. Donec feugiat blandit blandit. Aliquam lobortis libero ac augue placerat luctus. Nulla nulla dolor, consectetur id enim id, semper laoreet nunc. Sed feugiat tempor ante, venenatis ultrices mauris tempor ut. Sed a nunc ullamcorper nibh laoreet euismod. Cras mattis auctor metus, varius pellentesque neque rutrum eget. In feugiat ornare felis, laoreet dapibus justo faucibus et. Cras sodales interdum dolor vel vestibulum. Mauris cursus at purus eget hendrerit. In eu bibendum enim. Suspendisse non metus enim.</p>
@@ -34,7 +64,75 @@
     
     <div class="bg-white p-4 shadow rounded flex gap-4 flex-col">
         <h2 class="text-lg font-medium">Controls</h2>
-        <p class="bg-yellow-500/10 text-yellow-800 px-2 py-1 rounded border border-yellow-500/10">
+        <h3 class="font-medium border-b-[1px] border-b-slate-200">scrollbar</h3>
+        <table>
+            <tr>
+                <td>Width</td>
+                <td>
+                    <input
+                        type="number"
+                        id="scrollbar-width-input"
+                        step="1"
+                        min="0"
+                        max="32"
+                        value="10"
+                        class="border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
+                        >
+                    px
+                </td>
+                <td>
+                    <input
+                        type="range"
+                        id="scrollbar-width-range"
+                        step="1"
+                        min="0"
+                        max="32"
+                        value="10"
+                        list="scrollbar-width-range-markers"
+                        class="w-[200px]"
+                        >
+                    <datalist id="scrollbar-width-range-markers">
+                        <option value="0"></option>
+                        <option value="4"></option>
+                        <option value="8"></option>
+                        <option value="12"></option>
+                        <option value="16"></option>
+                        <option value="20"></option>
+                        <option value="24"></option>
+                        <option value="28"></option>
+                        <option value="32"></option>
+                    </datalist>
+                </td>
+            </tr>
+            <tr>
+                <td>Height</td>
+                <td>
+                    <input
+                        type="number"
+                        id="scrollbar-height-input"
+                        step="1"
+                        min="0"
+                        max="32"
+                        value="10"
+                        class="border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
+                        >
+                    px
+                </td>
+                <td>
+                    <input
+                        type="range"
+                        id="scrollbar-height-range"
+                        step="1"
+                        min="0"
+                        max="32"
+                        value="10"
+                        list="scrollbar-width-range-markers"
+                        class="w-[200px]"
+                        >
+                </td>
+            </tr>
+        </table>
+        <p class="mt-4 bg-yellow-500/10 text-yellow-800 px-2 py-1 rounded border border-yellow-500/10">
             To be added.
         </p>
     </div>
@@ -61,37 +159,24 @@
         <style>
             body pre code.hljs { padding: 0; }
         </style>
-        <pre class="text-xs language-css max-h-[70vh] overflow-auto"><code>.scrollbar::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-}
-.scrollbar::-webkit-scrollbar-track {
-    background-color: hsla(0, 0%, 95%, 0.9);
-    border-radius: 0.25rem;
-}
-.scrollbar::-webkit-scrollbar-thumb {
-    background-color: hsla(0, 0%, 75%, 0.95);
-    border-radius: 0.25rem;
-    border: 2px solid transparent;
-    background-clip: content-box;
-}
-.scrollbar::-webkit-scrollbar-thumb:hover {
-    background-color: hsla(0, 0%, 70%, 0.95);
-}
-.scrollbar::-webkit-scrollbar-thumb:active {
-    background-color: hsla(0, 0%, 65%, 0.95);
-}</code></pre>
+        <pre class="text-xs language-css max-h-[70vh] overflow-auto"><code id="css-output"></code></pre>
     </div>
     
 </div>
 
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/color-brewer.min.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-<script>hljs.highlightAll();</script>
+
+<script src="css.js"></script>
+<script src="controls.js"></script>
 <script>
-    let copyCssBtn = document.querySelector("#copy-css-btn");
-    copyCssBtn.addEventListener("click", () => {
-        navigator.clipboard.writeText(copyCssBtn.parentElement.querySelector("pre").innerText);
+    window.addEventListener("AllScriptsLoaded", () => {
+        applyCSS();
+        outputCSS();
+        let copyCssBtn = qs("#copy-css-btn");
+        on(copyCssBtn, "click", () => {
+            navigator.clipboard.writeText(copyCssBtn.parentElement.querySelector("pre").innerText);
+        });
     });
 </script>
 
