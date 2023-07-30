@@ -63,7 +63,9 @@
     </div>
     
     <div class="bg-white p-4 shadow rounded flex gap-4 flex-col">
+        
         <h2 class="text-lg font-medium">Controls</h2>
+        
         <h3 class="font-medium border-b-[1px] border-b-slate-200">scrollbar</h3>
         <table>
             <tr>
@@ -88,10 +90,10 @@
                         min="0"
                         max="32"
                         value="10"
-                        list="scrollbar-width-range-markers"
+                        list="range-markers-4x"
                         class="w-[200px]"
                         >
-                    <datalist id="scrollbar-width-range-markers">
+                    <datalist id="range-markers-4x">
                         <option value="0"></option>
                         <option value="4"></option>
                         <option value="8"></option>
@@ -126,12 +128,75 @@
                         min="0"
                         max="32"
                         value="10"
-                        list="scrollbar-width-range-markers"
+                        list="range-markers-4x"
                         class="w-[200px]"
                         >
                 </td>
             </tr>
         </table>
+        
+        <h3 class="font-medium border-b-[1px] border-b-slate-200">track</h3>
+        <table>
+            <tr>
+                <td>Background</td>
+                <td>
+                    <input
+                        type="color"
+                        id="track-background-input"
+                        value="#f2f2f2"
+                        class="w-20 border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
+                        >
+                </td>
+                <td>
+                    <input
+                        type="text"
+                        id="track-background-text"
+                        value="hsla(0, 0%, 95%, 0.9)"
+                        class="border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70 read-only:opacity-50"
+                        readonly
+                        >
+                </td>
+            </tr>
+            <tr>
+                <td>Radius</td>
+                <td>
+                    <input
+                        type="number"
+                        id="track-radius-input"
+                        step="1"
+                        min="0"
+                        max="16"
+                        value="4"
+                        class="border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
+                        >
+                    px
+                </td>
+                <td>
+                    <input
+                        type="range"
+                        id="track-radius-range"
+                        step="1"
+                        min="0"
+                        max="16"
+                        value="4"
+                        list="range-markers-2x"
+                        class="w-[200px]"
+                        >
+                    <datalist id="range-markers-2x">
+                        <option value="0"></option>
+                        <option value="2"></option>
+                        <option value="4"></option>
+                        <option value="6"></option>
+                        <option value="8"></option>
+                        <option value="10"></option>
+                        <option value="12"></option>
+                        <option value="14"></option>
+                        <option value="16"></option>
+                    </datalist>
+                </td>
+            </tr>
+        </table>
+        
         <p class="mt-4 bg-yellow-500/10 text-yellow-800 px-2 py-1 rounded border border-yellow-500/10">
             To be added.
         </p>
