@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Screen Info</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        body {
+            font-family: monospace, sans-serif;
+            font-size: 15px;
+        }
+        table {
+            border-collapse: collapse;
+        }
+        table td {
+            padding: 0.25em;
+            border: 1px solid gainsboro;
+        }
+        table td:first-child {
+            padding-right: 1em;
+        }
+    </style>
+</head>
+<body>
+
+<table></table>
+
+<script>
+    function getInfo() {
+        return {
+            "window"                    : "header",
+            "devicePixelRatio"          : devicePixelRatio,
+            "innerWidth"                : innerWidth,
+            "innerHeight"               : innerHeight,
+            "outerWidth"                : outerWidth  + ` (+${outerWidth - innerWidth})`,
+            "outerHeight"               : outerHeight + ` (+${outerHeight - innerHeight})`,
+            "screenX"                   : screenX,
+            "screenY"                   : screenY,
+            
+            "screen"                    : "header",
+            "screen.width"              : screen.width,
+            "screen.height"             : screen.height,
+            "screen.orientation.type"   : screen.orientation.type,
+            
+            "navigator"                 : "header",
+            "navigator.deviceMemory"    : navigator.deviceMemory,
+            "navigator.hardwareConcurrency" : navigator.hardwareConcurrency,
+            "navigator.language"        : navigator.language,
+            "navigator.languages"       : navigator.languages.join(", "),
+            "navigator.platform"        : navigator.platform,
+            "navigator.userAgent"       : navigator.userAgent,
+        }
+    }
+    function printInfo() {
+        let info = getInfo();
+        let table = document.querySelector("table");
+        table.innerHTML = null;
+        for (let piece in info) {
+            let value = info[piece];
+            let row = null;
+            if (value == "header") {
+                row = `<tr>
+                    <td colspan="2"><b>${piece}</b></td>
+                </tr>`;
+            } else {
+                row = `<tr>
+                    <td>${piece}</td>
+                    <td>${value}</td>
+                </tr>`;
+            }
+            table.innerHTML += row;
+        }
+    }
+    window.addEventListener("load", printInfo);
+    window.addEventListener("resize", printInfo);
+</script>
+
+</body>
+</html>
