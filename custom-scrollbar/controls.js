@@ -25,11 +25,21 @@ let controls = {
 };
 
 window.addEventListener("AllScriptsLoaded", () => {
+    
     controls.scrollbar.width  = qs("#scrollbar-width-input");
     controls.scrollbar.height = qs("#scrollbar-height-input");
     
     controls["scrollbar-track"]["background-color"] = qs("#track-background-input");
     controls["scrollbar-track"]["border-radius"]    = qs("#track-radius-input");
+    
+    let trackBackgroundAlphaInput = qs("#track-background-alpha-input");
+    let trackBackgroundAlphaRange = qs("#track-background-alpha-range");
+    
+    syncNumberInputAndRange(controls.scrollbar.width, qs("#scrollbar-width-range"));
+    syncNumberInputAndRange(controls.scrollbar.height, qs("#scrollbar-height-range"));
+    // syncColorAndTextInput(controls["scrollbar-track"]["background-color"], qs("#track-background-text"));
+    syncNumberInputAndRange(trackBackgroundAlphaInput, trackBackgroundAlphaRange);
+    syncNumberInputAndRange(controls["scrollbar-track"]["border-radius"], qs("#track-radius-range"));
     
     on([controls.scrollbar.width, qs("#scrollbar-width-range")], "input", function () {
         if (!["0", "", NaN].includes(this.value)) {
@@ -43,7 +53,7 @@ window.addEventListener("AllScriptsLoaded", () => {
     });
     
     on([controls["scrollbar-track"]["background-color"]], "input", function () {
-        css["scrollbar-track"]["background-color"] = this.value;
+        css["scrollbar-track"]["background-color"] = getTrackBackground();
     });
     on([controls["scrollbar-track"]["border-radius"], qs("#track-radius-range")], "input", function () {
         if (!["0", "", NaN].includes(this.value)) {
@@ -51,20 +61,43 @@ window.addEventListener("AllScriptsLoaded", () => {
         }
     });
     
+    function getTrackBackgroundAlphaHex() {
+        let alpha = parseFloat(trackBackgroundAlphaRange.value) || 0;
+        let alphaScaled = Math.round(alpha * 255);
+        let alphaHex = alphaScaled.toString(16);
+        return alphaHex;
+    }
+    function getTrackBackground() {
+        let colorHex = controls["scrollbar-track"]["background-color"].value;
+        let alphaHex = getTrackBackgroundAlphaHex();
+        if (alphaHex == 0) {
+            alphaHex = "00";
+        }
+        console.log(parseFloat(trackBackgroundAlphaRange.value) || 0, alphaHex);
+        if (alphaHex != "ff") {
+            colorHex += alphaHex;
+        }
+        return colorHex;
+    }
+    
+    on(trackBackgroundAlphaInput, "input", () => {
+        css["scrollbar-track"]["background-color"] = getTrackBackground();
+    });
+    on(trackBackgroundAlphaRange, "input", () => {
+        css["scrollbar-track"]["background-color"] = getTrackBackground();
+    });
+    
     on([
         controls.scrollbar.width,  qs("#scrollbar-width-range"),
         controls.scrollbar.height, qs("#scrollbar-height-range"),
         controls["scrollbar-track"]["background-color"],
+        trackBackgroundAlphaInput, trackBackgroundAlphaRange,
         controls["scrollbar-track"]["border-radius"], qs("#track-radius-range"),
     ], "input", function () {
         applyCSS();
         outputCSS();
     });
     
-    syncNumberInputAndRange(controls.scrollbar.width, qs("#scrollbar-width-range"));
-    syncNumberInputAndRange(controls.scrollbar.height, qs("#scrollbar-height-range"));
-    syncColorAndTextInput(controls["scrollbar-track"]["background-color"], qs("#track-background-text"));
-    syncNumberInputAndRange(controls["scrollbar-track"]["border-radius"], qs("#track-radius-range"));
 });
 
 function syncColorAndTextInput(color, textInput) {
