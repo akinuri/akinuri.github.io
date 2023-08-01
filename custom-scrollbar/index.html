@@ -51,11 +51,11 @@
 
 <h1 class="font-medium mx-auto w-fit text-2xl mt-8">Custom Scrollbar Designer</h1>
 
-<div class="container mx-auto grid grid-rows-3 lg:grid-rows-none lg:grid-cols-3 gap-4 p-4 mt-4 mb-16 text-slate-700">
+<div class="container mx-auto gap-4 p-4 mt-4 mb-16 text-slate-700 | grid grid-rows-3 | lg:grid-rows-none lg:grid-cols-2 | 2xl:grid-cols-3">
     
     <div class="bg-white p-4 shadow rounded flex gap-4 flex-col">
         <h2 class="text-lg font-medium">Preview</h2>
-        <div class="overflow-auto min-h-[30rem] max-h-[70vh] preview">
+        <div class="overflow-auto min-h-[20rem] max-h-[60vh] preview">
             <div class="flex gap-4 flex-col w-[125%]">
                 
                 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam at laoreet quam. Donec feugiat blandit blandit. Aliquam lobortis libero ac augue placerat luctus. Nulla nulla dolor, consectetur id enim id, semper laoreet nunc. Sed feugiat tempor ante, venenatis ultrices mauris tempor ut. Sed a nunc ullamcorper nibh laoreet euismod. Cras mattis auctor metus, varius pellentesque neque rutrum eget. In feugiat ornare felis, laoreet dapibus justo faucibus et. Cras sodales interdum dolor vel vestibulum. Mauris cursus at purus eget hendrerit. In eu bibendum enim. Suspendisse non metus enim.</p>
@@ -101,7 +101,7 @@
                         max="32"
                         value="10"
                         list="range-markers-4x"
-                        class="w-[200px]"
+                        class="w-[150px] sm:w-[200px]"
                         >
                     <datalist id="range-markers-4x">
                         <option value="0"></option>
@@ -139,7 +139,7 @@
                         max="32"
                         value="10"
                         list="range-markers-4x"
-                        class="w-[200px]"
+                        class="w-[150px] sm:w-[200px]"
                         >
                 </td>
             </tr>
@@ -177,7 +177,7 @@
                         value="1"
                         title="alpha"
                         list="range-markers-alpha"
-                        class="w-[130px]"
+                        class="w-[100px] sm:w-[130px]"
                         >
                     <datalist id="range-markers-alpha">
                         <option>0.0</option>
@@ -229,7 +229,7 @@
                         max="16"
                         value="4"
                         list="range-markers-2x"
-                        class="w-[200px]"
+                        class="w-[150px] sm:w-[200px]"
                         >
                     <datalist id="range-markers-2x">
                         <option value="0"></option>
@@ -251,7 +251,7 @@
         </p>
     </div>
     
-    <div class="bg-white p-4 shadow rounded flex gap-4 flex-col relative">
+    <div class="bg-white p-4 shadow rounded flex gap-4 flex-col relative min-h-[20rem] lg:col-start-1 lg:col-end-3 2xl:col-start-auto 2xl:col-end-auto">
         <h2 class="text-lg font-medium">CSS</h2>
         <button id="copy-css-btn" class="flex gap-1 bg-gray-100 rounded shadow px-2 py-1 absolute right-2 top-2 hover:bg-gray-200 active:bg-gray-300">
             <svg

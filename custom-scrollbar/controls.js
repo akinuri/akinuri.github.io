@@ -73,7 +73,6 @@ window.addEventListener("AllScriptsLoaded", () => {
         if (alphaHex == 0) {
             alphaHex = "00";
         }
-        console.log(parseFloat(trackBackgroundAlphaRange.value) || 0, alphaHex);
         if (alphaHex != "ff") {
             colorHex += alphaHex;
         }
