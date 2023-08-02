@@ -7,6 +7,9 @@ let css = {
         "background-color" : "hsla(0, 0%, 95%, 0.9)",
         "border-radius" : "4px",
     },
+    "scrollbar-corner" : {
+        "background-color" : "hsla(0, 0%, 95%, 0.9)",
+    },
     "scrollbar-thumb" : {
         "background-color" : "hsla(0, 0%, 75%, 0.95)",
         "border-radius" : "4px",

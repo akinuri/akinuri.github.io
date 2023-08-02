@@ -1,4 +1,7 @@
 let controls = {
+    "preview" : {
+        "background-color" : null,
+    },
     "scrollbar" : {
         "width" : null,
         "height" : null,
@@ -26,6 +29,8 @@ let controls = {
 
 window.addEventListener("AllScriptsLoaded", () => {
     
+    controls.preview["background-color"] = qs("#preview-background-input");
+    
     controls.scrollbar.width  = qs("#scrollbar-width-input");
     controls.scrollbar.height = qs("#scrollbar-height-input");
     
@@ -52,8 +57,13 @@ window.addEventListener("AllScriptsLoaded", () => {
         }
     });
     
-    on([controls["scrollbar-track"]["background-color"]], "input", function () {
+    on(controls.preview["background-color"], "input", function () {
+        qs("#preview-card").style.setProperty("--preview-bg", this.value);
+    });
+    
+    on(controls["scrollbar-track"]["background-color"], "input", function () {
         css["scrollbar-track"]["background-color"] = getTrackBackground();
+        css["scrollbar-corner"]["background-color"] = getTrackBackground();
     });
     on([controls["scrollbar-track"]["border-radius"], qs("#track-radius-range")], "input", function () {
         if (!["0", "", NaN].includes(this.value)) {
@@ -81,9 +91,11 @@ window.addEventListener("AllScriptsLoaded", () => {
     
     on(trackBackgroundAlphaInput, "input", () => {
         css["scrollbar-track"]["background-color"] = getTrackBackground();
+        css["scrollbar-corner"]["background-color"] = getTrackBackground();
     });
     on(trackBackgroundAlphaRange, "input", () => {
         css["scrollbar-track"]["background-color"] = getTrackBackground();
+        css["scrollbar-corner"]["background-color"] = getTrackBackground();
     });
     
     on([
