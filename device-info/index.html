@@ -27,6 +27,11 @@
 
 <table></table>
 
+<div style="display: flex; gap: 0.5em; flex-direction: column; width: fit-content; margin-top: 1em;">
+    <input type="text" placeholder="keyboard test: text" onfocus="printInfo()" />
+    <input type="number" placeholder="keyboard test: number" onfocus="printInfo()" />
+</div>
+
 <script>
     function getInfo() {
         return {
@@ -83,6 +88,7 @@
     }
     window.addEventListener("load", printInfo);
     window.addEventListener("resize", printInfo);
+    window.addEventListener("scroll", printInfo);
 </script>
 
 </body>
