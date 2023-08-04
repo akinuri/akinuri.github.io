@@ -44,16 +44,18 @@
             "screen.height"             : screen.height,
             "screen.availWidth"         : screen.availWidth,
             "screen.availHeight"        : screen.availHeight,
-            "screen.orientation.type"   : screen.orientation.type,
+            "screen.orientation.type"   : screen.orientation?.type,
             
             "navigator"                 : "header",
             "navigator.deviceMemory"    : navigator.deviceMemory,
             "navigator.hardwareConcurrency" : navigator.hardwareConcurrency,
             "navigator.language"        : navigator.language,
-            "navigator.languages"       : navigator.languages.join(", "),
+            "navigator.languages"       : navigator.languages?.join(", "),
             "navigator.platform"        : navigator.platform,
+            "navigator.product"         : navigator.product,
             "navigator.userAgent"       : navigator.userAgent,
-            "navigator.userAgentData.platform" : navigator.userAgentData.platform,
+            "navigator.userAgentData.platform" : navigator.userAgentData?.platform,
+            "navigator.vendor"          : navigator.vendor,
         }
     }
     function printInfo() {
@@ -68,6 +70,9 @@
                     <td colspan="2"><b>${piece}</b></td>
                 </tr>`;
             } else {
+                if (value == undefined) {
+                    value = "<span style='opacity: 0.25'>" + value + "</span>";
+                }
                 row = `<tr>
                     <td>${piece}</td>
                     <td>${value}</td>
