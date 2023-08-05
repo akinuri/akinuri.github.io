@@ -56,11 +56,16 @@
             "navigator.hardwareConcurrency" : navigator.hardwareConcurrency,
             "navigator.language"        : navigator.language,
             "navigator.languages"       : navigator.languages?.join(", "),
+            "navigator.maxTouchPoints"  : navigator.maxTouchPoints,
             "navigator.platform"        : navigator.platform,
             "navigator.product"         : navigator.product,
             "navigator.userAgent"       : navigator.userAgent,
             "navigator.userAgentData.platform" : navigator.userAgentData?.platform,
             "navigator.vendor"          : navigator.vendor,
+            
+            "events"                    : "header",
+            "ontouchstart"              : "ontouchstart" in window,
+            "onmousemove"               : "onmousemove" in window,
         }
     }
     function printInfo() {
