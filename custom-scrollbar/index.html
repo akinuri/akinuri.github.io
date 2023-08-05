@@ -262,6 +262,58 @@
             </tr>
         </table>
         
+        <h3 class="font-medium border-b-[1px] border-b-slate-200">corner</h3>
+        <table>
+            <tr>
+                <td>Background</td>
+                <td>
+                    <input
+                        type="color"
+                        id="corner-background-input"
+                        value="#000000"
+                        class="w-20 border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
+                        >
+                </td>
+                <td>
+                    <input
+                        type="number"
+                        id="corner-background-alpha-input"
+                        step="0.1"
+                        min="0"
+                        max="1"
+                        value="0"
+                        title="alpha"
+                        class="w-[60px] mr-1 border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
+                        >
+                    <input
+                        type="range"
+                        id="corner-background-alpha-range"
+                        step="0.1"
+                        min="0"
+                        max="1"
+                        value="0"
+                        title="alpha"
+                        list="range-markers-alpha"
+                        class="w-[100px] sm:w-[130px]"
+                        >
+                    <datalist id="range-markers-alpha">
+                        <option>0.0</option>
+                        <option>0.1</option>
+                        <option>0.2</option>
+                        <option>0.3</option>
+                        <option>0.4</option>
+                        <option>0.5</option>
+                        <option>0.6</option>
+                        <option>0.7</option>
+                        <option>0.8</option>
+                        <option>0.9</option>
+                        <option>1.0</option>
+                    </datalist>
+                </td>
+            </tr>
+            
+        </table>
+        
         <p class="mt-4 bg-yellow-500/10 text-yellow-800 px-2 py-1 rounded border border-yellow-500/10">
             To be added.
         </p>

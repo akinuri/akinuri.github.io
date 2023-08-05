@@ -8,7 +8,7 @@ let css = {
         "border-radius" : "4px",
     },
     "scrollbar-corner" : {
-        "background-color" : "hsla(0, 0%, 95%, 0.9)",
+        "background-color" : null,
     },
     "scrollbar-thumb" : {
         "background-color" : "hsla(0, 0%, 75%, 0.95)",
@@ -38,6 +38,10 @@ function generateCSSText(selectorPrefix = "") {
             for (const property in declerations) {
                 if (Object.hasOwnProperty.call(declerations, property)) {
                     const value = declerations[property];
+                    if (!value) {
+                        // TODO: if there's only one decleration, the rule should be skipped
+                        continue;
+                    }
                     let declerationText = "";
                     if (typeof value == "object") {
                         let values = [];
@@ -69,6 +73,7 @@ function applyCSS(selectorPrefix = ".preview") {
     let scrollbarStyleElement = document.querySelector("#scrollbar-style");
     if (!scrollbarStyleElement) {
         scrollbarStyleElement = document.createElement("style");
+        scrollbarStyleElement.id = "scrollbar-style";
         document.body.append(scrollbarStyleElement);
     }
     scrollbarStyleElement.textContent = cssText;
