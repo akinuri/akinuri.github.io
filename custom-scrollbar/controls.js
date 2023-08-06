@@ -83,13 +83,10 @@ window.addEventListener("AllScriptsLoaded", () => {
     });
     
     on(controls["scrollbar-corner"]["background-color"], "input", function () {
-        let alpha = cornerBackgroundAlphaInput.valueAsNumber || 0;
-        if (alpha != 0) {
-            css["scrollbar-corner"]["background-color"] = getBackground(
-                controls["scrollbar-corner"]["background-color"],
-                cornerBackgroundAlphaInput,
-            );
-        }
+        css["scrollbar-corner"]["background-color"] = getBackground(
+            controls["scrollbar-corner"]["background-color"],
+            cornerBackgroundAlphaInput,
+        );
     });
     
     function getBackgroundAlphaHex(input) {
@@ -124,26 +121,16 @@ window.addEventListener("AllScriptsLoaded", () => {
     });
     
     on(cornerBackgroundAlphaInput, "input", () => {
-        let alpha = cornerBackgroundAlphaInput.valueAsNumber || 0;
-        if (alpha != 0) {
-            css["scrollbar-corner"]["background-color"] = getBackground(
-                controls["scrollbar-corner"]["background-color"],
-                cornerBackgroundAlphaInput,
-            );
-        } else {
-            css["scrollbar-corner"]["background-color"] = null;
-        }
+        css["scrollbar-corner"]["background-color"] = getBackground(
+            controls["scrollbar-corner"]["background-color"],
+            cornerBackgroundAlphaInput,
+        );
     });
     on(cornerBackgroundAlphaRange, "input", () => {
-        let alpha = cornerBackgroundAlphaInput.valueAsNumber || 0;
-        if (alpha != 0) {
-            css["scrollbar-corner"]["background-color"] = getBackground(
-                controls["scrollbar-corner"]["background-color"],
-                cornerBackgroundAlphaInput,
-            );
-        } else {
-            css["scrollbar-corner"]["background-color"] = null;
-        }
+        css["scrollbar-corner"]["background-color"] = getBackground(
+            controls["scrollbar-corner"]["background-color"],
+            cornerBackgroundAlphaInput,
+        );
     });
     
     on([

@@ -8,7 +8,7 @@ let css = {
         "border-radius" : "4px",
     },
     "scrollbar-corner" : {
-        "background-color" : null,
+        "background-color" : "hsla(0, 0%, 100%)",
     },
     "scrollbar-thumb" : {
         "background-color" : "hsla(0, 0%, 75%, 0.95)",
@@ -39,7 +39,6 @@ function generateCSSText(selectorPrefix = "") {
                 if (Object.hasOwnProperty.call(declerations, property)) {
                     const value = declerations[property];
                     if (!value) {
-                        // TODO: if there's only one decleration, the rule should be skipped
                         continue;
                     }
                     let declerationText = "";
@@ -60,8 +59,10 @@ function generateCSSText(selectorPrefix = "") {
                 }
             }
             declerationsText = declerationsText.join("\n");
-            ruleText = sprintf(ruleText, selectorPrefix, selector, declerationsText);
-            rulesText.push(ruleText);
+            if (declerationsText.length) {
+                ruleText = sprintf(ruleText, selectorPrefix, selector, declerationsText);
+                rulesText.push(ruleText);
+            }
         }
     }
     rulesText = rulesText.join("\n");
