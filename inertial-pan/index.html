@@ -16,50 +16,107 @@
     
     let panTarget = document.querySelector("#container");
     
-    const panDistanceMultiplier = 1.25;
+    let pan = {
+        active : false,
+        startTargetScrollX : null,
+        startTargetScrollY : null,
+        startX : null,
+        startY : null,
+        endX : null,
+        endY : null,
+        startTime : null,
+        endTime : null,
+        directionX : null,
+        directionY : null,
+        distanceX : null,
+        distanceY : null,
+    }
     
-    let isPanning = false;
-    let panStartTargetScrollX = null;
-    let panStartTargetScrollY = null;
-    let panStartX = null;
-    let panStartY = null;
+    let fps  = 60;
+    let mspf = 1000 / fps; // 16.66
+    
+    let autoPan = {
+        multipliers : {
+            friction : 0.95,
+        },
+        minSpeed : 0.25, // px
+        speedX   : 20,   // px per frame
+        speedY   : 20,   // px per frame
+    };
     
     panTarget.addEventListener("mousedown", (e) => {
-        isPanning = true;
-        panStartTargetScrollX = panTarget.scrollLeft;
-        panStartTargetScrollY = panTarget.scrollTop;
-        panStartX = e.clientX;
-        panStartY = e.clientY;
-        panTarget.classList.add("panning");
+        if (!pan.active) {
+            pan.active = true;
+            pan.startTargetScrollX = panTarget.scrollLeft;
+            pan.startTargetScrollY = panTarget.scrollTop;
+            pan.startX = e.clientX;
+            pan.startY = e.clientY;
+            pan.startTime = performance.now();
+            autoPan.speedX  = 0;
+            autoPan.speedY  = 0;
+            panTarget.classList.add("panning");
+        }
     });
     
     panTarget.addEventListener("mousemove", (e) => {
-        if (isPanning) {
-            let panDirectionX = e.clientX < panStartX ? 1 : -1;
-            let panDirectionY = e.clientY < panStartY ? 1 : -1;
-            let panDistanceX  = Math.abs(e.clientX - panStartX) * panDistanceMultiplier;
-            let panDistanceY  = Math.abs(e.clientY - panStartY) * panDistanceMultiplier;
-            let scrollLeft    = panStartTargetScrollX + (panDistanceX * panDirectionX);
-            let scrollTop     = panStartTargetScrollY + (panDistanceY * panDirectionY);
+        if (pan.active) {
+            pan.directionX = e.clientX < pan.startX ? 1 : -1;
+            pan.directionY = e.clientY < pan.startY ? 1 : -1;
+            pan.distanceX  = Math.abs(e.clientX - pan.startX);
+            pan.distanceY  = Math.abs(e.clientY - pan.startY);
+            let scrollLeft = pan.startTargetScrollX + (pan.distanceX * pan.directionX);
+            let scrollTop  = pan.startTargetScrollY + (pan.distanceY * pan.directionY);
             panTarget.scrollTo(scrollLeft, scrollTop);
         }
     });
     
     panTarget.addEventListener("mouseup", (e) => {
-        if (isPanning) {
-            isPanning = false;
+        if (pan.active) {
+            pan.active     = false;
+            pan.endX       = e.clientX;
+            pan.endY       = e.clientY;
+            pan.endTime    = performance.now();
+            pan.directionX = e.clientX < pan.startX ? 1 : -1;
+            pan.directionY = e.clientY < pan.startY ? 1 : -1;
+            pan.distanceX  = Math.abs(pan.endX - pan.startX);
+            pan.distanceY  = Math.abs(pan.endY - pan.startY);
+            pan.duration   = pan.endTime - pan.startTime;
+            pan.speedX     = (pan.distanceX / pan.duration) * mspf;
+            pan.speedY     = (pan.distanceY / pan.duration) * mspf;
+            autoPan.speedX = pan.speedX;
+            autoPan.speedY = pan.speedY;
+            applyFriction();
             panTarget.classList.remove("panning");
         }
     });
     
     window.addEventListener("mouseup", (e) => {
         if (e.target != panTarget) {
-            if (isPanning) {
-                isPanning = false;
+            if (pan.active) {
+                pan.active = false;
                 panTarget.classList.remove("panning");
             }
         }
     });
+    
+    function applyFriction() {
+        if (!pan.active) {
+            let displacementX = autoPan.speedX * pan.directionX;
+            let displacementY = autoPan.speedY * pan.directionY;
+            if (Math.abs(autoPan.speedX) < autoPan.minSpeed) {
+                displacementX = 0;
+            }
+            if (Math.abs(autoPan.speedY) < autoPan.minSpeed) {
+                displacementY = 0;
+            }
+            if (displacementX != 0 || displacementY != 0) {
+                panTarget.scrollBy(displacementX, displacementY);
+                autoPan.speedX *= autoPan.multipliers.friction;
+                autoPan.speedY *= autoPan.multipliers.friction;
+                requestAnimationFrame(applyFriction);
+            }
+        }
+    }
     
 </script>
 
