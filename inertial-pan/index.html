@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Inertial Pan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="container">
+    <img src="images/world-political.jpg" />
+</div>
+
+<script>
+    
+    let panTarget = document.querySelector("#container");
+    
+    const panDistanceMultiplier = 1.25;
+    
+    let isPanning = false;
+    let panStartTargetScrollX = null;
+    let panStartTargetScrollY = null;
+    let panStartX = null;
+    let panStartY = null;
+    
+    panTarget.addEventListener("mousedown", (e) => {
+        isPanning = true;
+        panStartTargetScrollX = panTarget.scrollLeft;
+        panStartTargetScrollY = panTarget.scrollTop;
+        panStartX = e.clientX;
+        panStartY = e.clientY;
+        panTarget.classList.add("panning");
+    });
+    
+    panTarget.addEventListener("mousemove", (e) => {
+        if (isPanning) {
+            let panDirectionX = e.clientX < panStartX ? 1 : -1;
+            let panDirectionY = e.clientY < panStartY ? 1 : -1;
+            let panDistanceX  = Math.abs(e.clientX - panStartX) * panDistanceMultiplier;
+            let panDistanceY  = Math.abs(e.clientY - panStartY) * panDistanceMultiplier;
+            let scrollLeft    = panStartTargetScrollX + (panDistanceX * panDirectionX);
+            let scrollTop     = panStartTargetScrollY + (panDistanceY * panDirectionY);
+            panTarget.scrollTo(scrollLeft, scrollTop);
+        }
+    });
+    
+    panTarget.addEventListener("mouseup", (e) => {
+        if (isPanning) {
+            isPanning = false;
+            panTarget.classList.remove("panning");
+        }
+    });
+    
+    window.addEventListener("mouseup", (e) => {
+        if (e.target != panTarget) {
+            if (isPanning) {
+                isPanning = false;
+                panTarget.classList.remove("panning");
+            }
+        }
+    });
+    
+</script>
+
+</body>
+</html>
