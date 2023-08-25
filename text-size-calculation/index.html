@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Text Size Calculator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-200 p-4">
+
+<div class="flex gap-4 mb-4 items-center">
+    <select id="local-fonts" class="p-2 rounded shadow">
+        <option value="" class="text-gray-400">Select a font</option>
+    </select>
+    <button class="bg-slate-50 rounded px-3 py-1 shadow text-sm" onclick="loadLocalFonts(this)">Load local fonts</button>
+</div>
+
+<script>
+    async function getFontData() {
+        try {
+            return await window.queryLocalFonts();
+        } catch (err) {
+            console.error(err.name, err.message);
+        }
+    }
+    async function loadLocalFonts(btn) {
+        let localFontsEl = document.querySelector("#local-fonts");
+        if (localFontsEl.childElementCount > 1) {
+            return;
+        }
+        alert("Loading local fonts list might take a few seconds.");
+        let fonts = await getFontData();
+        if (fonts.length == 0) {
+            return;
+        }
+        fonts.forEach(font => {
+            localFontsEl.innerHTML += `
+                <option>${font.fullName}</option>
+            `;
+        });
+        btn.remove();
+    }
+</script>
+
+</body>
+</html>
