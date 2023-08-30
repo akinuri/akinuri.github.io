@@ -3,18 +3,45 @@ let controls = {
         "background-color" : null,
     },
     "scrollbar" : {
-        "width" : null,
-        "height" : null,
+        "width" : {
+            "box" : null,
+            "range" : null,
+        },
+        "height" : {
+            "box" : null,
+            "range" : null,
+        },
     },
     "scrollbar-track" : {
-        "background-color" : null,
-        "border-radius" : null,
+        "background-color" : {
+            "box" : null,
+            "alpha" : {
+                "box" : null,
+                "range" : null,
+            },
+        },
+        "border-radius" : {
+            "box" : null,
+            "range" : null,
+        },
     },
     "scrollbar-corner" : {
-        "background-color" : null,
+        "background-color" : {
+            "box" : null,
+            "alpha" : {
+                "box" : null,
+                "range" : null,
+            },
+        },
     },
     "scrollbar-thumb" : {
-        "background-color" : null,
+        "background-color" : {
+            "box" : null,
+            "alpha" : {
+                "box" : null,
+                "range" : null,
+            },
+        },
         "border-radius" : null,
         "border" : {
             "width" : null,
@@ -30,123 +57,175 @@ let controls = {
     },
 };
 
-window.addEventListener("AllScriptsLoaded", () => {
+sl.onAllLoaded(() => {
     
     controls.preview["background-color"] = qs("#preview-background-input");
+    on(controls.preview["background-color"], "input", function () {
+        qs("#preview-card").style.setProperty("--preview-bg", this.value);
+    });
     
-    controls.scrollbar.width  = qs("#scrollbar-width-input");
-    controls.scrollbar.height = qs("#scrollbar-height-input");
     
-    controls["scrollbar-track"]["background-color"] = qs("#track-background-input");
-    controls["scrollbar-track"]["border-radius"]    = qs("#track-radius-input");
-    
-    controls["scrollbar-corner"]["background-color"] = qs("#corner-background-input");
-    
-    let trackBackgroundAlphaInput = qs("#track-background-alpha-input");
-    let trackBackgroundAlphaRange = qs("#track-background-alpha-range");
-    
-    let cornerBackgroundAlphaInput = qs("#corner-background-alpha-input");
-    let cornerBackgroundAlphaRange = qs("#corner-background-alpha-range");
-    
-    syncNumberInputAndRange(controls.scrollbar.width, qs("#scrollbar-width-range"));
-    syncNumberInputAndRange(controls.scrollbar.height, qs("#scrollbar-height-range"));
-    // syncColorAndTextInput(controls["scrollbar-track"]["background-color"], qs("#track-background-text"));
-    syncNumberInputAndRange(trackBackgroundAlphaInput, trackBackgroundAlphaRange);
-    syncNumberInputAndRange(cornerBackgroundAlphaInput, cornerBackgroundAlphaRange);
-    syncNumberInputAndRange(controls["scrollbar-track"]["border-radius"], qs("#track-radius-range"));
-    
-    on([controls.scrollbar.width, qs("#scrollbar-width-range")], "input", function () {
+    controls.scrollbar.width.box   = qs("#scrollbar-width-input");
+    controls.scrollbar.width.range = qs("#scrollbar-width-range");
+    syncNumberInputAndRange(controls.scrollbar.width.box, controls.scrollbar.width.range);
+    on([controls.scrollbar.width.box, controls.scrollbar.width.range], "input", function () {
         if (!["0", "", NaN].includes(this.value)) {
             css.scrollbar.width = this.value + "px";
         }
     });
-    on([controls.scrollbar.height, qs("#scrollbar-height-range")], "input", function () {
+    
+    controls.scrollbar.height.box   = qs("#scrollbar-height-input");
+    controls.scrollbar.height.range = qs("#scrollbar-height-range");
+    syncNumberInputAndRange(controls.scrollbar.height.box, controls.scrollbar.height.range);
+    on([controls.scrollbar.height.box, controls.scrollbar.height.range], "input", function () {
         if (!["0", "", NaN].includes(this.value)) {
             css.scrollbar.height = this.value + "px";
         }
     });
     
-    on(controls.preview["background-color"], "input", function () {
-        qs("#preview-card").style.setProperty("--preview-bg", this.value);
-    });
     
-    on(controls["scrollbar-track"]["background-color"], "input", function () {
+    controls["scrollbar-track"]["background-color"].box         = qs("#track-background-input");
+    controls["scrollbar-track"]["background-color"].alpha.box   = qs("#track-background-alpha-input");
+    controls["scrollbar-track"]["background-color"].alpha.range = qs("#track-background-alpha-range");
+    on(controls["scrollbar-track"]["background-color"].box, "input", function () {
         css["scrollbar-track"]["background-color"] = getBackground(
-            controls["scrollbar-track"]["background-color"],
-            trackBackgroundAlphaInput,
+            controls["scrollbar-track"]["background-color"].box,
+            controls["scrollbar-track"]["background-color"].alpha.box,
         );
     });
-    on([controls["scrollbar-track"]["border-radius"], qs("#track-radius-range")], "input", function () {
+    syncNumberInputAndRange(
+        controls["scrollbar-track"]["background-color"].alpha.box,
+        controls["scrollbar-track"]["background-color"].alpha.range,
+    );
+    on(controls["scrollbar-track"]["background-color"].alpha.box, "input", () => {
+        css["scrollbar-track"]["background-color"] = getBackground(
+            controls["scrollbar-track"]["background-color"].box,
+            controls["scrollbar-track"]["background-color"].alpha.box,
+        );
+    });
+    on(controls["scrollbar-track"]["background-color"].alpha.range, "input", () => {
+        css["scrollbar-track"]["background-color"] = getBackground(
+            controls["scrollbar-track"]["background-color"].box,
+            controls["scrollbar-track"]["background-color"].alpha.box,
+        );
+    });
+    
+    controls["scrollbar-track"]["border-radius"].box   = qs("#track-radius-input");
+    controls["scrollbar-track"]["border-radius"].range = qs("#track-radius-range");
+    on([
+        controls["scrollbar-track"]["border-radius"].box,
+        controls["scrollbar-track"]["border-radius"].range,
+    ], "input", function () {
         if (!["0", "", NaN].includes(this.value)) {
             css["scrollbar-track"]["border-radius"] = this.value + "px";
         }
     });
+    syncNumberInputAndRange(
+        controls["scrollbar-track"]["border-radius"].box,
+        controls["scrollbar-track"]["border-radius"].range,
+    );
     
-    on(controls["scrollbar-corner"]["background-color"], "input", function () {
+    
+    controls["scrollbar-corner"]["background-color"].box         = qs("#corner-background-input");
+    controls["scrollbar-corner"]["background-color"].alpha.box   = qs("#corner-background-alpha-input");
+    controls["scrollbar-corner"]["background-color"].alpha.range = qs("#corner-background-alpha-range");
+    syncNumberInputAndRange(
+        controls["scrollbar-corner"]["background-color"].alpha.box,
+        controls["scrollbar-corner"]["background-color"].alpha.range,
+    );
+    on(controls["scrollbar-corner"]["background-color"].box, "input", function () {
         css["scrollbar-corner"]["background-color"] = getBackground(
-            controls["scrollbar-corner"]["background-color"],
-            cornerBackgroundAlphaInput,
+            controls["scrollbar-corner"]["background-color"].box,
+            controls["scrollbar-corner"]["background-color"].alpha.box,
         );
     });
-    
-    function getBackgroundAlphaHex(input) {
-        let alpha = parseFloat(input.value) || 0;
-        let alphaScaled = Math.round(alpha * 255);
-        let alphaHex = alphaScaled.toString(16);
-        return alphaHex;
-    }
-    function getBackground(colorInput, alphaInput) {
-        let colorHex = colorInput.value;
-        let alphaHex = getBackgroundAlphaHex(alphaInput);
-        if (alphaHex == 0) {
-            alphaHex = "00";
-        }
-        if (alphaHex != "ff") {
-            colorHex += alphaHex;
-        }
-        return colorHex;
-    }
-    
-    on(trackBackgroundAlphaInput, "input", () => {
-        css["scrollbar-track"]["background-color"] = getBackground(
-            controls["scrollbar-track"]["background-color"],
-            trackBackgroundAlphaInput,
-        );
-    });
-    on(trackBackgroundAlphaRange, "input", () => {
-        css["scrollbar-track"]["background-color"] = getBackground(
-            controls["scrollbar-track"]["background-color"],
-            trackBackgroundAlphaInput,
-        );
-    });
-    
-    on(cornerBackgroundAlphaInput, "input", () => {
+    on(controls["scrollbar-corner"]["background-color"].alpha.box, "input", () => {
         css["scrollbar-corner"]["background-color"] = getBackground(
-            controls["scrollbar-corner"]["background-color"],
-            cornerBackgroundAlphaInput,
+            controls["scrollbar-corner"]["background-color"].box,
+            controls["scrollbar-corner"]["background-color"].alpha.box,
         );
     });
-    on(cornerBackgroundAlphaRange, "input", () => {
+    on(controls["scrollbar-corner"]["background-color"].alpha.range, "input", () => {
         css["scrollbar-corner"]["background-color"] = getBackground(
-            controls["scrollbar-corner"]["background-color"],
-            cornerBackgroundAlphaInput,
+            controls["scrollbar-corner"]["background-color"].box,
+            controls["scrollbar-corner"]["background-color"].alpha.box,
         );
     });
+    
+    
+    controls["scrollbar-thumb"]["background-color"].box         = qs("#thumb-background-input");
+    controls["scrollbar-thumb"]["background-color"].alpha.box   = qs("#thumb-background-alpha-input");
+    controls["scrollbar-thumb"]["background-color"].alpha.range = qs("#thumb-background-alpha-range");
+    syncNumberInputAndRange(
+        controls["scrollbar-thumb"]["background-color"].alpha.box,
+        controls["scrollbar-thumb"]["background-color"].alpha.range,
+    );
+    on(controls["scrollbar-thumb"]["background-color"].box, "input", function () {
+        css["scrollbar-thumb"]["background-color"] = getBackground(
+            controls["scrollbar-thumb"]["background-color"].box,
+            controls["scrollbar-thumb"]["background-color"].alpha.box,
+        );
+    });
+    on(controls["scrollbar-thumb"]["background-color"].alpha.box, "input", () => {
+        css["scrollbar-thumb"]["background-color"] = getBackground(
+            controls["scrollbar-thumb"]["background-color"].box,
+            controls["scrollbar-thumb"]["background-color"].alpha.box,
+        );
+    });
+    on(controls["scrollbar-thumb"]["background-color"].alpha.range, "input", () => {
+        css["scrollbar-thumb"]["background-color"] = getBackground(
+            controls["scrollbar-thumb"]["background-color"].box,
+            controls["scrollbar-thumb"]["background-color"].alpha.box,
+        );
+    });
+    
     
     on([
-        controls.scrollbar.width,  qs("#scrollbar-width-range"),
-        controls.scrollbar.height, qs("#scrollbar-height-range"),
-        controls["scrollbar-track"]["background-color"],
-        trackBackgroundAlphaInput, trackBackgroundAlphaRange,
-        controls["scrollbar-corner"]["background-color"],
-        cornerBackgroundAlphaInput, cornerBackgroundAlphaRange,
-        controls["scrollbar-track"]["border-radius"], qs("#track-radius-range"),
+        controls.scrollbar.width.box,
+        controls.scrollbar.width.range,
+        
+        controls.scrollbar.height.box,
+        controls.scrollbar.height.range,
+        
+        controls["scrollbar-track"]["background-color"].box,
+        controls["scrollbar-track"]["background-color"].alpha.box,
+        controls["scrollbar-track"]["background-color"].alpha.range,
+        
+        controls["scrollbar-track"]["border-radius"].box,
+        controls["scrollbar-track"]["border-radius"].range,
+        
+        controls["scrollbar-corner"]["background-color"].box,
+        controls["scrollbar-corner"]["background-color"].alpha.box,
+        controls["scrollbar-corner"]["background-color"].alpha.range,
+        
+        controls["scrollbar-thumb"]["background-color"].box,
+        controls["scrollbar-thumb"]["background-color"].alpha.box,
+        controls["scrollbar-thumb"]["background-color"].alpha.range,
     ], "input", function () {
         applyCSS();
         outputCSS();
     });
     
 });
+
+function getBackgroundAlphaHex(input) {
+    let alpha = parseFloat(input.value) || 0;
+    let alphaScaled = Math.round(alpha * 255);
+    let alphaHex = alphaScaled.toString(16);
+    return alphaHex;
+}
+
+function getBackground(colorInput, alphaInput) {
+    let colorHex = colorInput.value;
+    let alphaHex = getBackgroundAlphaHex(alphaInput);
+    if (alphaHex == 0) {
+        alphaHex = "00";
+    }
+    if (alphaHex != "ff") {
+        colorHex += alphaHex;
+    }
+    return colorHex;
+}
 
 function syncColorAndTextInput(color, textInput) {
     color.addEventListener("input", () => {

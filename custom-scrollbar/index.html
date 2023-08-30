@@ -5,46 +5,19 @@
     <title>Custom Scrollbar Designer</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="script-loader.js"></script>
     <script>
-        let ScriptLoader = {
-            scripts : {
-                "https://raw.githubusercontent.com/akinuri/js-lib/master/html/qs.js" : {
-                    import : ["qs", "qsa"],
-                },
-                "https://raw.githubusercontent.com/akinuri/js-lib/master/event/on.js" : {
-                    import : ["on"],
-                },
-                "https://raw.githubusercontent.com/alexei/sprintf.js/master/dist/sprintf.min.js" : {
-                    import : ["sprintf"],
-                },
+        sl = new ScriptLoader({
+            "https://raw.githubusercontent.com/akinuri/js-lib/master/html/qs.js" : {
+                import : ["qs", "qsa"],
             },
-            load : function () {
-                window.addEventListener("ScriptLoaded", () => {
-                    if (ScriptLoader.areAllScriptsLoaded()) {
-                        window.dispatchEvent(new CustomEvent("AllScriptsLoaded"));
-                    }
-                });
-                for (let scriptURL in ScriptLoader.scripts) {
-                    let config = ScriptLoader.scripts[scriptURL];
-                    if (config.loaded != true) {
-                        fetch(scriptURL, {cache: "no-cache"})
-                            .then((response) => response.text())
-                            .then((text) => {
-                                eval(text);
-                                config.loaded = true;
-                                config.import.forEach(item => {
-                                    window[item] = eval(item);
-                                });
-                                window.dispatchEvent(new CustomEvent("ScriptLoaded", {detail: {src: scriptURL}}));
-                            });
-                    }
-                }
+            "https://raw.githubusercontent.com/akinuri/js-lib/master/event/on.js" : {
+                import : ["on"],
             },
-            areAllScriptsLoaded : function () {
-                return Object.values(ScriptLoader.scripts).every(config => config.loaded);
+            "https://raw.githubusercontent.com/alexei/sprintf.js/master/dist/sprintf.min.js" : {
+                import : ["sprintf"],
             },
-        };
-        ScriptLoader.load();
+        });
     </script>
 </head>
 <body class="bg-slate-100">
@@ -296,19 +269,45 @@
                         list="range-markers-alpha"
                         class="w-[100px] sm:w-[130px]"
                         >
-                    <datalist id="range-markers-alpha">
-                        <option>0.0</option>
-                        <option>0.1</option>
-                        <option>0.2</option>
-                        <option>0.3</option>
-                        <option>0.4</option>
-                        <option>0.5</option>
-                        <option>0.6</option>
-                        <option>0.7</option>
-                        <option>0.8</option>
-                        <option>0.9</option>
-                        <option>1.0</option>
-                    </datalist>
+                </td>
+            </tr>
+            
+        </table>
+        
+        <h3 class="font-medium border-b-[1px] border-b-slate-200">thumb</h3>
+        <table>
+            <tr>
+                <td>Background</td>
+                <td>
+                    <input
+                        type="color"
+                        id="thumb-background-input"
+                        value="#ffffff"
+                        class="w-20 border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
+                        >
+                </td>
+                <td>
+                    <input
+                        type="number"
+                        id="thumb-background-alpha-input"
+                        step="0.1"
+                        min="0"
+                        max="1"
+                        value="1"
+                        title="alpha"
+                        class="w-[60px] mr-1 border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
+                        >
+                    <input
+                        type="range"
+                        id="thumb-background-alpha-range"
+                        step="0.1"
+                        min="0"
+                        max="1"
+                        value="1"
+                        title="alpha"
+                        list="range-markers-alpha"
+                        class="w-[100px] sm:w-[130px]"
+                        >
                 </td>
             </tr>
             
@@ -352,7 +351,7 @@
 <script src="css.js"></script>
 <script src="controls.js"></script>
 <script>
-    window.addEventListener("AllScriptsLoaded", () => {
+    sl.onAllLoaded(() => {
         applyCSS();
         outputCSS();
         let copyCssBtn = qs("#copy-css-btn");
