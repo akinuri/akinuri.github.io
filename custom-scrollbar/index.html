@@ -26,323 +26,400 @@
     
     <h1 class="font-medium mx-auto w-fit text-2xl mb-4">Custom Scrollbar Designer</h1>
     
-    <div class="container mx-auto gap-4 p-4 text-slate-700 | grid grid-rows-3 | lg:grid-rows-none lg:grid-cols-2 | 2xl:grid-cols-3">
+    <div class="container mx-auto gap-6 p-4 text-slate-700 | grid | lg:gap-4 lg:grid-rows-none lg:grid-cols-2 | 2xl:grid-cols-3">
         
-        <div id="preview-card" class="p-4 shadow rounded flex gap-4 flex-col" style="--preview-bg: white; background-color: var(--preview-bg)">
-            <h2 class="text-lg font-medium">Preview</h2>
-            <div class="overflow-auto min-h-[20rem] max-h-[60vh] preview">
-                <div class="flex gap-4 flex-col w-[125%]">
-                    
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam at laoreet quam. Donec feugiat blandit blandit. Aliquam lobortis libero ac augue placerat luctus. Nulla nulla dolor, consectetur id enim id, semper laoreet nunc. Sed feugiat tempor ante, venenatis ultrices mauris tempor ut. Sed a nunc ullamcorper nibh laoreet euismod. Cras mattis auctor metus, varius pellentesque neque rutrum eget. In feugiat ornare felis, laoreet dapibus justo faucibus et. Cras sodales interdum dolor vel vestibulum. Mauris cursus at purus eget hendrerit. In eu bibendum enim. Suspendisse non metus enim.</p>
-                    
-                    <p>Etiam dignissim lacus eget consequat eleifend. Aliquam at risus dignissim nunc sodales pretium tempus eu dolor. Etiam elementum tortor eu ligula aliquam porta. Sed id condimentum lacus, in fermentum ex. Fusce eleifend lacus eget est dictum hendrerit vitae in lacus. Nam tincidunt elementum velit. Nullam lobortis sapien quis mauris scelerisque bibendum ut ut mi.</p>
-                    
-                    <p>Fusce aliquam vulputate tristique. Vivamus facilisis, neque aliquam vehicula sollicitudin, nisi est vehicula libero, vel rutrum dolor velit vitae dui. Etiam in convallis tortor. Vivamus pulvinar velit a nisl fringilla aliquam. Sed fringilla vestibulum nulla eu aliquam. Vivamus a bibendum erat, vel auctor arcu. Fusce non diam congue, dignissim justo ac, egestas sapien. Phasellus sit amet erat ut urna ornare cursus id non sem. In sit amet sem iaculis, semper lorem et, aliquet ex. Suspendisse eget condimentum ante. Proin mollis risus a libero ullamcorper, ac vulputate lacus pellentesque. Integer lacinia augue diam, eget finibus enim dignissim eu. Maecenas lorem erat, sollicitudin ac justo nec, luctus consectetur odio.</p>
-                    
-                    <p>Vestibulum vel finibus ante. Nullam vitae turpis et lectus pretium pharetra. Nam cursus porttitor purus nec porttitor. Maecenas a consequat dui, ac bibendum leo. Proin consectetur quam ipsum, sed porta libero vehicula vitae. Etiam scelerisque, risus ut tristique malesuada, quam diam tincidunt dui, vel efficitur turpis ex quis turpis. Sed faucibus, velit sit amet sagittis ornare, leo arcu molestie lorem, in lobortis ex risus nec dolor. Aenean tempus, quam sit amet pretium iaculis, velit diam tempor purus, vel feugiat velit dolor dignissim purus. Aenean ac diam enim. Ut sed turpis augue. In sed odio ut mi dapibus maximus id dapibus quam. Nulla tempor feugiat ex ultrices volutpat. Nunc eu tempus nulla, non luctus mi. Etiam blandit lacinia ex id hendrerit. Nunc tempus dolor id est volutpat, vel dignissim metus egestas.</p>
-                    
-                    <p>Vivamus tincidunt bibendum odio id laoreet. Mauris eget arcu scelerisque, consectetur magna sagittis, convallis tellus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nullam mollis ultrices metus non venenatis. Suspendisse purus ante, eleifend vitae lectus sollicitudin, vestibulum luctus felis. Sed vestibulum, quam in consectetur sagittis, tellus arcu laoreet arcu, quis pulvinar nisi ipsum a odio. Mauris pulvinar magna eget sapien semper vulputate.</p>
-                    
+        <div class="flex flex-col gap-1">
+            <h2 class="text-lg font-medium pl-1">Preview</h2>
+            <div id="preview-card" class="p-4 shadow rounded flex gap-4 flex-col" style="--preview-bg: white; background-color: var(--preview-bg)">
+                <div class="overflow-auto min-h-[20rem] max-h-[60vh] preview">
+                    <div class="flex gap-4 flex-col w-[125%]">
+                        
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam at laoreet quam. Donec feugiat blandit blandit. Aliquam lobortis libero ac augue placerat luctus. Nulla nulla dolor, consectetur id enim id, semper laoreet nunc. Sed feugiat tempor ante, venenatis ultrices mauris tempor ut. Sed a nunc ullamcorper nibh laoreet euismod. Cras mattis auctor metus, varius pellentesque neque rutrum eget. In feugiat ornare felis, laoreet dapibus justo faucibus et. Cras sodales interdum dolor vel vestibulum. Mauris cursus at purus eget hendrerit. In eu bibendum enim. Suspendisse non metus enim.</p>
+                        
+                        <p>Etiam dignissim lacus eget consequat eleifend. Aliquam at risus dignissim nunc sodales pretium tempus eu dolor. Etiam elementum tortor eu ligula aliquam porta. Sed id condimentum lacus, in fermentum ex. Fusce eleifend lacus eget est dictum hendrerit vitae in lacus. Nam tincidunt elementum velit. Nullam lobortis sapien quis mauris scelerisque bibendum ut ut mi.</p>
+                        
+                        <p>Fusce aliquam vulputate tristique. Vivamus facilisis, neque aliquam vehicula sollicitudin, nisi est vehicula libero, vel rutrum dolor velit vitae dui. Etiam in convallis tortor. Vivamus pulvinar velit a nisl fringilla aliquam. Sed fringilla vestibulum nulla eu aliquam. Vivamus a bibendum erat, vel auctor arcu. Fusce non diam congue, dignissim justo ac, egestas sapien. Phasellus sit amet erat ut urna ornare cursus id non sem. In sit amet sem iaculis, semper lorem et, aliquet ex. Suspendisse eget condimentum ante. Proin mollis risus a libero ullamcorper, ac vulputate lacus pellentesque. Integer lacinia augue diam, eget finibus enim dignissim eu. Maecenas lorem erat, sollicitudin ac justo nec, luctus consectetur odio.</p>
+                        
+                        <p>Vestibulum vel finibus ante. Nullam vitae turpis et lectus pretium pharetra. Nam cursus porttitor purus nec porttitor. Maecenas a consequat dui, ac bibendum leo. Proin consectetur quam ipsum, sed porta libero vehicula vitae. Etiam scelerisque, risus ut tristique malesuada, quam diam tincidunt dui, vel efficitur turpis ex quis turpis. Sed faucibus, velit sit amet sagittis ornare, leo arcu molestie lorem, in lobortis ex risus nec dolor. Aenean tempus, quam sit amet pretium iaculis, velit diam tempor purus, vel feugiat velit dolor dignissim purus. Aenean ac diam enim. Ut sed turpis augue. In sed odio ut mi dapibus maximus id dapibus quam. Nulla tempor feugiat ex ultrices volutpat. Nunc eu tempus nulla, non luctus mi. Etiam blandit lacinia ex id hendrerit. Nunc tempus dolor id est volutpat, vel dignissim metus egestas.</p>
+                        
+                        <p>Vivamus tincidunt bibendum odio id laoreet. Mauris eget arcu scelerisque, consectetur magna sagittis, convallis tellus. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nullam mollis ultrices metus non venenatis. Suspendisse purus ante, eleifend vitae lectus sollicitudin, vestibulum luctus felis. Sed vestibulum, quam in consectetur sagittis, tellus arcu laoreet arcu, quis pulvinar nisi ipsum a odio. Mauris pulvinar magna eget sapien semper vulputate.</p>
+                        
+                    </div>
                 </div>
             </div>
         </div>
         
-        <div class="bg-white p-4 shadow rounded flex gap-4 flex-col">
-            
-            <h2 class="text-lg font-medium">Controls</h2>
-            
-            <h3 class="font-medium border-b-[1px] border-b-slate-200">preview</h3>
-            <table class="w-fit">
-                <tr>
-                    <td class="pr-4">Background</td>
-                    <td>
-                        <input
-                            type="color"
-                            id="preview-background-input"
-                            value="#ffffff"
-                            class="w-20 border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
-                            >
-                    </td>
-                    <td></td>
-                </tr>
-            </table>
-            
-            <h3 class="font-medium border-b-[1px] border-b-slate-200">scrollbar</h3>
-            <table>
-                <tr>
-                    <td>Width</td>
-                    <td>
-                        <input
-                            type="number"
-                            id="scrollbar-width-input"
-                            step="1"
-                            min="0"
-                            max="32"
-                            value="10"
-                            class="border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
-                            >
-                        px
-                    </td>
-                    <td>
-                        <input
-                            type="range"
-                            id="scrollbar-width-range"
-                            step="1"
-                            min="0"
-                            max="32"
-                            value="10"
-                            list="range-markers-4x"
-                            class="w-[150px] sm:w-[200px]"
-                            >
-                        <datalist id="range-markers-4x">
-                            <option value="0"></option>
-                            <option value="4"></option>
-                            <option value="8"></option>
-                            <option value="12"></option>
-                            <option value="16"></option>
-                            <option value="20"></option>
-                            <option value="24"></option>
-                            <option value="28"></option>
-                            <option value="32"></option>
-                        </datalist>
-                    </td>
-                </tr>
-                <tr>
-                    <td>Height</td>
-                    <td>
-                        <input
-                            type="number"
-                            id="scrollbar-height-input"
-                            step="1"
-                            min="0"
-                            max="32"
-                            value="10"
-                            class="border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
-                            >
-                        px
-                    </td>
-                    <td>
-                        <input
-                            type="range"
-                            id="scrollbar-height-range"
-                            step="1"
-                            min="0"
-                            max="32"
-                            value="10"
-                            list="range-markers-4x"
-                            class="w-[150px] sm:w-[200px]"
-                            >
-                    </td>
-                </tr>
-            </table>
-            
-            <h3 class="font-medium border-b-[1px] border-b-slate-200">track</h3>
-            <table>
-                <tr>
-                    <td>Background</td>
-                    <td>
-                        <input
-                            type="color"
-                            id="track-background-input"
-                            value="#f2f2f2"
-                            class="w-20 border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
-                            >
-                    </td>
-                    <td>
-                        <input
-                            type="number"
-                            id="track-background-alpha-input"
-                            step="0.1"
-                            min="0"
-                            max="1"
-                            value="1"
-                            title="alpha"
-                            class="w-[60px] mr-1 border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
-                            >
-                        <input
-                            type="range"
-                            id="track-background-alpha-range"
-                            step="0.1"
-                            min="0"
-                            max="1"
-                            value="1"
-                            title="alpha"
-                            list="range-markers-alpha"
-                            class="w-[100px] sm:w-[130px]"
-                            >
-                        <datalist id="range-markers-alpha">
-                            <option>0.0</option>
-                            <option>0.1</option>
-                            <option>0.2</option>
-                            <option>0.3</option>
-                            <option>0.4</option>
-                            <option>0.5</option>
-                            <option>0.6</option>
-                            <option>0.7</option>
-                            <option>0.8</option>
-                            <option>0.9</option>
-                            <option>1.0</option>
-                        </datalist>
-                    </td>
-                </tr>
-                <!-- <tr>
-                    <td></td>
-                    <td colspan="2" class="pb-2">
-                        <input
-                            type="text"
-                            id="track-background-text"
-                            value="hsla(0, 0%, 95%, 0.9)"
-                            class="w-full border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70 read-only:opacity-75"
-                            readonly
-                            >
-                    </td>
-                </tr> -->
-                <tr>
-                    <td>Radius</td>
-                    <td>
-                        <input
-                            type="number"
-                            id="track-radius-input"
-                            step="1"
-                            min="0"
-                            max="16"
-                            value="4"
-                            class="border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
-                            >
-                        px
-                    </td>
-                    <td>
-                        <input
-                            type="range"
-                            id="track-radius-range"
-                            step="1"
-                            min="0"
-                            max="16"
-                            value="4"
-                            list="range-markers-2x"
-                            class="w-[150px] sm:w-[200px]"
-                            >
-                        <datalist id="range-markers-2x">
-                            <option value="0"></option>
-                            <option value="2"></option>
-                            <option value="4"></option>
-                            <option value="6"></option>
-                            <option value="8"></option>
-                            <option value="10"></option>
-                            <option value="12"></option>
-                            <option value="14"></option>
-                            <option value="16"></option>
-                        </datalist>
-                    </td>
-                </tr>
-            </table>
-            
-            <h3 class="font-medium border-b-[1px] border-b-slate-200">corner</h3>
-            <table>
-                <tr>
-                    <td>Background</td>
-                    <td>
-                        <input
-                            type="color"
-                            id="corner-background-input"
-                            value="#ffffff"
-                            class="w-20 border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
-                            >
-                    </td>
-                    <td>
-                        <input
-                            type="number"
-                            id="corner-background-alpha-input"
-                            step="0.1"
-                            min="0"
-                            max="1"
-                            value="1"
-                            title="alpha"
-                            class="w-[60px] mr-1 border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
-                            >
-                        <input
-                            type="range"
-                            id="corner-background-alpha-range"
-                            step="0.1"
-                            min="0"
-                            max="1"
-                            value="1"
-                            title="alpha"
-                            list="range-markers-alpha"
-                            class="w-[100px] sm:w-[130px]"
-                            >
-                    </td>
-                </tr>
+        <div class="flex flex-col gap-1">
                 
-            </table>
+            <h2 class="text-lg font-medium pl-1">Controls</h2>
             
-            <h3 class="font-medium border-b-[1px] border-b-slate-200">thumb</h3>
-            <table>
-                <tr>
-                    <td>Background</td>
-                    <td>
-                        <input
-                            type="color"
-                            id="thumb-background-input"
-                            value="#bfbfbf"
-                            class="w-20 border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
-                            >
-                    </td>
-                    <td>
-                        <input
-                            type="number"
-                            id="thumb-background-alpha-input"
-                            step="0.1"
-                            min="0"
-                            max="1"
-                            value="1"
-                            title="alpha"
-                            class="w-[60px] mr-1 border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
-                            >
-                        <input
-                            type="range"
-                            id="thumb-background-alpha-range"
-                            step="0.1"
-                            min="0"
-                            max="1"
-                            value="1"
-                            title="alpha"
-                            list="range-markers-alpha"
-                            class="w-[100px] sm:w-[130px]"
-                            >
-                    </td>
-                </tr>
+            <div class="flex flex-col gap-2">
                 
-            </table>
+                <div class="bg-white p-4 shadow rounded flex gap-4 flex-col">
+                    
+                    <h3 class="font-medium border-b-[1px] border-b-slate-200 -mt-1">preview</h3>
+                    <table class="w-fit">
+                        <tr>
+                            <td class="pr-4">Background</td>
+                            <td>
+                                <input
+                                    type="color"
+                                    id="preview-background-input"
+                                    value="#ffffff"
+                                    class="w-20 border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
+                                    >
+                            </td>
+                            <td></td>
+                        </tr>
+                    </table>
+                    
+                </div>
+                
+                <div class="bg-white p-4 shadow rounded flex gap-4 flex-col">
+                    
+                    <h3 class="font-medium border-b-[1px] border-b-slate-200 -mt-1">scrollbar</h3>
+                    <table>
+                        <tr>
+                            <td>Width</td>
+                            <td>
+                                <input
+                                    type="number"
+                                    id="scrollbar-width-input"
+                                    step="1"
+                                    min="0"
+                                    max="32"
+                                    value="10"
+                                    class="border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
+                                    >
+                                px
+                            </td>
+                            <td>
+                                <input
+                                    type="range"
+                                    id="scrollbar-width-range"
+                                    step="1"
+                                    min="0"
+                                    max="32"
+                                    value="10"
+                                    list="range-markers-4x"
+                                    class="w-[150px] sm:w-[200px]"
+                                    >
+                                <datalist id="range-markers-4x">
+                                    <option value="0"></option>
+                                    <option value="4"></option>
+                                    <option value="8"></option>
+                                    <option value="12"></option>
+                                    <option value="16"></option>
+                                    <option value="20"></option>
+                                    <option value="24"></option>
+                                    <option value="28"></option>
+                                    <option value="32"></option>
+                                </datalist>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Height</td>
+                            <td>
+                                <input
+                                    type="number"
+                                    id="scrollbar-height-input"
+                                    step="1"
+                                    min="0"
+                                    max="32"
+                                    value="10"
+                                    class="border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
+                                    >
+                                px
+                            </td>
+                            <td>
+                                <input
+                                    type="range"
+                                    id="scrollbar-height-range"
+                                    step="1"
+                                    min="0"
+                                    max="32"
+                                    value="10"
+                                    list="range-markers-4x"
+                                    class="w-[150px] sm:w-[200px]"
+                                    >
+                            </td>
+                        </tr>
+                    </table>
+                    
+                </div>
+                
+                <div class="bg-white p-4 shadow rounded flex gap-4 flex-col">
+                    
+                    <h3 class="font-medium border-b-[1px] border-b-slate-200 -mt-1">track</h3>
+                    <table>
+                        <tr>
+                            <td>Background</td>
+                            <td>
+                                <input
+                                    type="color"
+                                    id="track-background-input"
+                                    value="#f2f2f2"
+                                    class="w-20 border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
+                                    >
+                            </td>
+                            <td>
+                                <input
+                                    type="number"
+                                    id="track-background-alpha-input"
+                                    step="0.1"
+                                    min="0"
+                                    max="1"
+                                    value="1"
+                                    title="alpha"
+                                    class="w-[60px] mr-1 border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
+                                    >
+                                <input
+                                    type="range"
+                                    id="track-background-alpha-range"
+                                    step="0.1"
+                                    min="0"
+                                    max="1"
+                                    value="1"
+                                    title="alpha"
+                                    list="range-markers-alpha"
+                                    class="w-[100px] sm:w-[130px]"
+                                    >
+                                <datalist id="range-markers-alpha">
+                                    <option>0.0</option>
+                                    <option>0.1</option>
+                                    <option>0.2</option>
+                                    <option>0.3</option>
+                                    <option>0.4</option>
+                                    <option>0.5</option>
+                                    <option>0.6</option>
+                                    <option>0.7</option>
+                                    <option>0.8</option>
+                                    <option>0.9</option>
+                                    <option>1.0</option>
+                                </datalist>
+                            </td>
+                        </tr>
+                        <!-- <tr>
+                            <td></td>
+                            <td colspan="2" class="pb-2">
+                                <input
+                                    type="text"
+                                    id="track-background-text"
+                                    value="hsla(0, 0%, 95%, 0.9)"
+                                    class="w-full border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70 read-only:opacity-75"
+                                    readonly
+                                    >
+                            </td>
+                        </tr> -->
+                        <tr>
+                            <td>Radius</td>
+                            <td>
+                                <input
+                                    type="number"
+                                    id="track-radius-input"
+                                    step="1"
+                                    min="0"
+                                    max="16"
+                                    value="4"
+                                    class="border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
+                                    >
+                                px
+                            </td>
+                            <td>
+                                <input
+                                    type="range"
+                                    id="track-radius-range"
+                                    step="1"
+                                    min="0"
+                                    max="16"
+                                    value="4"
+                                    list="range-markers-2x"
+                                    class="w-[150px] sm:w-[200px]"
+                                    >
+                                <datalist id="range-markers-2x">
+                                    <option value="0"></option>
+                                    <option value="2"></option>
+                                    <option value="4"></option>
+                                    <option value="6"></option>
+                                    <option value="8"></option>
+                                    <option value="10"></option>
+                                    <option value="12"></option>
+                                    <option value="14"></option>
+                                    <option value="16"></option>
+                                </datalist>
+                            </td>
+                        </tr>
+                    </table>
+                    
+                </div>
+                
+                <div class="bg-white p-4 shadow rounded flex gap-4 flex-col">
+                    
+                    <h3 class="font-medium border-b-[1px] border-b-slate-200 -mt-1">corner</h3>
+                    <table>
+                        <tr>
+                            <td>Background</td>
+                            <td>
+                                <input
+                                    type="color"
+                                    id="corner-background-input"
+                                    value="#ffffff"
+                                    class="w-20 border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
+                                    >
+                            </td>
+                            <td>
+                                <input
+                                    type="number"
+                                    id="corner-background-alpha-input"
+                                    step="0.1"
+                                    min="0"
+                                    max="1"
+                                    value="1"
+                                    title="alpha"
+                                    class="w-[60px] mr-1 border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
+                                    >
+                                <input
+                                    type="range"
+                                    id="corner-background-alpha-range"
+                                    step="0.1"
+                                    min="0"
+                                    max="1"
+                                    value="1"
+                                    title="alpha"
+                                    list="range-markers-alpha"
+                                    class="w-[100px] sm:w-[130px]"
+                                    >
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Radius</td>
+                            <td>
+                                <input
+                                    type="number"
+                                    id="corner-radius-input"
+                                    step="1"
+                                    min="0"
+                                    max="16"
+                                    value="0"
+                                    class="border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
+                                    >
+                                px
+                            </td>
+                            <td>
+                                <input
+                                    type="range"
+                                    id="corner-radius-range"
+                                    step="1"
+                                    min="0"
+                                    max="16"
+                                    value="0"
+                                    list="range-markers-2x"
+                                    class="w-[150px] sm:w-[200px]"
+                                    >
+                            </td>
+                        </tr>
+                    </table>
+                    
+                </div>
+                
+                <div class="bg-white p-4 shadow rounded flex gap-4 flex-col">
+                    
+                    <h3 class="font-medium border-b-[1px] border-b-slate-200 -mt-1">thumb</h3>
+                    <table>
+                        <tr>
+                            <td>Background</td>
+                            <td>
+                                <input
+                                    type="color"
+                                    id="thumb-background-input"
+                                    value="#bfbfbf"
+                                    class="w-20 border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
+                                    >
+                            </td>
+                            <td>
+                                <input
+                                    type="number"
+                                    id="thumb-background-alpha-input"
+                                    step="0.1"
+                                    min="0"
+                                    max="1"
+                                    value="1"
+                                    title="alpha"
+                                    class="w-[60px] mr-1 border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
+                                    >
+                                <input
+                                    type="range"
+                                    id="thumb-background-alpha-range"
+                                    step="0.1"
+                                    min="0"
+                                    max="1"
+                                    value="1"
+                                    title="alpha"
+                                    list="range-markers-alpha"
+                                    class="w-[100px] sm:w-[130px]"
+                                    >
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Radius</td>
+                            <td>
+                                <input
+                                    type="number"
+                                    id="thumb-radius-input"
+                                    step="1"
+                                    min="0"
+                                    max="16"
+                                    value="4"
+                                    class="border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
+                                    >
+                                px
+                            </td>
+                            <td>
+                                <input
+                                    type="range"
+                                    id="thumb-radius-range"
+                                    step="1"
+                                    min="0"
+                                    max="16"
+                                    value="4"
+                                    list="range-markers-2x"
+                                    class="w-[150px] sm:w-[200px]"
+                                    >
+                            </td>
+                        </tr>
+                    </table>
+                    
+                </div>
+                
+            </div>
             
-            <p class="mt-4 bg-yellow-500/10 text-yellow-800 px-2 py-1 rounded border border-yellow-500/10">
-                To be added.
-            </p>
         </div>
         
-        <div class="bg-white p-4 shadow rounded flex gap-4 flex-col relative min-h-[20rem] lg:col-start-1 lg:col-end-3 2xl:col-start-auto 2xl:col-end-auto">
-            <h2 class="text-lg font-medium">CSS</h2>
-            <button id="copy-css-btn" class="flex gap-1 bg-gray-100 rounded shadow px-2 py-1 absolute right-2 top-2 hover:bg-gray-200 active:bg-gray-300">
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="w-6 h-6"
-                    >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75"
-                        />
-                </svg>
-                <span>Copy</span>
-            </button>
-            <style>
-                body pre code.hljs { padding: 0; }
-            </style>
-            <pre class="text-xs language-css max-h-[70vh] overflow-auto"><code id="css-output"></code></pre>
+        <div class="flex flex-col gap-1">
+            <h2 class="text-lg font-medium pl-1">CSS</h2>
+            <div class="bg-white p-4 shadow rounded flex gap-4 flex-col relative min-h-[20rem] lg:col-start-1 lg:col-end-3 2xl:col-start-auto 2xl:col-end-auto">
+                <button id="copy-css-btn" class="flex gap-1 bg-gray-100 rounded shadow px-2 py-1 absolute right-2 top-2 hover:bg-gray-200 active:bg-gray-300">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="w-6 h-6"
+                        >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75"
+                            />
+                    </svg>
+                    <span>Copy</span>
+                </button>
+                <style>
+                    body pre code.hljs { padding: 0; }
+                </style>
+                <pre class="text-xs language-css max-h-[70vh] overflow-auto"><code id="css-output"></code></pre>
+            </div>
         </div>
         
     </div>

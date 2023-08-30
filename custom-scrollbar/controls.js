@@ -33,6 +33,10 @@ let controls = {
                 "range" : null,
             },
         },
+        "border-radius" : {
+            "box" : null,
+            "range" : null,
+        },
     },
     "scrollbar-thumb" : {
         "background-color" : {
@@ -42,7 +46,10 @@ let controls = {
                 "range" : null,
             },
         },
-        "border-radius" : null,
+        "border-radius" : {
+            "box" : null,
+            "range" : null,
+        },
         "border" : {
             "width" : null,
             "style" : null,
@@ -152,6 +159,21 @@ sl.onAllLoaded(() => {
         );
     });
     
+    controls["scrollbar-corner"]["border-radius"].box   = qs("#corner-radius-input");
+    controls["scrollbar-corner"]["border-radius"].range = qs("#corner-radius-range");
+    on([
+        controls["scrollbar-corner"]["border-radius"].box,
+        controls["scrollbar-corner"]["border-radius"].range,
+    ], "input", function () {
+        if (!["0", "", NaN].includes(this.value)) {
+            css["scrollbar-corner"]["border-radius"] = this.value + "px";
+        }
+    });
+    syncNumberInputAndRange(
+        controls["scrollbar-corner"]["border-radius"].box,
+        controls["scrollbar-corner"]["border-radius"].range,
+    );
+    
     
     controls["scrollbar-thumb"]["background-color"].box         = qs("#thumb-background-input");
     controls["scrollbar-thumb"]["background-color"].alpha.box   = qs("#thumb-background-alpha-input");
@@ -179,6 +201,21 @@ sl.onAllLoaded(() => {
         );
     });
     
+    controls["scrollbar-thumb"]["border-radius"].box   = qs("#thumb-radius-input");
+    controls["scrollbar-thumb"]["border-radius"].range = qs("#thumb-radius-range");
+    on([
+        controls["scrollbar-thumb"]["border-radius"].box,
+        controls["scrollbar-thumb"]["border-radius"].range,
+    ], "input", function () {
+        if (!["0", "", NaN].includes(this.value)) {
+            css["scrollbar-thumb"]["border-radius"] = this.value + "px";
+        }
+    });
+    syncNumberInputAndRange(
+        controls["scrollbar-thumb"]["border-radius"].box,
+        controls["scrollbar-thumb"]["border-radius"].range,
+    );
+    
     
     on([
         controls.scrollbar.width.box,
@@ -198,9 +235,15 @@ sl.onAllLoaded(() => {
         controls["scrollbar-corner"]["background-color"].alpha.box,
         controls["scrollbar-corner"]["background-color"].alpha.range,
         
+        controls["scrollbar-corner"]["border-radius"].box,
+        controls["scrollbar-corner"]["border-radius"].range,
+        
         controls["scrollbar-thumb"]["background-color"].box,
         controls["scrollbar-thumb"]["background-color"].alpha.box,
         controls["scrollbar-thumb"]["background-color"].alpha.range,
+        
+        controls["scrollbar-thumb"]["border-radius"].box,
+        controls["scrollbar-thumb"]["border-radius"].range,
     ], "input", function () {
         applyCSS();
         outputCSS();

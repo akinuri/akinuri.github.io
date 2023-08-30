@@ -9,6 +9,7 @@ let css = {
     },
     "scrollbar-corner" : {
         "background-color" : "#ffffff",
+        "border-radius" : "0",
     },
     "scrollbar-thumb" : {
         "background-color" : "#bfbfbf",
