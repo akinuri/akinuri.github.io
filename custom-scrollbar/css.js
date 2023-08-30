@@ -4,14 +4,14 @@ let css = {
         "height" : "10px",
     },
     "scrollbar-track" : {
-        "background-color" : "hsla(0, 0%, 95%, 0.9)",
+        "background-color" : "#f2f2f2",
         "border-radius" : "4px",
     },
     "scrollbar-corner" : {
-        "background-color" : "hsla(0, 0%, 100%)",
+        "background-color" : "#ffffff",
     },
     "scrollbar-thumb" : {
-        "background-color" : "hsla(0, 0%, 75%, 0.95)",
+        "background-color" : "#bfbfbf",
         "border-radius" : "4px",
         "border" : {
             "width" : "2px",
@@ -27,6 +27,8 @@ let css = {
         "background-color" : "hsla(0, 0%, 65%, 0.95)",
     },
 };
+
+// TODO: add option for output color format
 
 function generateCSSText(selectorPrefix = "") {
     let rulesText = [];
