@@ -55,7 +55,7 @@
             
             <div class="flex flex-col gap-2">
                 
-                <div class="bg-white p-4 shadow rounded flex gap-4 flex-col">
+                <div class="bg-white p-3 shadow rounded flex gap-3 flex-col">
                     
                     <h3 class="font-medium border-b-[1px] border-b-slate-200 -mt-1">preview</h3>
                     <table class="w-fit">
@@ -75,7 +75,7 @@
                     
                 </div>
                 
-                <div class="bg-white p-4 shadow rounded flex gap-4 flex-col">
+                <div class="bg-white p-3 shadow rounded flex gap-3 flex-col">
                     
                     <h3 class="font-medium border-b-[1px] border-b-slate-200 -mt-1">scrollbar</h3>
                     <table>
@@ -137,7 +137,7 @@
                     
                 </div>
                 
-                <div class="bg-white p-4 shadow rounded flex gap-4 flex-col">
+                <div class="bg-white p-3 shadow rounded flex gap-3 flex-col">
                     
                     <h3 class="font-medium border-b-[1px] border-b-slate-200 -mt-1">track</h3>
                     <table>
@@ -216,7 +216,7 @@
                     
                 </div>
                 
-                <div class="bg-white p-4 shadow rounded flex gap-4 flex-col">
+                <div class="bg-white p-3 shadow rounded flex gap-3 flex-col">
                     
                     <h3 class="font-medium border-b-[1px] border-b-slate-200 -mt-1">corner</h3>
                     <table>
@@ -283,7 +283,7 @@
                     
                 </div>
                 
-                <div class="bg-white p-4 shadow rounded flex gap-4 flex-col">
+                <div class="bg-white p-3 shadow rounded flex gap-3 flex-col">
                     
                     <h3 class="font-medium border-b-[1px] border-b-slate-200 -mt-1">thumb</h3>
                     <table>
@@ -393,6 +393,39 @@
                                     <option>inset</option>
                                     <option>outset</option>
                                 </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="pl-4">Color</td>
+                            <td>
+                                <input
+                                    type="color"
+                                    id="thumb-border-color-input"
+                                    value="#000"
+                                    class="w-20 border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
+                                    >
+                            </td>
+                            <td>
+                                <input
+                                    type="number"
+                                    id="thumb-border-color-alpha-input"
+                                    step="0.1"
+                                    min="0"
+                                    max="1"
+                                    value="0"
+                                    title="alpha"
+                                    class="w-[60px] mr-1 border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
+                                    >
+                                <input
+                                    type="range"
+                                    id="thumb-border-color-alpha-range"
+                                    step="0.1"
+                                    min="0"
+                                    max="1"
+                                    value="0"
+                                    title="alpha"
+                                    class="w-[100px] sm:w-[130px]"
+                                    >
                             </td>
                         </tr>
                     </table>
