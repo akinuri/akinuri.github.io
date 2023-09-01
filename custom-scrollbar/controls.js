@@ -234,6 +234,13 @@ sl.onAllLoaded(() => {
         controls["scrollbar-thumb"]["border"]["width"].range,
     );
     
+    controls["scrollbar-thumb"]["border"]["width"].select = qs("#thumb-border-style-select");
+    on([
+        controls["scrollbar-thumb"]["border"]["width"].select,
+    ], "input", function () {
+        css["scrollbar-thumb"]["border"]["style"] = this.value;
+    });
+    
     
     on([
         controls.scrollbar.width.box,
@@ -265,6 +272,8 @@ sl.onAllLoaded(() => {
         
         controls["scrollbar-thumb"]["border"]["width"].box,
         controls["scrollbar-thumb"]["border"]["width"].range,
+        
+        controls["scrollbar-thumb"]["border"]["width"].select,
     ], "input", function () {
         applyCSS();
         outputCSS();
