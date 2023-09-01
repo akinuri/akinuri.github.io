@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Dimensions - Fit</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        :root {
+            --container-size: 200px;
+            --img-scale-factor: 0.15;
+            --img-scaled-down: calc(var(--container-size) * (1 - var(--img-scale-factor)));
+            --img-scaled-up: calc(var(--container-size) * (1 + var(--img-scale-factor)));
+        }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 p-8">
+
+<div class="flex flex-col gap-20">
+    
+    <div class="flex gap-10">
+        
+        <div class="img-container bg-gray-200 w-[var(--container-size)] aspect-square relative outline-dashed outline-1 shadow-md outline-gray-400">
+            <div class="img absolute bg-red-200/50 w-[var(--container-size)] aspect-square"></div>
+        </div>
+        
+        <div class="img-container bg-gray-200 w-[var(--container-size)] aspect-square relative outline-dashed outline-1 shadow-md outline-gray-400">
+            <div class="img absolute bg-red-200/50 w-[var(--img-scaled-down)] aspect-square"></div>
+        </div>
+        
+        <div class="img-container bg-gray-200 w-[var(--container-size)] aspect-square relative outline-dashed outline-1 shadow-md outline-gray-400">
+            <div class="img absolute bg-red-200/50 w-[var(--img-scaled-up)] aspect-square"></div>
+        </div>
+        
+    </div>
+    
+    <div class="flex gap-10">
+        
+        <div class="img-container bg-gray-200 w-[var(--container-size)] aspect-square relative outline-dashed outline-1 shadow-md outline-gray-400">
+            <div class="img absolute bg-red-200/50 w-[var(--container-size)] aspect-[2/3]"></div>
+        </div>
+        
+        <div class="img-container bg-gray-200 w-[var(--container-size)] aspect-square relative outline-dashed outline-1 shadow-md outline-gray-400">
+            <div class="img absolute bg-red-200/50 w-[var(--img-scaled-down)] aspect-[3/4]"></div>
+        </div>
+        
+        <div class="img-container bg-gray-200 w-[var(--container-size)] aspect-square relative outline-dashed outline-1 shadow-md outline-gray-400">
+            <div class="img absolute bg-red-200/50 w-[var(--img-scaled-up)] aspect-[4/5]"></div>
+        </div>
+        
+    </div>
+    
+    <div class="flex gap-24 mt-12">
+        
+        <div class="img-container bg-gray-200 w-[var(--container-size)] aspect-square relative outline-dashed outline-1 shadow-md outline-gray-400 mr-8">
+            <div class="img absolute bg-red-200/50 h-[var(--container-size)] aspect-[3/2]"></div>
+        </div>
+        
+        <div class="img-container bg-gray-200 w-[var(--container-size)] aspect-square relative outline-dashed outline-1 shadow-md outline-gray-400">
+            <div class="img absolute bg-red-200/50 h-[var(--img-scaled-down)] aspect-[4/3]"></div>
+        </div>
+        
+        <div class="img-container bg-gray-200 w-[var(--container-size)] aspect-square relative outline-dashed outline-1 shadow-md outline-gray-400">
+            <div class="img absolute bg-red-200/50 h-[var(--img-scaled-up)] aspect-[5/4]"></div>
+        </div>
+        
+    </div>
+    
+</div>
+
+<div class="fixed top-4 right-4 p-4 flex gap-4 bg-slate-200/80 shadow rounded">
+    <div class="flex gap-2 items-center">
+        <span>Alignment :</span>
+        <select class="rounded h-7">
+            <option>left top</option>
+            <option>left center</option>
+            <option>left bottom</option>
+            <option>center top</option>
+            <option selected>center center</option>
+            <option>center bottom</option>
+            <option>right top</option>
+            <option>right center</option>
+            <option>right bottom</option>
+        </select>
+    </div>
+    <div class="flex gap-4">
+        <button id="fit" class="bg-blue-200 px-3 py-1 rounded hover:bg-blue-300/75 active:bg-blue-400/60">Fit</button>
+        <button id="fill" class="bg-green-300/80 px-3 py-1 rounded hover:bg-green-400/50 active:bg-green-400/75 opacity-30 cursor-not-allowed">Fill</button>
+        <button id="reset" class="bg-slate-300 px-3 py-1 rounded hover:bg-slate-400/50 active:bg-slate-400/75">Reset</button>
+    </div>
+</div>
+
+<script src="dimensions/fit.js"></script>
+<script>
+    
+    let items = Array.from(document.querySelectorAll(".img-container"));
+    items = items.map(container => [container, container.children[0]]);
+    
+    resetItems();
+    
+    document.querySelector("#reset").addEventListener("click", resetItems);
+    document.querySelector("#fit").addEventListener("click", fitItems);
+    
+    function resetItems() {
+        items.forEach(entry => {
+            [containerEl, contentEl] = entry;
+            contentEl.style.width  = "";
+            contentEl.style.height = "";
+            contentEl.style.top    = "";
+            contentEl.style.left   = "";
+            contentEl.style.right  = "";
+            contentEl.style.bottom = "";
+            printElSize(contentEl);
+        });
+    }
+    
+    function fitItems() {
+        items.forEach(entry => {
+            [containerEl, contentEl] = entry;
+            let fitInfo = fit(
+                contentEl.clientWidth,
+                contentEl.clientHeight,
+                containerEl.clientWidth,
+                containerEl.clientHeight,
+                document.querySelector("select").value,
+            );
+            contentEl.style.width  = fitInfo.width + "px";
+            contentEl.style.height = fitInfo.height + "px";
+            if (fitInfo.top    != null) contentEl.style.top    = fitInfo.top + "px";
+            if (fitInfo.left   != null) contentEl.style.left   = fitInfo.left + "px";
+            if (fitInfo.right  != null) contentEl.style.right  = fitInfo.right + "px";
+            if (fitInfo.bottom != null) contentEl.style.bottom = fitInfo.bottom + "px";
+            printElSize(contentEl);
+        });
+    }
+    
+    function printElSize(el) {
+        el.textContent = `${el.clientWidth} × ${el.clientHeight}`;
+    }
+    
+</script>
+
+</body>
+</html>
