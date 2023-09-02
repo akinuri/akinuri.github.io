@@ -46,6 +46,7 @@ let controls = {
                 "range" : null,
             },
         },
+        "background-clip" : null,
         "border-radius" : {
             "box" : null,
             "range" : null,
@@ -240,9 +241,9 @@ sl.onAllLoaded(() => {
         controls["scrollbar-thumb"]["border"]["width"].range,
     );
     
-    controls["scrollbar-thumb"]["border"]["width"].select = qs("#thumb-border-style-select");
+    controls["scrollbar-thumb"]["border"]["style"] = qs("#thumb-border-style-select");
     on([
-        controls["scrollbar-thumb"]["border"]["width"].select,
+        controls["scrollbar-thumb"]["border"]["style"],
     ], "input", function () {
         css["scrollbar-thumb"]["border"]["style"] = this.value;
     });
@@ -271,6 +272,13 @@ sl.onAllLoaded(() => {
             controls["scrollbar-thumb"]["border"]["color"].box,
             controls["scrollbar-thumb"]["border"]["color"].alpha.box,
         );
+    });
+    
+    controls["scrollbar-thumb"]["background-clip"] = qs("#thumb-background-clip-select");
+    on([
+        controls["scrollbar-thumb"]["background-clip"],
+    ], "input", function () {
+        css["scrollbar-thumb"]["background-clip"] = this.value;
     });
     
     
@@ -305,11 +313,13 @@ sl.onAllLoaded(() => {
         controls["scrollbar-thumb"]["border"]["width"].box,
         controls["scrollbar-thumb"]["border"]["width"].range,
         
-        controls["scrollbar-thumb"]["border"]["width"].select,
+        controls["scrollbar-thumb"]["border"]["style"],
         
         controls["scrollbar-thumb"]["border"]["color"].box,
         controls["scrollbar-thumb"]["border"]["color"].alpha.box,
         controls["scrollbar-thumb"]["border"]["color"].alpha.range,
+        
+        controls["scrollbar-thumb"]["background-clip"],
     ], "input", function () {
         applyCSS();
         outputCSS();
