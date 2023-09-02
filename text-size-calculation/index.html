@@ -8,11 +8,59 @@
 </head>
 <body class="bg-slate-200 p-4">
 
-<div class="flex gap-4 mb-4 items-center">
-    <select id="local-fonts" class="p-2 rounded shadow">
-        <option value="" class="text-gray-400">Select a font</option>
-    </select>
-    <button class="bg-slate-50 rounded px-3 py-1 shadow text-sm" onclick="loadLocalFonts(this)">Load local fonts</button>
+<div class="flex flex-col gap-4 items-start text-slate-700">
+    <div class="flex gap-4 items-center">
+        <select id="local-fonts" class="p-2 rounded shadow">
+            <option value="" class="text-gray-400">Select a font</option>
+        </select>
+        <button
+            class="bg-slate-50 rounded px-3 py-1 shadow text-sm hover:bg-slate-100 active:bg-slate-100/70"
+            onclick="loadLocalFonts(this)"
+            >
+            Load Local Fonts
+        </button>
+    </div>
+    <div>
+        <span class="inline-block w-20">Uppercase</span>
+        <input
+            type="text"
+            class="px-2 py-1 border border-slate-300 w-96 rounded"
+            value="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            id="uppercase-letters"
+            >
+    </div>
+    <div>
+        <span class="inline-block w-20">Lowercase</span>
+        <input
+            type="text"
+            class="px-2 py-1 border border-slate-300 w-96 rounded"
+            value="abcdefghijklmnopqrstuvwxyz"
+            id="lowercase-letters"
+            >
+    </div>
+    <div>
+        <span class="inline-block w-20">Other</span>
+        <input
+            type="text"
+            class="px-2 py-1 border border-slate-300 w-96 rounded"
+            value="&nbsp;!&quot;\#$%&'()*+,-./:;<=\&gt;?@[\]^_`{|}~"
+            id="other-letters"
+            >
+    </div>
+    <button
+        class="bg-slate-50 rounded px-3 py-1 shadow hover:bg-slate-100 active:bg-slate-100/70"
+        onclick="printLetters()"
+        >
+        Print Letters
+    </button>
+</div>
+
+<hr class="my-4 border-slate-300">
+
+<div id="letters-container" class="flex flex-col gap-4 font-[Calibri] text-[50px] leading-none">
+    <div class="flex items-center gap-4" id="uppercase-container"></div>
+    <div class="flex items-center gap-4" id="lowercase-container"></div>
+    <div class="flex items-center gap-4" id="other-container"></div>
 </div>
 
 <script>
@@ -39,6 +87,30 @@
             `;
         });
         btn.remove();
+    }
+    
+    let lettersContainer    = document.querySelector("#letters-container");
+    let uppercaseContainer  = document.querySelector("#uppercase-container");
+    let lowercaseContainer  = document.querySelector("#lowercase-container");
+    let otherContainer      = document.querySelector("#other-container");
+    
+    let uppercaseLettersBox = document.querySelector("#uppercase-letters");
+    let lowercaseLettersBox = document.querySelector("#lowercase-letters");
+    let otherLettersBox = document.querySelector("#other-letters");
+    
+    function printLetters() {
+        uppercaseContainer.innerHTML = "";
+        uppercaseLettersBox.value.split("").forEach(letter => {
+            uppercaseContainer.innerHTML += `<div class="bg-white shadow">${letter}</div>`;
+        });
+        lowercaseContainer.innerHTML = "";
+        lowercaseLettersBox.value.split("").forEach(letter => {
+            lowercaseContainer.innerHTML += `<div class="bg-white shadow">${letter}</div>`;
+        });
+        otherContainer.innerHTML = "";
+        otherLettersBox.value.split("").forEach(letter => {
+            otherContainer.innerHTML += `<div class="bg-white shadow">${letter}</div>`;
+        });
     }
 </script>
 
