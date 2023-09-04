@@ -33,8 +33,8 @@
 </div>
 
 <script>
-    function getInfo() {
-        return {
+    async function getInfo() {
+        let info = {
             "os"                        : "header",
             "date.getTimezoneOffset()"  : new Date().getTimezoneOffset(),
             "window"                    : "header",
@@ -56,6 +56,7 @@
             "navigator"                 : "header",
             "navigator.deviceMemory"    : navigator.deviceMemory,
             "navigator.hardwareConcurrency" : navigator.hardwareConcurrency,
+            "navigator.keyboard.getKeyboardLayout()" : "",
             "navigator.language"        : navigator.language,
             "navigator.languages"       : navigator.languages?.join(", "),
             "navigator.maxTouchPoints"  : navigator.maxTouchPoints,
@@ -69,9 +70,23 @@
             "ontouchstart"              : "ontouchstart" in window,
             "onmousemove"               : "onmousemove" in window,
         }
+        if (navigator.keyboard) {
+            let layoutJSON = "";
+            await navigator.keyboard.getLayoutMap().then((keyboardLayoutMap) => {
+                layoutJSON = JSON.stringify(Object.fromEntries(keyboardLayoutMap.entries()), null, " ");
+            });
+            layoutJSON = layoutJSON.replace(/("[^"]+"):/g, (match, group) => {
+                return `<span style="color: hsl(220 50% 50%)">${group}</span>:`;
+            });
+            layoutJSON = layoutJSON.replace(/("[^"]+"),/g, (match, group) => {
+                return `<span style="color: hsl(0 50% 50%)">${group}</span>,`;
+            });
+            info["navigator.keyboard.getKeyboardLayout()"] = layoutJSON;
+        }
+        return info;
     }
-    function printInfo() {
-        let info = getInfo();
+    async function printInfo() {
+        let info = await getInfo();
         let table = document.querySelector("table");
         table.innerHTML = null;
         for (let piece in info) {
@@ -84,6 +99,9 @@
             } else {
                 if (value == undefined) {
                     value = "<span style='opacity: 0.25'>" + value + "</span>";
+                }
+                else if (value.length >= 100) {
+                    value = "<div style='font-family: monospace; font-size: 13px; line-height: 1.4; max-width: 50rem; word-break: break-word;'>" + value + "</div>";
                 }
                 row = `<tr>
                     <td>${piece}</td>
