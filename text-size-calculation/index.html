@@ -40,12 +40,12 @@
             >
     </div>
     <div>
-        <span class="inline-block w-20">Numbers</span>
+        <span class="inline-block w-20">Digits</span>
         <input
             type="text"
             class="px-2 py-1 border border-slate-300 w-96 rounded"
             value="0123456789"
-            id="numbers"
+            id="digits"
             >
     </div>
     <div>
@@ -53,16 +53,10 @@
         <input
             type="text"
             class="px-2 py-1 border border-slate-300 w-96 rounded"
-            value="&nbsp;!&quot;\#$%&'()*+,-./:;<=\&gt;?@[\]^_`{|}~€₺"
-            id="other-letters"
+            value="&nbsp;,;:.!?&quot;'+-*/\<&gt;=%()[]{}^`~_|@#&$€"
+            id="other-chars"
             >
     </div>
-    <button
-        class="bg-slate-50 rounded px-3 py-1 shadow hover:bg-slate-100 active:bg-slate-100/70"
-        onclick="printLetters()"
-        >
-        Print Letters
-    </button>
 </div>
 
 <hr class="my-4 border-slate-300">
@@ -70,7 +64,7 @@
 <div id="letters-container" class="flex flex-col gap-4 font-[Arial] text-[50px] leading-none">
     <div class="flex items-center gap-4" id="uppercase-container"></div>
     <div class="flex items-center gap-4" id="lowercase-container"></div>
-    <div class="flex items-center gap-4" id="numbers-container"></div>
+    <div class="flex items-center gap-4" id="digits-container"></div>
     <div class="flex items-center gap-4" id="other-container"></div>
 </div>
 
@@ -81,13 +75,13 @@
     
     let uppercaseContainer  = document.querySelector("#uppercase-container");
     let lowercaseContainer  = document.querySelector("#lowercase-container");
-    let numbersContainer    = document.querySelector("#numbers-container");
+    let digitsContainer     = document.querySelector("#digits-container");
     let otherContainer      = document.querySelector("#other-container");
     
     let uppercaseLettersBox = document.querySelector("#uppercase-letters");
     let lowercaseLettersBox = document.querySelector("#lowercase-letters");
-    let numbersBox          = document.querySelector("#numbers");
-    let otherLettersBox     = document.querySelector("#other-letters");
+    let digitsBox           = document.querySelector("#digits");
+    let otherCharsBox       = document.querySelector("#other-chars");
     
     localFontsEl.addEventListener("change", () => {
         let value = localFontsEl.value;
@@ -97,7 +91,18 @@
         lettersContainer.style.fontFamily = value;
     });
     
-    printLetters();
+    uppercaseLettersBox.addEventListener("input", printUppercaseLetters);
+    lowercaseLettersBox.addEventListener("input", printLowercaseLetters);
+    digitsBox.addEventListener("input", printDigits);
+    otherCharsBox.addEventListener("input", printOtherCharacters);
+    [
+        uppercaseLettersBox,
+        lowercaseLettersBox,
+        digitsBox,
+        otherCharsBox,
+    ].forEach(el => el.dispatchEvent(new Event("input")));
+    
+    // #region ==================== FUNCTIONS
     
     async function loadLocalFonts(callerBtn) {
         let fonts = await getFontData();
@@ -124,6 +129,7 @@
             console.error(err.name, err.message);
         }
     }
+    
     function groupByProperty(arr, property) {
         return arr.reduce((acc, obj) => {
             const key = obj[property];
@@ -135,24 +141,33 @@
         }, {});
     }
     
-    function printLetters() {
+    function printUppercaseLetters() {
         uppercaseContainer.innerHTML = "";
         uppercaseLettersBox.value.split("").forEach(letter => {
             uppercaseContainer.innerHTML += `<div class="bg-white shadow">${letter}</div>`;
         });
+    }
+    function printLowercaseLetters() {
         lowercaseContainer.innerHTML = "";
         lowercaseLettersBox.value.split("").forEach(letter => {
             lowercaseContainer.innerHTML += `<div class="bg-white shadow">${letter}</div>`;
         });
-        numbersContainer.innerHTML = "";
-        numbersBox.value.split("").forEach(number => {
-            numbersContainer.innerHTML += `<div class="bg-white shadow">${number}</div>`;
+    }
+    function printDigits() {
+        digitsContainer.innerHTML = "";
+        digitsBox.value.split("").forEach(digit => {
+            digitsContainer.innerHTML += `<div class="bg-white shadow">${digit}</div>`;
         });
+    }
+    function printOtherCharacters() {
         otherContainer.innerHTML = "";
-        otherLettersBox.value.split("").forEach(letter => {
+        otherCharsBox.value.split("").forEach(letter => {
             otherContainer.innerHTML += `<div class="bg-white shadow">${letter}</div>`;
         });
     }
+    
+    //#endregion
+    
 </script>
 
 </body>
