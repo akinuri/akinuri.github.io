@@ -71,7 +71,7 @@
 <div class="fixed top-4 right-4 p-4 flex gap-4 bg-slate-200/80 shadow rounded">
     <div class="flex gap-2 items-center">
         <span>Alignment :</span>
-        <select class="rounded h-7">
+        <select class="rounded h-7" id="alignment">
             <option>left top</option>
             <option>left center</option>
             <option>left bottom</option>
@@ -85,23 +85,45 @@
     </div>
     <div class="flex gap-4">
         <button id="fit" class="bg-blue-200 px-3 py-1 rounded hover:bg-blue-300/75 active:bg-blue-400/60">Fit</button>
-        <button id="fill" class="bg-green-300/80 px-3 py-1 rounded hover:bg-green-400/50 active:bg-green-400/75 opacity-30 cursor-not-allowed">Fill</button>
+        <button id="fill" class="bg-green-300/80 px-3 py-1 rounded hover:bg-green-400/50 active:bg-green-400/75">Fill</button>
         <button id="reset" class="bg-slate-300 px-3 py-1 rounded hover:bg-slate-400/50 active:bg-slate-400/75">Reset</button>
     </div>
 </div>
 
 <script src="dimensions/fit.js"></script>
+<script src="dimensions/fill.js"></script>
 <script>
     
     let items = Array.from(document.querySelectorAll(".img-container"));
     items = items.map(container => [container, container.children[0]]);
     
-    resetItems();
+    let lastAction = null; // fit or fill
     
-    document.querySelector("#reset").addEventListener("click", resetItems);
-    document.querySelector("#fit").addEventListener("click", fitItems);
+    document.querySelector("#reset").addEventListener("click", () => resetUI(true, true));
+    document.querySelector("#fit").addEventListener("click", function () {
+        resetUI();
+        placeItems("fit");
+        lastAction = "fit";
+        this.classList.add("ring", "ring-offset-1");
+        document.querySelector("#fill").classList.remove("ring", "ring-offset-1");
+    });
+    document.querySelector("#fill").addEventListener("click", function () {
+        resetUI();
+        placeItems("fill");
+        lastAction = "fill";
+        this.classList.add("ring", "ring-offset-1");
+        document.querySelector("#fit").classList.remove("ring", "ring-offset-1");
+    });
+    document.querySelector("#alignment").addEventListener("change", () => {
+        if (lastAction) {
+            resetUI();
+            placeItems(lastAction);
+        }
+    });
     
-    function resetItems() {
+    resetUI();
+    
+    function resetUI(resetState = false, resetAlignment = false) {
         items.forEach(entry => {
             [containerEl, contentEl] = entry;
             contentEl.style.width  = "";
@@ -112,24 +134,32 @@
             contentEl.style.bottom = "";
             printElSize(contentEl);
         });
+        if (resetState) {
+            lastAction = null;
+            document.querySelector("#fill").classList.remove("ring", "ring-offset-1");
+            document.querySelector("#fit").classList.remove("ring", "ring-offset-1");
+        }
+        if (resetAlignment) {
+            document.querySelector("#alignment").value = "center center";
+        }
     }
     
-    function fitItems() {
+    function placeItems(placeMethod) {
         items.forEach(entry => {
             [containerEl, contentEl] = entry;
-            let fitInfo = fit(
+            let placeInfo = window[placeMethod](
                 contentEl.clientWidth,
                 contentEl.clientHeight,
                 containerEl.clientWidth,
                 containerEl.clientHeight,
-                document.querySelector("select").value,
+                document.querySelector("#alignment").value,
             );
-            contentEl.style.width  = fitInfo.width + "px";
-            contentEl.style.height = fitInfo.height + "px";
-            if (fitInfo.top    != null) contentEl.style.top    = fitInfo.top + "px";
-            if (fitInfo.left   != null) contentEl.style.left   = fitInfo.left + "px";
-            if (fitInfo.right  != null) contentEl.style.right  = fitInfo.right + "px";
-            if (fitInfo.bottom != null) contentEl.style.bottom = fitInfo.bottom + "px";
+            contentEl.style.width  = placeInfo.width + "px";
+            contentEl.style.height = placeInfo.height + "px";
+            if (placeInfo.top    != null) contentEl.style.top    = placeInfo.top + "px";
+            if (placeInfo.left   != null) contentEl.style.left   = placeInfo.left + "px";
+            if (placeInfo.right  != null) contentEl.style.right  = placeInfo.right + "px";
+            if (placeInfo.bottom != null) contentEl.style.bottom = placeInfo.bottom + "px";
             printElSize(contentEl);
         });
     }
