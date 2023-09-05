@@ -5,24 +5,43 @@
     <title>Text Size Calculator</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .cell-border :is(td, th) {
+                @apply border;
+            }
+            .cell-px-2 :is(td, th) {
+                @apply px-2;
+            }
+            .cell-py-1 :is(td, th) {
+                @apply py-1;
+            }
+            .cell-border-slate-300 :is(td, th) {
+                @apply border-slate-300;
+            }
+        }
+    </style>
 </head>
 <body class="bg-slate-200 p-4">
 
 <div class="flex flex-col gap-4 items-start text-slate-700">
-    <div class="flex gap-4 items-center">
-        <select id="local-fonts" class="p-2 rounded shadow" data-placeholder="Select a font">
-            <option class="text-gray-400">Select a font</option>
-            <option selected style="font-family: Arial, sans-serif;">Arial</option>
-        </select>
-        <button
-            class="bg-slate-50 rounded px-3 py-1 shadow hover:bg-slate-100 active:bg-slate-100/70"
-            onclick="loadLocalFonts(this)"
-            >
-            Load Local Fonts
-        </button>
+    <div>
+        <span class="inline-block w-24">Font Family</span>
+        <div class="inline-flex gap-3 items-center">
+            <select id="local-fonts" class="p-2 rounded shadow" data-placeholder="Select a font">
+                <option class="text-gray-400">Select a font</option>
+                <option selected style="font-family: Arial, sans-serif;">Arial</option>
+            </select>
+            <button
+                class="bg-slate-50 rounded px-3 py-1 shadow hover:bg-slate-100 active:bg-slate-100/70"
+                onclick="loadLocalFonts(this)"
+                >
+                Load Local Fonts
+            </button>
+        </div>
     </div>
     <div>
-        <span class="inline-block w-20">Uppercase</span>
+        <span class="inline-block w-24">Uppercase</span>
         <input
             type="text"
             class="px-2 py-1 border border-slate-300 w-96 rounded"
@@ -31,7 +50,7 @@
             >
     </div>
     <div>
-        <span class="inline-block w-20">Lowercase</span>
+        <span class="inline-block w-24">Lowercase</span>
         <input
             type="text"
             class="px-2 py-1 border border-slate-300 w-96 rounded"
@@ -40,7 +59,7 @@
             >
     </div>
     <div>
-        <span class="inline-block w-20">Digits</span>
+        <span class="inline-block w-24">Digits</span>
         <input
             type="text"
             class="px-2 py-1 border border-slate-300 w-96 rounded"
@@ -49,7 +68,7 @@
             >
     </div>
     <div>
-        <span class="inline-block w-20">Other</span>
+        <span class="inline-block w-24">Other</span>
         <input
             type="text"
             class="px-2 py-1 border border-slate-300 w-96 rounded"
@@ -66,6 +85,62 @@
     <div class="flex items-center gap-4" id="lowercase-container"></div>
     <div class="flex items-center gap-4" id="digits-container"></div>
     <div class="flex items-center gap-4" id="other-container"></div>
+</div>
+
+<hr class="my-4 border-slate-300">
+
+<div class="flex gap-4 items-start text-slate-700">
+    <button
+        class="bg-slate-50 rounded px-3 py-1 shadow hover:bg-slate-100 active:bg-slate-100/70"
+        onclick="printCharWidthRatios()"
+        >
+        Calculate Widths
+    </button>
+</div>
+
+<hr class="my-4 border-slate-300">
+
+<div class="flex flex-col gap-4 items-start">
+    
+    <div class="flex items-start">
+        <span class="inline-block mr-4">Enter text to test</span>
+        <div
+            class="bg-white shadow outline-dashed w-fit min-w-[2rem] max-w-[30rem] outline-1 outline-slate-400 leading-none mt-1"
+            contenteditable
+            ></div>
+    </div>
+    
+    <table class="cell-border cell-border-slate-300 cell-px-2 cell-py-1 bg-white/50">
+        <thead>
+            <tr>
+                <th></th>
+                <th>HTML</th>
+                <th>Calculated</th>
+                <th>Match (%)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Width</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Height</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>Lines</td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+    
 </div>
 
 <script>
@@ -164,6 +239,58 @@
         otherCharsBox.value.split("").forEach(letter => {
             otherContainer.innerHTML += `<div class="bg-white shadow">${letter}</div>`;
         });
+    }
+    
+    function printCharWidthRatios() {
+        let charWidthRatios = calculateCharWidthRatios();
+        let containers = {
+            uppercase : uppercaseContainer,
+            lowercase : lowercaseContainer,
+            digit     : digitsContainer,
+            other     : otherContainer,
+        };
+        for (let containerName in containers) {
+            let containerEl = containers[containerName];
+            for (let charEl of Array.from(containerEl.children)) {
+                let char = charEl.textContent.trim();
+                if (char == "") {
+                    char = " ";
+                }
+                charEl.title = charWidthRatios[containerName][char];
+                charEl.classList.add("shadow", "shadow-sky-500/50");
+            }
+        }
+    }
+    
+    function calculateCharWidthRatios() {
+        let charWidths = {
+            uppercase : {},
+            lowercase : {},
+            digit     : {},
+            other     : {},
+        };
+        let containers = {
+            uppercase : uppercaseContainer,
+            lowercase : lowercaseContainer,
+            digit     : digitsContainer,
+            other     : otherContainer,
+        };
+        for (let containerName in containers) {
+            let containerEl = containers[containerName];
+            for (let charEl of Array.from(containerEl.children)) {
+                let char   = charEl.textContent.trim();
+                if (char == "") {
+                    char = " ";
+                }
+                let width  = getComputedStyle(charEl).width;
+                let height = getComputedStyle(charEl).height;
+                width  = parseFloat(width);
+                height = parseFloat(height);
+                let widthRatio = width / height;
+                charWidths[containerName][char] = widthRatio;
+            }
+        }
+        return charWidths;
     }
     
     //#endregion
