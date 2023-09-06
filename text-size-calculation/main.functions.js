@@ -84,13 +84,17 @@ function printTextSize() {
     output.htmlWidth.textContent  = toFixed(htmlWidth, 3);
     output.htmlHeight.textContent = toFixed(htmlHeight, 3);
     output.htmlLines.textContent  = toFixed(htmlLines, 3);
-    let size = calcTextSize(text, 16, charWidthRatiosDict);
+    let maxWidth = Infinity;
+    if (isElMaxWidthReached(textEl)) {
+        maxWidth = getElMaxWidth(textEl);
+    }
+    let size = calcTextSize(text, 16, charWidthRatiosDict, maxWidth);
     output.calcWidth.textContent   = toFixed(size.width, 3);
     output.calcHeight.textContent  = toFixed(size.height, 3);
-    output.calcLines.textContent   = toFixed(size.lines, 3);
+    output.calcLines.textContent   = toFixed(size.lines.length, 3);
     output.matchWidth.textContent  = toFixed(size.width / htmlWidth, 3);
     output.matchHeight.textContent = toFixed(size.height / htmlHeight, 3);
-    output.matchLines.textContent  = toFixed(size.lines / htmlLines, 3);
+    output.matchLines.textContent  = toFixed(size.lines.length / htmlLines, 3);
 }
 
 function toFixed(number, precision) {

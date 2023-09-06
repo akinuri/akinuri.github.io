@@ -40,29 +40,55 @@ function calculateCharWidthRatios(charElems) {
     return ratios;
 }
 
-function calcTextSize(text, fontSize, charWidthRatios, maxWidth = null) {
+function calcTextSize(text, fontSize, charWidthRatios, containerWidth = null) {
+    containerWidth = containerWidth || Infinity;
     let size = {
         width   : 0,
         height  : 0,
-        lines   : 0,
+        lines   : [],
+        containerWidth : containerWidth,
     };
-    // TODO: detect word breaking, max width, lines
     let words = text.split(" ");
-    for (let i = 0; i < words.length; i++) {
-        let word = words[i];
-        let chars = word.split("");
-        for (let char of chars) {
-            if (char in charWidthRatios) {
-                size.width += charWidthRatios[char] * fontSize;
-            } else {
-                console.warn(`The character ${char} could not be found in the width ratios dictionary.`);
-            }
+    let line = [];
+    while (words.length != 0) {
+        let word = words.shift();
+        line.push(word);
+        let lineWidth = calcSingleLineTextWidth(line.join(" "), fontSize, charWidthRatios);
+        let lineOverflows = lineWidth >= containerWidth;
+        if (lineOverflows) {
+            words.unshift(line.pop());
+            size.lines.push(line);
+            line = [];
         }
-        if (words.length != 1 && i != words.length - 1) {
-            size.width += charWidthRatios[" "] * fontSize;
+        lineWidth = calcSingleLineTextWidth(line.join(" "), fontSize, charWidthRatios);
+        size.width = Math.max(size.width, lineWidth);
+        if (words.length == 0 && line.length != 0) {
+            size.lines.push(line);
         }
     }
-    size.height = fontSize;
-    size.lines = size.height / fontSize;
+    size.height = size.lines.length * fontSize;
     return size;
+}
+
+function calcSingleLineTextWidth(text, fontSize, charWidthRatios) {
+    let width = 0;
+    let chars = text.split("");
+    for (let char of chars) {
+        if (char in charWidthRatios) {
+            width += charWidthRatios[char] * fontSize;
+        } else {
+            console.warn(`The character ${char} could not be found in the width ratios dictionary.`);
+        }
+    }
+    return width;
+}
+
+function getElMaxWidth(el) {
+    let maxWidth = getComputedStyle(el).maxWidth;
+    maxWidth = maxWidth != "none" ? parseFloat(maxWidth) : Infinity;
+    return maxWidth;
+}
+
+function isElMaxWidthReached(el) {
+    return el.clientWidth >= getElMaxWidth(el);
 }
