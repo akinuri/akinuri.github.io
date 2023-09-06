@@ -40,6 +40,21 @@ function calculateCharWidthRatios(charElems) {
     return ratios;
 }
 
+function getTextFromEditableEl(el) {
+    let text = "";
+    const paragraphs = el.querySelectorAll("div");
+    if (paragraphs.length) {
+        text = [];
+        paragraphs.forEach(paragraph => {
+            text.push(paragraph.textContent.trim());
+        });
+        text = text.join("\n");
+    } else {
+        text = el.textContent.trim();
+    }
+    return text;
+}
+
 function calcTextSize(text, fontSize, charWidthRatios, containerWidth = null) {
     containerWidth = containerWidth || Infinity;
     let size = {
@@ -48,24 +63,32 @@ function calcTextSize(text, fontSize, charWidthRatios, containerWidth = null) {
         lines   : [],
         containerWidth : containerWidth,
     };
-    let words = text.split(" ");
-    let line = [];
-    while (words.length != 0) {
-        let word = words.shift();
-        line.push(word);
-        let lineWidth = calcSingleLineTextWidth(line.join(" "), fontSize, charWidthRatios);
-        let lineOverflows = lineWidth >= containerWidth;
-        if (lineOverflows) {
-            words.unshift(line.pop());
-            size.lines.push(line);
-            line = [];
+    let spacedParagraphs = text.split("\n\n");
+    for (let spacedParagraph of spacedParagraphs) {
+        let adjacentParagraphs = spacedParagraph.split("\n");
+        for (let adjacenParagraph of adjacentParagraphs) {
+            let words = adjacenParagraph.split(" ");
+            let line = [];
+            while (words.length != 0) {
+                let word = words.shift();
+                line.push(word);
+                let lineWidth = calcSingleLineTextWidth(line.join(" "), fontSize, charWidthRatios);
+                if (lineWidth >= containerWidth) {
+                    words.unshift(line.pop());
+                    size.lines.push(line);
+                    line = [];
+                }
+                lineWidth = calcSingleLineTextWidth(line.join(" "), fontSize, charWidthRatios);
+                size.width = Math.max(size.width, lineWidth);
+                if (words.length == 0 && line.length != 0) {
+                    size.lines.push(line);
+                }
+            }
+            line.push("\n");
         }
-        lineWidth = calcSingleLineTextWidth(line.join(" "), fontSize, charWidthRatios);
-        size.width = Math.max(size.width, lineWidth);
-        if (words.length == 0 && line.length != 0) {
-            size.lines.push(line);
-        }
+        size.lines.push(["\n"]);
     }
+    size.lines.pop();
     size.height = size.lines.length * fontSize;
     return size;
 }

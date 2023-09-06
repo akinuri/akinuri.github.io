@@ -77,7 +77,7 @@ function updateCharWidthRatiosDict(containers) {
 
 function printTextSize() {
     let textEl     = document.querySelector("div[contentEditable]");
-    let text       = textEl.textContent.trim();
+    let text       = getTextFromEditableEl(textEl);
     let htmlWidth  = parseFloat(getComputedStyle(textEl).width);
     let htmlHeight = parseFloat(getComputedStyle(textEl).height);
     let htmlLines  = htmlHeight / 16;
