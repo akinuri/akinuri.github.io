@@ -22,7 +22,7 @@
         }
     </style>
 </head>
-<body class="bg-slate-200 p-4 [--font-family:Arial]">
+<body class="bg-slate-200 p-4 [--font-family:Arial] pb-[20vh]">
 
 <div class="flex flex-col gap-4 items-start text-slate-700">
     <div>
@@ -92,7 +92,7 @@
 
 <hr class="my-4 border-slate-300">
 
-<div class="flex flex-col gap-4 items-start mb-[20vh]">
+<div class="flex flex-col gap-4 items-start">
     
     <div class="flex items-start">
         <span class="inline-block mr-4">Enter text to test</span>
@@ -142,6 +142,16 @@
     </table>
     
 </div>
+
+<hr class="my-4 border-slate-300">
+
+<button
+    class="bg-slate-50 rounded px-3 py-1 shadow hover:bg-slate-100 active:bg-slate-100/70"
+    onclick="downloadCharWidthRatiosDict()"
+    title="Character width/height ratios in the specified font family"
+    >
+    Download Dictionary
+</button>
 
 <script src="utils.js"></script>
 <script src="main.functions.js"></script>

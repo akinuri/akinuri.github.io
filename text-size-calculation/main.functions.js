@@ -106,3 +106,25 @@ function toFixed(number, precision) {
     }
     return number;
 }
+
+function downloadCharWidthRatiosDict() {
+    downloadViaAnchor(
+        createJSONObjURL(charWidthRatiosDict),
+        localFontSelect.value.toLowerCase() + "-width-ratio-dict.json",
+    );
+}
+
+function createJSONObjURL(obj) {
+    const str = JSON.stringify(obj);
+    const blob = new Blob([str], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    return url;
+}
+
+function downloadViaAnchor(url, filename) {
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = filename;
+    anchor.click();
+    URL.revokeObjectURL(url);
+}
