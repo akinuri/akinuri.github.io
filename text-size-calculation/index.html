@@ -22,7 +22,7 @@
         }
     </style>
 </head>
-<body class="bg-slate-200 p-4">
+<body class="bg-slate-200 p-4 [--font-family:Arial]">
 
 <div class="flex flex-col gap-4 items-start text-slate-700">
     <div>
@@ -30,7 +30,7 @@
         <div class="inline-flex gap-3 items-center">
             <select id="local-fonts" class="p-2 rounded shadow" data-placeholder="Select a font">
                 <option class="text-gray-400">Select a font</option>
-                <option selected style="font-family: Arial, sans-serif;">Arial</option>
+                <option selected style="font-family: var(--font-family)">Arial</option>
             </select>
             <button
                 class="bg-slate-50 rounded px-3 py-1 shadow hover:bg-slate-100 active:bg-slate-100/70"
@@ -80,7 +80,10 @@
 
 <hr class="my-4 border-slate-300">
 
-<div id="letters-container" class="flex flex-col gap-4 font-[Arial] text-[50px] leading-none">
+<div
+    class="flex flex-col gap-4 text-[50px] leading-none"
+    style="font-family: var(--font-family)"
+    >
     <div class="flex items-center gap-4" id="uppercase-container"></div>
     <div class="flex items-center gap-4" id="lowercase-container"></div>
     <div class="flex items-center gap-4" id="digits-container"></div>
@@ -89,24 +92,15 @@
 
 <hr class="my-4 border-slate-300">
 
-<div class="flex gap-4 items-start text-slate-700">
-    <button
-        class="bg-slate-50 rounded px-3 py-1 shadow hover:bg-slate-100 active:bg-slate-100/70"
-        onclick="printCharWidthRatios()"
-        >
-        Calculate Widths
-    </button>
-</div>
-
-<hr class="my-4 border-slate-300">
-
-<div class="flex flex-col gap-4 items-start">
+<div class="flex flex-col gap-4 items-start mb-[20vh]">
     
     <div class="flex items-start">
         <span class="inline-block mr-4">Enter text to test</span>
         <div
             class="bg-white shadow outline-dashed w-fit min-w-[2rem] max-w-[30rem] outline-1 outline-slate-400 leading-none mt-1"
+            style="font-family: var(--font-family)"
             contenteditable
+            oninput="printTextSize()"
             ></div>
     </div>
     
@@ -122,180 +116,30 @@
         <tbody>
             <tr>
                 <td>Width</td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td id="html-width"></td>
+                <td id="calc-width"></td>
+                <td id="match-width"></td>
             </tr>
             <tr>
                 <td>Height</td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td id="html-height"></td>
+                <td id="calc-height"></td>
+                <td id="match-height"></td>
             </tr>
             <tr>
                 <td>Lines</td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td id="html-lines"></td>
+                <td id="calc-lines"></td>
+                <td id="match-lines"></td>
             </tr>
         </tbody>
     </table>
     
 </div>
 
-<script>
-    let localFontsEl = document.querySelector("#local-fonts");
-    
-    let lettersContainer = document.querySelector("#letters-container");
-    
-    let uppercaseContainer  = document.querySelector("#uppercase-container");
-    let lowercaseContainer  = document.querySelector("#lowercase-container");
-    let digitsContainer     = document.querySelector("#digits-container");
-    let otherContainer      = document.querySelector("#other-container");
-    
-    let uppercaseLettersBox = document.querySelector("#uppercase-letters");
-    let lowercaseLettersBox = document.querySelector("#lowercase-letters");
-    let digitsBox           = document.querySelector("#digits");
-    let otherCharsBox       = document.querySelector("#other-chars");
-    
-    localFontsEl.addEventListener("change", () => {
-        let value = localFontsEl.value;
-        if (value == localFontsEl.dataset.placeholder) {
-            value = "";
-        }
-        lettersContainer.style.fontFamily = value;
-    });
-    
-    uppercaseLettersBox.addEventListener("input", printUppercaseLetters);
-    lowercaseLettersBox.addEventListener("input", printLowercaseLetters);
-    digitsBox.addEventListener("input", printDigits);
-    otherCharsBox.addEventListener("input", printOtherCharacters);
-    [
-        uppercaseLettersBox,
-        lowercaseLettersBox,
-        digitsBox,
-        otherCharsBox,
-    ].forEach(el => el.dispatchEvent(new Event("input")));
-    
-    // #region ==================== FUNCTIONS
-    
-    async function loadLocalFonts(callerBtn) {
-        let fonts = await getFontData();
-        if (fonts.length == 0) {
-            return;
-        }
-        localFontsEl.lastElementChild.remove();
-        let fontFamilies = groupByProperty(fonts, "family");
-        Object.keys(fontFamilies).forEach(family => {
-            let selected = "";
-            if (family == "Arial") {
-                selected = " selected";
-            }
-            localFontsEl.innerHTML += `
-                <option${selected} style="font-family: '${family}'">${family}</option>
-            `;
-        });
-        callerBtn.remove();
-    }
-    async function getFontData() {
-        try {
-            return await window.queryLocalFonts();
-        } catch (err) {
-            console.error(err.name, err.message);
-        }
-    }
-    
-    function groupByProperty(arr, property) {
-        return arr.reduce((acc, obj) => {
-            const key = obj[property];
-            if (!acc[key]) {
-                acc[key] = [];
-            }
-            acc[key].push(obj);
-            return acc;
-        }, {});
-    }
-    
-    function printUppercaseLetters() {
-        uppercaseContainer.innerHTML = "";
-        uppercaseLettersBox.value.split("").forEach(letter => {
-            uppercaseContainer.innerHTML += `<div class="bg-white shadow">${letter}</div>`;
-        });
-    }
-    function printLowercaseLetters() {
-        lowercaseContainer.innerHTML = "";
-        lowercaseLettersBox.value.split("").forEach(letter => {
-            lowercaseContainer.innerHTML += `<div class="bg-white shadow">${letter}</div>`;
-        });
-    }
-    function printDigits() {
-        digitsContainer.innerHTML = "";
-        digitsBox.value.split("").forEach(digit => {
-            digitsContainer.innerHTML += `<div class="bg-white shadow">${digit}</div>`;
-        });
-    }
-    function printOtherCharacters() {
-        otherContainer.innerHTML = "";
-        otherCharsBox.value.split("").forEach(letter => {
-            otherContainer.innerHTML += `<div class="bg-white shadow">${letter}</div>`;
-        });
-    }
-    
-    function printCharWidthRatios() {
-        let charWidthRatios = calculateCharWidthRatios();
-        let containers = {
-            uppercase : uppercaseContainer,
-            lowercase : lowercaseContainer,
-            digit     : digitsContainer,
-            other     : otherContainer,
-        };
-        for (let containerName in containers) {
-            let containerEl = containers[containerName];
-            for (let charEl of Array.from(containerEl.children)) {
-                let char = charEl.textContent.trim();
-                if (char == "") {
-                    char = " ";
-                }
-                charEl.title = charWidthRatios[containerName][char];
-                charEl.classList.add("shadow", "shadow-sky-500/50");
-            }
-        }
-    }
-    
-    function calculateCharWidthRatios() {
-        let charWidths = {
-            uppercase : {},
-            lowercase : {},
-            digit     : {},
-            other     : {},
-        };
-        let containers = {
-            uppercase : uppercaseContainer,
-            lowercase : lowercaseContainer,
-            digit     : digitsContainer,
-            other     : otherContainer,
-        };
-        for (let containerName in containers) {
-            let containerEl = containers[containerName];
-            for (let charEl of Array.from(containerEl.children)) {
-                let char   = charEl.textContent.trim();
-                if (char == "") {
-                    char = " ";
-                }
-                let width  = getComputedStyle(charEl).width;
-                let height = getComputedStyle(charEl).height;
-                width  = parseFloat(width);
-                height = parseFloat(height);
-                let widthRatio = width / height;
-                charWidths[containerName][char] = widthRatio;
-            }
-        }
-        return charWidths;
-    }
-    
-    //#endregion
-    
-</script>
+<script src="utils.js"></script>
+<script src="main.functions.js"></script>
+<script src="main.js"></script>
 
 </body>
 </html>
