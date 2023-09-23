@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Thumbnails Generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 p-8 text-slate-700">
+
+<div class="flex flex-col gap-4">
+    
+    <div class="flex items-center gap-2">
+        <span class="inline-block w-16">Video</span>
+        <span>:</span>
+        <input type="file" id="video-input">
+    </div>
+    
+    <div class="flex items-center gap-2">
+        <span class="inline-block w-16">Seekbar</span>
+        <span>:</span>
+        <input
+            type="range"
+            id="seekbar"
+            class="w-64"
+            list="seekbar-marks"
+            min="0"
+            step="1"
+            >
+        <span id="timestamp">00:00</span>
+        <datalist id="seekbar-marks"></datalist>
+    </div>
+    
+    <div>
+        <canvas
+            class="bg-white shadow"
+            id="seek-preview"
+            data-width="400"
+            ></canvas>
+    </div>
+    
+    <div>
+        <button
+            id="download-button"
+            class="px-2 py-1 bg-slate-300 rounded shadow-sm hover:bg-slate-400/50 active:bg-slate-400/70 select-none"
+            >Download Image</button>
+    </div>
+    
+</div>
+
+<script src="on.js"></script>
+<script src="element.js"></script>
+<script src="duration.js"></script>
+<script src="utils.js"></script>
+<script src="main.utils.js"></script>
+<script src="main.js"></script>
+
+</body>
+</html>
