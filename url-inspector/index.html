@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>URL Inspector</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .cell-px-2 :is(th, td) {
+                @apply px-2;
+            }
+            .cell-py-1 :is(th, td) {
+                @apply py-1;
+            }
+            .cell-border :is(th, td) {
+                @apply border;
+            }
+            .cell-border-zinc-300 :is(th, td) {
+                @apply border-zinc-300;
+            }
+        }
+    </style>
+</head>
+<body class="bg-zinc-100 p-8">
+
+<div class="flex flex-col gap-4 w-fit">
+    
+    <textarea 
+        id="url-input"
+        class="border border-zinc-300 rounded px-2 py-1 min-w-[50rem] resize"
+        placeholder="Enter a URL"
+        ></textarea>
+    
+    <a
+        id="url-link"
+        href=""
+        target="_blank"
+        class="block w-fit text-blue-600 hover:underline active:text-blue-800"
+        ></a>
+    
+    <table
+        id="output-table"
+        class="bg-white cell-px-2 cell-py-1 cell-border cell-border-zinc-300 text-sm w-fit"
+        ></table>
+    
+</div>
+
+<script>
+    
+    let urlInputBox = document.querySelector("#url-input");
+    let urlLink     = document.querySelector("#url-link");
+    let outputTable = document.querySelector("#output-table");
+    
+    urlInputBox.addEventListener("input", () => {
+        
+        urlLink.href = urlInputBox.value;
+        urlLink.textContent = urlInputBox.value;
+        
+        outputTable.innerHTML = "";
+        
+        if (urlInputBox.value.length == 0) {
+            return;
+        }
+        
+        let url = new URL(urlInputBox.value);
+        console.log(url);
+        
+        if ("protocol" in url) {
+            outputTable.innerHTML += `
+                <tr>
+                    <td style="padding-right: 1em"><strong>scheme</strong></td>
+                    <td>${url.protocol}</td>
+                </tr>
+            `;
+        }
+        
+        if ("host" in url) {
+            outputTable.innerHTML += `
+                <tr>
+                    <td style="padding-right: 1em"><strong>host</strong></td>
+                    <td>${url.host}</td>
+                </tr>
+            `;
+        }
+        
+        // if ("hostname" in url) {
+        //     outputTable.innerHTML += `
+        //         <tr>
+        //             <td style="padding-right: 1em"><strong>hostname</strong></td>
+        //             <td>${url.hostname}</td>
+        //         </tr>
+        //     `;
+        // }
+        
+        if ("port" in url && url.port) {
+            outputTable.innerHTML += `
+                <tr>
+                    <td style="padding-right: 1em"><strong>port</strong></td>
+                    <td>${url.port}</td>
+                </tr>
+            `;
+        }
+        
+        if ("pathname" in url && url.pathname) {
+            outputTable.innerHTML += `
+                <tr>
+                    <td style="padding-right: 1em"><strong>path</strong></td>
+                    <td>${url.pathname}</td>
+                </tr>
+            `;
+        }
+        
+        if ("search" in url && url.search) {
+            let paramsTable = ``;
+            if (url.searchParams.size) {
+                paramsTable = document.createElement("table");
+                paramsTable.style.marginTop = "1em";
+                for (const [key, value] of url.searchParams) {
+                    paramsTable.innerHTML += `
+                        <tr>
+                            <td><strong>${key}</strong></td>
+                            <td>${value}</td>
+                        </tr>
+                    `;
+                }
+            }
+            outputTable.innerHTML += `
+                <tr>
+                    <td class="align-top"><strong>query</strong></td>
+                    <td class="!pb-2">
+                        ${url.search}
+                        ${paramsTable.outerHTML}
+                    </td>
+                </tr>
+            `;
+        }
+        
+        if ("hash" in url && url.hash) {
+            outputTable.innerHTML += `
+                <tr>
+                    <td><strong>fragment</strong></td>
+                    <td>${url.hash}</td>
+                </tr>
+            `;
+        }
+        
+    });
+    
+</script>
+
+</body>
+</html>
