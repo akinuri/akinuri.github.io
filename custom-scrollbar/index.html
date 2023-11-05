@@ -495,7 +495,7 @@
                 <style>
                     body pre code.hljs { padding: 0; }
                 </style>
-                <pre class="text-xs language-css max-h-[70vh] overflow-auto">
+                <pre class="text-xs language-css max-h-[70vh] overflow-auto flex">
                     <code id="css-output"></code>
                 </pre>
             </div>
@@ -516,9 +516,8 @@
     sl.onAllLoaded(() => {
         applyCSS();
         outputCSS();
-        let copyCssBtn = qs("#copy-css-btn");
-        on(copyCssBtn, "click", () => {
-            navigator.clipboard.writeText(copyCssBtn.parentElement.querySelector("pre").innerText);
+        on(qs("#copy-css-btn"), "click", () => {
+            navigator.clipboard.writeText(qs("#css-output").innerText.trim());
         });
     });
     document.querySelectorAll("input[type=range]").forEach(range => {
