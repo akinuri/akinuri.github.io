@@ -419,7 +419,7 @@
                                 <input
                                     type="color"
                                     id="thumb-border-color-input"
-                                    value="#000"
+                                    value="#000000"
                                     class="w-20 border rounded px-1 bg-slate-50 text-slate-600 placeholder:text-slate-300 hover:border-blue-300 hover:placeholder:text-slate-400/60 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-300 focus:placeholder:text-slate-400/70"
                                     >
                             </td>
@@ -470,34 +470,40 @@
         <div class="flex flex-col gap-1">
             <h2 class="text-lg font-medium pl-1">CSS</h2>
             <div
-                class="bg-white p-4 shadow rounded flex gap-4 flex-col relative min-h-[20rem] lg:col-start-1 lg:col-end-3 2xl:col-start-auto 2xl:col-end-auto"
+                class="bg-white p-4 shadow rounded flex gap-2 flex-col relative min-h-[20rem] lg:col-start-1 lg:col-end-3 2xl:col-start-auto 2xl:col-end-auto"
                 >
-                <button
-                    id="copy-css-btn"
-                    class="flex gap-1 bg-gray-100 rounded shadow px-2 py-1 absolute right-2 top-2 hover:bg-gray-200 active:bg-gray-300"
+                <input
+                    type="text"
+                    class="px-2 py-1 rounded border"
+                    id="css-selector"
+                    placeholder="selector"
+                    data-value=".custom-scrollbar"
                     >
-                    <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke-width="1.5"
-                        stroke="currentColor"
-                        class="w-6 h-6"
+                <div class="relative bg-neutral-50 border rounded p-1 px-2">
+                    <button
+                        id="copy-css-btn"
+                        class="flex gap-1 bg-gray-200/80 rounded shadow-sm px-2 py-1 absolute right-2 top-2 hover:bg-gray-300/70 active:bg-gray-300"
                         >
-                        <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75"
-                            />
-                    </svg>
-                    <span>Copy</span>
-                </button>
-                <style>
-                    body pre code.hljs { padding: 0; }
-                </style>
-                <pre class="text-xs language-css max-h-[70vh] overflow-auto flex">
-                    <code id="css-output"></code>
-                </pre>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke-width="1.5"
+                            stroke="currentColor"
+                            class="w-6 h-6"
+                            >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 01-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 011.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 00-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 01-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 00-3.375-3.375h-1.5a1.125 1.125 0 01-1.125-1.125v-1.5a3.375 3.375 0 00-3.375-3.375H9.75"
+                                />
+                        </svg>
+                        <span>Copy</span>
+                    </button>
+                    <pre class="text-xs language-css max-h-[70vh] overflow-auto flex">
+                        <code id="css-output" class="!p-0 !bg-transparent"></code>
+                    </pre>
+                </div>
             </div>
         </div>
         

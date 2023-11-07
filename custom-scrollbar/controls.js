@@ -326,6 +326,9 @@ sl.onAllLoaded(() => {
         controls["scrollbar-thumb"]["border"]["color"].alpha.range,
         
         controls["scrollbar-thumb"]["background-clip"],
+        
+        qs("#css-selector"),
+        
     ], "input", function () {
         applyCSS();
         outputCSS();
@@ -333,8 +336,9 @@ sl.onAllLoaded(() => {
     
 });
 
-function outputCSS(selectorPrefix = ".scrollbar") {
+function outputCSS() {
     let cssOutput = qs("#css-output");
-    cssOutput.textContent = generateCSSText(selectorPrefix);
+    let cssSelector = qs("#css-selector");
+    cssOutput.textContent = generateCSSText(cssSelector.value);
     hljs.highlightAll();
 }

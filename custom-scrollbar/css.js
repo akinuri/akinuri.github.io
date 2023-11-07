@@ -72,8 +72,8 @@ function generateCSSText(selectorPrefix = "") {
     return rulesText;
 }
 
-function applyCSS(selectorPrefix = ".preview") {
-    let cssText = generateCSSText(selectorPrefix);
+function applyCSS() {
+    let cssText = generateCSSText();
     let scrollbarStyleElement = document.querySelector("#scrollbar-style");
     if (!scrollbarStyleElement) {
         scrollbarStyleElement = document.createElement("style");
