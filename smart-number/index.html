@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Quote</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .cell-px-2 :is(th, td) {
+                @apply px-2;
+            }
+            .cell-py-1 :is(th, td) {
+                @apply py-1;
+            }
+            .children-placeholder-gray-300 :is(input, textarea) {
+                @apply placeholder-gray-300;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-slate-100">
+
+    <div class="container mx-auto py-8">
+
+        <div class="bg-white rounded shadow p-4 w-fit min-w-[1100px] mx-auto">
+            <table id="line-items-table" class="w-full cell-px-2 cell-py-1 children-placeholder-gray-300">
+                <thead class="font-semibold">
+                    <tr>
+                        <td>#</td>
+                        <td>Item</td>
+                        <td>Unit</td>
+                        <td>Quantity</td>
+                        <td>Unit Price</td>
+                        <td>Discount</td>
+                        <td>Tax</td>
+                        <td>Line Total</td>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <button class="bg-slate-200 px-2 py-1 rounded mt-4 hover:bg-slate-300/70 active:bg-slate-300/90"
+                onclick="lis.addLine()">
+                Add Line
+            </button>
+        </div>
+
+    </div>
+
+    <template id="line-item-template">
+        <tr>
+            <td class="col-index"></td>
+            <td class="col-name">
+                <input class="px-1 border" type="text" placeholder="product">
+            </td>
+            <td class="col-unit">
+                <input class="px-1 border w-24" type="text" placeholder="piece">
+            </td>
+            <td class="col-quantity">
+                <input class="px-1 border w-16" type="number" placeholder="1" min="0">
+            </td>
+            <td class="col-unit-price">
+                <input class="px-1 border w-36" type="number" placeholder="100" min="0">
+            </td>
+            <td class="col-discount">
+                <select class="px-1 border">
+                    <option value="percentage">%</option>
+                    <option value="amount">$</option>
+                </select>
+                <input class="px-1 border w-32" type="number" placeholder="10">
+            </td>
+            <td class="col-tax">
+                % <input class="px-1 border w-16" type="number" placeholder="20" list="tax-rates">
+            </td>
+            <td class="col-total">
+                <input class="px-1 border w-36" type="number" placeholder="100">
+            </td>
+            <td>
+                <button class="bg-red-200 p-1 rounded hover:bg-red-300/70 active:bg-red-300/90 leading-none"
+                    onclick="lis.removeLine(this.closest('tr'))">
+                    ×
+                </button>
+            </td>
+        </tr>
+    </template>
+
+    <datalist id="tax-rates">
+        <option>0</option>
+        <option>5</option>
+        <option>10</option>
+        <option>15</option>
+        <option>20</option>
+        <option>25</option>
+    </datalist>
+
+    <script src="smart-number.js"></script>
+    <script src="smart-price.js"></script>
+    <script src="line-items.js"></script>
+    <script src="line-item.js"></script>
+    <script>
+        let lineItemsBody = document.querySelector("#line-items-table tbody");
+        let lineItemsRowTemplate = document.querySelector("#line-item-template");
+        lis = new LineItems(lineItemsBody, lineItemsRowTemplate);
+        lis.addLine();
+    </script>
+
+</body>
+
+</html>
