@@ -22,7 +22,7 @@
 
 <body class="bg-slate-100">
 
-    <div class="container mx-auto py-8">
+    <div class="container mx-auto py-8 w-fit">
 
         <div class="bg-white rounded shadow p-4 w-fit min-w-[1100px] mx-auto">
             <table id="line-items-table" class="w-full cell-px-2 cell-py-1 children-placeholder-gray-300">
@@ -44,6 +44,94 @@
                 onclick="lis.addLine()">
                 Add Line
             </button>
+        </div>
+
+        <div class="flex justify-end mt-4">
+            <div class="bg-white rounded shadow p-4 w-fit">
+                <style>
+                    .totals-table tbody th {
+                        text-align: left;
+                        font-weight: 500;
+                        width: 9rem;
+                    }
+                    .totals-table tbody th + td {
+                        text-align: right;
+                        width: 12rem;
+                    }
+                </style>
+                <table class="totals-table">
+                    <tbody>
+                        <tr>
+                            <th>Subtotal</th>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><hr></td>
+                        </tr>
+                    </tbody>
+                    <tbody>
+                        <tr class="text-sm text-gray-600">
+                            <th>Line Discount</th>
+                            <td>0</td>
+                        </tr>
+                        <tr class="text-sm text-gray-600">
+                            <th>Quote Discount</th>
+                            <td>
+                                <div class="flex justify-end">
+                                    <select class="px-1 border">
+                                        <option value="percentage">%</option>
+                                        <option value="amount">$</option>
+                                    </select>
+                                    <input class="px-1 border w-20" type="number" placeholder="10" min="0">
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Total Discount</th>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><hr></td>
+                        </tr>
+                    </tbody>
+                    <tbody>
+                        <tr>
+                            <th>Discounted Total</th>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><hr></td>
+                        </tr>
+                    </tbody>
+                    <tbody>
+                        <tr class="text-sm text-gray-600">
+                            <th>Total Tax (0%)</th>
+                            <td>0</td>
+                        </tr>
+                        <tr class="text-sm text-gray-600">
+                            <th>Total Tax (10%)</th>
+                            <td>0</td>
+                        </tr>
+                        <tr class="text-sm text-gray-600">
+                            <th>Total Tax (15%)</th>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <th>Total Tax</th>
+                            <td>0</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><hr></td>
+                        </tr>
+                    </tbody>
+                    <tbody>
+                        <tr>
+                            <th>Grand Total</th>
+                            <td>0</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
     </div>
@@ -68,13 +156,13 @@
                     <option value="percentage">%</option>
                     <option value="amount">$</option>
                 </select>
-                <input class="px-1 border w-32" type="number" placeholder="10">
+                <input class="px-1 border w-32" type="number" placeholder="10" min="0">
             </td>
             <td class="col-tax">
-                % <input class="px-1 border w-16" type="number" placeholder="20" list="tax-rates">
+                % <input class="px-1 border w-16" type="number" placeholder="20" list="tax-rates" min="0">
             </td>
             <td class="col-total">
-                <input class="px-1 border w-36" type="number" placeholder="100">
+                <input class="px-1 border w-36" type="number" placeholder="100" min="0">
             </td>
             <td>
                 <button class="bg-red-200 p-1 rounded hover:bg-red-300/70 active:bg-red-300/90 leading-none"
