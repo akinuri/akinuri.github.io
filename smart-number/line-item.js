@@ -1,5 +1,7 @@
 class LineItem {
 
+    row = null;
+    eventBus = null;
     fields = {
         name: null,
         unit: null,
@@ -13,8 +15,9 @@ class LineItem {
         total: null,
     };
 
-    constructor(row) {
+    constructor(row, eventBus) {
         this.row = row;
+        this.eventBus = eventBus;
         this.row.lineItem = this;
         this.findFields();
         this.addEventListeners();
@@ -35,10 +38,6 @@ class LineItem {
         };
     }
 
-    setIndex(index) {
-        this.row.querySelector(".col-index").textContent = index;
-    }
-
     addEventListeners() {
         let lineItem = this;
         [
@@ -51,6 +50,7 @@ class LineItem {
         ].forEach(input => {
             input.addEventListener("input", () => {
                 lineItem.printTotal(input);
+                lineItem.eventBus.dispatch("LineItemChanged");
             });
         });
     }
@@ -104,6 +104,10 @@ class LineItem {
             total: parseFloat(this.fields.total.value) || 0,
         };
         return result;
+    }
+
+    setIndex(index) {
+        this.row.querySelector(".col-index").textContent = index;
     }
 
 }

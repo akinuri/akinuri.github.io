@@ -41,7 +41,7 @@
                 <tbody></tbody>
             </table>
             <button class="bg-slate-200 px-2 py-1 rounded mt-4 hover:bg-slate-300/70 active:bg-slate-300/90"
-                onclick="lis.addLine()">
+                onclick="lineItems.addLine()">
                 Add Line
             </button>
         </div>
@@ -49,21 +49,21 @@
         <div class="flex justify-end mt-4">
             <div class="bg-white rounded shadow p-4 w-fit">
                 <style>
-                    .totals-table tbody th {
+                    #totals-table tbody th {
                         text-align: left;
                         font-weight: 500;
                         width: 9rem;
                     }
-                    .totals-table tbody th + td {
+                    #totals-table tbody th + td {
                         text-align: right;
                         width: 12rem;
                     }
                 </style>
-                <table class="totals-table">
+                <table id="totals-table">
                     <tbody>
                         <tr>
                             <th>Subtotal</th>
-                            <td>0</td>
+                            <td class="subtotal-value-cell">0</td>
                         </tr>
                         <tr>
                             <td colspan="2"><hr></td>
@@ -166,7 +166,7 @@
             </td>
             <td>
                 <button class="bg-red-200 p-1 rounded hover:bg-red-300/70 active:bg-red-300/90 leading-none"
-                    onclick="lis.removeLine(this.closest('tr'))">
+                    onclick="lineItems.removeLine(this.closest('tr'))">
                     ×
                 </button>
             </td>
@@ -184,13 +184,24 @@
 
     <script src="smart-number.js"></script>
     <script src="smart-price.js"></script>
+    <script src="event-bus.js"></script>
     <script src="line-items.js"></script>
     <script src="line-item.js"></script>
+    <script src="totals.js"></script>
     <script>
-        let lineItemsBody = document.querySelector("#line-items-table tbody");
-        let lineItemsRowTemplate = document.querySelector("#line-item-template");
-        lis = new LineItems(lineItemsBody, lineItemsRowTemplate);
-        lis.addLine();
+        let eventBus = new EventBus();
+        lineItems = new LineItems(
+            document.querySelector("#line-items-table tbody"),
+            document.querySelector("#line-item-template"),
+            eventBus,
+        );
+        lineItems.addLine();
+        lineItems.addLine();
+        let totals = new Totals(
+            document.querySelector("#totals-table"),
+            lineItems,
+            eventBus,
+        );
     </script>
 
 </body>

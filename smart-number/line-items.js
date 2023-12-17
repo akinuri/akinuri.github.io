@@ -1,8 +1,13 @@
 class LineItems {
 
-    constructor(tbody, rowTemplate) {
+    tbody = null;
+    rowTemplate = null;
+    eventBus = null;
+
+    constructor(tbody, rowTemplate, eventBus) {
         this.tbody = tbody;
         this.rowTemplate = rowTemplate;
+        this.eventBus = eventBus;
     }
 
     addLine() {
@@ -13,7 +18,7 @@ class LineItems {
 
     buildLineItem() {
         let row = this.rowTemplate.content.children[0].cloneNode(true);
-        let item = new LineItem(row);
+        let item = new LineItem(row, this.eventBus);
         return item;
     }
 
@@ -27,6 +32,7 @@ class LineItems {
 
     removeLine(row) {
         row.remove();
+        this.eventBus.dispatch("LineItemRemoved");
         this.reindexLines();
     }
 
@@ -35,5 +41,11 @@ class LineItems {
             row.lineItem.setIndex(index + 1);
         });
     }
-
+    
+    getItems() {
+        return Array.from(this.tbody.children).map(row => {
+            return row.lineItem;
+        });
+    }
+    
 }
