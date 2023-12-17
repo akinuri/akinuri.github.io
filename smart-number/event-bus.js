@@ -4,7 +4,13 @@ class EventBus {
 
     addListener(eventName, eventHandler, isOnce = false) {
         if (typeof eventHandler !== "function") {
-            throw new TypeError(`The event ("${eventName}") handler must be a function.`);
+            let eventNameString;
+            if (typeof eventName == "string") {
+                eventNameString = `"${eventName}"`;
+            } else if (eventName instanceof Array) {
+                eventNameString = "[" + eventName.map(en => `"${en}"`) + "]";
+            }
+            throw new TypeError(`The event handler (for ${eventNameString}) must be a function.`);
         }
         if (typeof eventName == "string") {
             let handlers = this.#listeners.get(eventName);
