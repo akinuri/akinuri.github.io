@@ -1,0 +1,168 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Text - Align Columns</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-100">
+
+<div class="w-fit mx-auto flex flex-col gap-4 p-4">
+    
+    <div class="flex gap-8 items-center justify-center">
+        
+        <div class="flex gap-4 items-center justify-center">
+            <div class="flex gap-2 items-center">
+                <span>Seperator :</span>
+                <input
+                    type="text"
+                    class="px-2 py-1 border rounded w-24"
+                    id="col-seperator-input"
+                    placeholder="sth"
+                    >
+            </div>
+            <div class="flex gap-2 items-center">
+                <span>Suffix :</span>
+                <input
+                    type="text"
+                    class="px-2 py-1 border rounded w-24"
+                    id="col-suffix-input"
+                    placeholder="sth"
+                    >
+            </div>
+            <div class="flex gap-2 items-center">
+                <span>Joiner :</span>
+                <input
+                    type="text"
+                    class="px-2 py-1 border rounded w-24"
+                    id="col-joiner-input"
+                    placeholder="sth"
+                    >
+            </div>
+        </div>
+        
+        <div class="flex gap-4 items-center">
+            <button
+                id="align-button"
+                class="px-2 py-1 bg-sky-300/60 rounded hover:bg-sky-300/80 active:bg-sky-300"
+                >
+                Align
+            </button>
+            <button
+                id="reset-button"
+                class="px-2 py-1 bg-slate-300/60 rounded hover:bg-slate-300/80 active:bg-slate-300 text-gray-700"
+                >
+                Reset
+            </button>
+            <button
+                id="demo-button"
+                class="px-2 py-1 bg-slate-200/80 rounded hover:bg-slate-200 active:bg-slate-300/50 text-gray-600"
+                >
+                Demo
+            </button>
+        </div>
+        
+    </div>
+    
+    <textarea
+        id="text-box"
+        class="w-[800px] h-[600px] border rounded px-2 py-1 font-mono resize"
+        placeholder="alignable text"
+        ></textarea>
+    
+</div>
+
+<script src="lib/on.js"></script>
+<script src="lib/qs.js"></script>
+<script src="lib/multiline-string.js"></script>
+
+<script>
+    let colSeperatorBox = qs("#col-seperator-input");
+    let colSuffixBox    = qs("#col-suffix-input");
+    let colJoinerBox    = qs("#col-joiner-input");
+    let textBox         = qs("#text-box");
+    let alignButton     = qs("#align-button");
+    let resetButton     = qs("#reset-button");
+    let demoButton      = qs("#demo-button");
+    
+    on(resetButton, "click", () => {
+        colSeperatorBox.value = "";
+        colSuffixBox.value = "";
+        colJoinerBox.value = "";
+        textBox.value = "";
+    });
+    
+    on(demoButton, "click", () => {
+        colSeperatorBox.value = " ";
+        colSuffixBox.value = ",";
+        colJoinerBox.value = "  ";
+        textBox.value = `
+            \`width\` decimal(5,2) UNSIGNED DEFAULT NULL,
+            \`height\` decimal(5,2) UNSIGNED DEFAULT NULL,
+            \`depth\` decimal(5,2) UNSIGNED DEFAULT NULL,
+            \`volume\` decimal(9,6) UNSIGNED DEFAULT NULL,
+            \`length\` decimal(5,2) UNSIGNED DEFAULT NULL,
+            \`thickness\` decimal(5,2) UNSIGNED DEFAULT NULL,
+            \`diameter\` decimal(5,2) UNSIGNED DEFAULT NULL,
+            \`weight\` decimal(6,3) UNSIGNED DEFAULT NULL,
+        `;
+        textBox.value = trimIndentation(textBox.value);
+    });
+    
+    on(alignButton, "click", () => {
+        
+        if (colSeperatorBox.value.length == 0) {
+            return;
+        }
+        
+        let seperator = colSeperatorBox.value;
+        let suffix    = colSuffixBox.value;
+        let joiner    = colJoinerBox.value;
+        if (seperator.startsWith("/") && seperator.endsWith("/")) {
+            seperator = new RegExp(seperator.slice(1, -1));
+        }
+        
+        let text = textBox.value.trim();
+        let lines = text.split(/\r?\n/);
+        lines = lines.map(line => line.trim());
+        lines = lines.map(line => line.split(seperator));
+        
+        if (suffix) {
+            lines = lines.map(lineCols => {
+                return lineCols.map((col, i) => {
+                    return i != lineCols.length - 1
+                        ? col + suffix
+                        : col;
+                });
+            });
+        }
+        
+        let colWidths = [];
+        for (let i = 0; i < lines[0].length; i++) {
+            let colItems = getColumn(lines, i);
+            let widths = colItems.map(text => (text || "").length);
+            let maxWidth = Math.max(...widths);
+            colWidths.push(maxWidth);
+        }
+        
+        let outputLines = lines.map(lineCols => {
+            lineCols = lineCols.map((col, i) => col.padEnd(colWidths[i], " "));
+            lineCols = lineCols.join(joiner);
+            return lineCols;
+        });
+        let outputText = outputLines.join("\n");
+        
+        textBox.value = outputText;
+    });
+    
+    function getColumn(array, columnId) {
+        return array.map(item => item[columnId]);
+    }
+</script>
+
+</body>
+
+</html>
