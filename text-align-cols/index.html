@@ -12,32 +12,38 @@
 
 <div class="w-fit mx-auto flex flex-col gap-4 p-4">
     
-    <div class="flex gap-8 items-center justify-center">
+    <div class="flex gap-8 items-start justify-center">
         
-        <div class="flex gap-4 items-center justify-center">
-            <div class="flex gap-2 items-center">
-                <span>Seperator :</span>
-                <input
-                    type="text"
-                    class="px-2 py-1 border rounded w-24"
-                    id="col-seperator-input"
-                    placeholder="sth"
-                    >
+        <div class="flex gap-4">
+            <div class="flex flex-col gap-2">
+                <div class="flex gap-2 items-start">
+                    <span>Separator :</span>
+                    <input
+                        type="text"
+                        class="px-1 border rounded w-24"
+                        id="col-separator-input"
+                        placeholder="sth"
+                        >
+                </div>
+                <label class="flex gap-2 items-center cursor-pointer">
+                    <input type="checkbox" id="ignore-quoted" class="cursor-pointer">
+                    <span>Ignore quoted strings</span>
+                </label>
             </div>
-            <div class="flex gap-2 items-center">
+            <div class="flex gap-2 items-start">
                 <span>Suffix :</span>
                 <input
                     type="text"
-                    class="px-2 py-1 border rounded w-24"
+                    class="px-1 border rounded w-24"
                     id="col-suffix-input"
                     placeholder="sth"
                     >
             </div>
-            <div class="flex gap-2 items-center">
+            <div class="flex gap-2 items-start">
                 <span>Joiner :</span>
                 <input
                     type="text"
-                    class="px-2 py-1 border rounded w-24"
+                    class="px-1 border rounded w-24"
                     id="col-joiner-input"
                     placeholder="sth"
                     >
@@ -80,7 +86,8 @@
 <script src="lib/multiline-string.js"></script>
 
 <script>
-    let colSeperatorBox = qs("#col-seperator-input");
+    let colSeparatorBox = qs("#col-separator-input");
+    let ignoreQuotedCheck = qs("#ignore-quoted");
     let colSuffixBox    = qs("#col-suffix-input");
     let colJoinerBox    = qs("#col-joiner-input");
     let textBox         = qs("#text-box");
@@ -89,14 +96,14 @@
     let demoButton      = qs("#demo-button");
     
     on(resetButton, "click", () => {
-        colSeperatorBox.value = "";
+        colSeparatorBox.value = "";
         colSuffixBox.value = "";
         colJoinerBox.value = "";
         textBox.value = "";
     });
     
     on(demoButton, "click", () => {
-        colSeperatorBox.value = " ";
+        colSeparatorBox.value = " ";
         colSuffixBox.value = ",";
         colJoinerBox.value = "  ";
         textBox.value = `
@@ -114,21 +121,27 @@
     
     on(alignButton, "click", () => {
         
-        if (colSeperatorBox.value.length == 0) {
+        if (colSeparatorBox.value.length == 0) {
             return;
         }
         
-        let seperator = colSeperatorBox.value;
+        let separator = colSeparatorBox.value;
         let suffix    = colSuffixBox.value;
         let joiner    = colJoinerBox.value;
-        if (seperator.startsWith("/") && seperator.endsWith("/")) {
-            seperator = new RegExp(seperator.slice(1, -1));
+        if (separator.startsWith("/") && separator.endsWith("/")) {
+            separator = new RegExp(separator.slice(1, -1));
         }
         
         let text = textBox.value.trim();
         let lines = text.split(/\r?\n/);
         lines = lines.map(line => line.trim());
-        lines = lines.map(line => line.split(seperator));
+        if (ignoreQuotedCheck.checked) {
+            separator = new RegExp(
+                // TODO: also parameterize the enclosers?
+                `${separator}(?=(?:(?:[^'"\`]*['"\`]){2})*[^'"\`}]*$)`
+            );
+        }
+        lines = lines.map(line => line.split(separator));
         
         if (suffix) {
             lines = lines.map(lineCols => {
