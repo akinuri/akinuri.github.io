@@ -10,93 +10,100 @@
             padding: 2rem;
         }
         .range-2d {
-            width: fit-content;
-            /* border: 1px dashed silver; */
-        }
-        .range-2d input[type=range] {
-            /* display: none; */
-        }
-        .range-2d .value-map-wrapper {
-            padding: 0.5rem;
-            width: fit-content;
+            --width: 100px;
+            --height: 100px;
+            --thumb-size: 1rem;
+            /* --padding: calc(var(--thumb-size) / 2); */
+            width: var(--width);
+            height: var(--height);
+            padding: var(--padding, 0);
             background-color: #efefef;
             border: 1px solid #b2b2b2;
             border-radius: 0.5rem;
+            position: relative;
+            box-sizing: border-box;
         }
-        .range-2d .value-map-wrapper:hover {
+        .range-2d:hover {
             background-color: #E5E5E5;
         }
-        .range-2d .value-map-wrapper:active {
+        .range-2d:active {
             background-color: hsl(210, 25%, 90%);
             border: 1px solid hsl(210, 25%, 70%);
         }
-        .range-2d .value-map {
-            width: 100px;
-            height: 100px;
-            position: relative;
-            /* outline for debugging */
-            outline: 1px dashed hsl(0, 0%, 0%, 0.1);
-        }
-        .range-2d .value-map .thumb {
+        .range-2d .thumb {
             background-color: #0075ff;
             border-radius: 50%;
-            width: 1rem;
-            height: 1rem;
+            width: var(--thumb-size);
+            height: var(--thumb-size);
             translate: -50% -50%;
             position: absolute;
             left: 0;
             top: 0;
         }
-        .range-2d .value-map .thumb:hover {
+        .range-2d .thumb:hover {
             background-color: #005CC8;
+        }
+        .range-2d .thumb:active {
+            background-color: #3793ff;
         }
     </style>
 </head>
 <body>
 
+<div style="margin-bottom: 1rem">
+    <input
+        id="range-x"
+        type="range"
+        min="0"
+        max="100"
+    />
+    <input
+        id="range-y"
+        type="range"
+        min="0"
+        max="100"
+    />
+</div>
+
 <div class="range-2d">
-    <input
-        type="range"
-        class="range-x"
-        min="0"
-        max="100"
-    />
-    <input
-        type="range"
-        class="range-y"
-        min="0"
-        max="100"
-    />
-    <div class="value-map-wrapper">
-        <div class="value-map">
-            <div class="thumb"></div>
-        </div>
-    </div>
+    <div class="thumb"></div>
 </div>
 
 <script>
-    let mapWrapper  = document.querySelector(".range-2d .value-map-wrapper");
-    let map         = document.querySelector(".range-2d .value-map");
-    let thumb       = document.querySelector(".range-2d .value-map .thumb");
+    let range = document.querySelector(".range-2d");
+    let thumb = document.querySelector(".range-2d .thumb");
     
     thumb.addEventListener("mousedown", startDragging);
     window.addEventListener("mouseup", stopDragging);
     
-    let mapOffsetX, mapOffsetY;
+    range.addEventListener("mousedown", e => {
+        if (e.target == thumb) {
+            return;
+        }
+        let x = e.offsetX;
+        let y = e.offsetY;
+        moveThumb(x, y);
+        startDragging(e);
+    });
+    
+    let rangeOffsetX, rangeOffsetY;
     
     function startDragging(e) {
         e.preventDefault();
-        let mapRect = map.getBoundingClientRect();
-        mapOffsetX = mapRect.left;
-        mapOffsetY = mapRect.top;
+        let rangeRect = range.getBoundingClientRect();
+        rangeOffsetX = rangeRect.left;
+        rangeOffsetY = rangeRect.top;
         window.addEventListener("mousemove", drag);
     }
     function stopDragging() {
         window.removeEventListener("mousemove", drag);
     }
     function drag(e) {
-        let x = e.clientX - mapOffsetX;
-        let y = e.clientY - mapOffsetY;
+        let x = e.clientX - rangeOffsetX;
+        let y = e.clientY - rangeOffsetY;
+        moveThumb(x, y);
+    }
+    function moveThumb(x, y) {
         x = clamp(x, 0, 100);
         y = clamp(y, 0, 100);
         thumb.style.left = x + "px";
