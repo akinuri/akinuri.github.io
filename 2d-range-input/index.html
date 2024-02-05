@@ -8,12 +8,13 @@
         body {
             margin: 0;
             padding: 2rem;
+            font-family: system-ui, sans-serif;
+            /* background-color: hsl(0, 0%, 10%); */
         }
-        .range-2d {
+        /* .range-2d {
             --width: 100px;
             --height: 100px;
             --thumb-size: 1rem;
-            /* --padding: calc(var(--thumb-size) / 2); */
             width: var(--width);
             height: var(--height);
             padding: var(--padding, 0);
@@ -45,7 +46,7 @@
         }
         .range-2d .thumb:active {
             background-color: #3793ff;
-        }
+        } */
     </style>
 </head>
 <body>
@@ -65,54 +66,20 @@
     />
 </div>
 
-<div class="range-2d">
-    <div class="thumb"></div>
-</div>
+<p>Resizable container? <input type="checkbox" id="resize-toggle"></p>
 
+<script src="range-2d.js"></script>
 <script>
-    let range = document.querySelector(".range-2d");
-    let thumb = document.querySelector(".range-2d .thumb");
-    
-    thumb.addEventListener("mousedown", startDragging);
-    window.addEventListener("mouseup", stopDragging);
-    
-    range.addEventListener("mousedown", e => {
-        if (e.target == thumb) {
-            return;
+    let range = new Range2D();
+    let resizeToggle = document.querySelector("#resize-toggle");
+    resizeToggle.parentElement.before(range.container);
+    resizeToggle.addEventListener("input", () => {
+        if (resizeToggle.checked) {
+            range.makeResizable();
+        } else {
+            range.makeNotResizable();
         }
-        let x = e.offsetX;
-        let y = e.offsetY;
-        moveThumb(x, y);
-        startDragging(e);
     });
-    
-    let rangeOffsetX, rangeOffsetY;
-    
-    function startDragging(e) {
-        e.preventDefault();
-        let rangeRect = range.getBoundingClientRect();
-        rangeOffsetX = rangeRect.left;
-        rangeOffsetY = rangeRect.top;
-        window.addEventListener("mousemove", drag);
-    }
-    function stopDragging() {
-        window.removeEventListener("mousemove", drag);
-    }
-    function drag(e) {
-        let x = e.clientX - rangeOffsetX;
-        let y = e.clientY - rangeOffsetY;
-        moveThumb(x, y);
-    }
-    function moveThumb(x, y) {
-        x = clamp(x, 0, 100);
-        y = clamp(y, 0, 100);
-        thumb.style.left = x + "px";
-        thumb.style.top  = y + "px";
-    }
-    
-    function clamp(number, min, max) {
-        return Math.min(Math.max(number, min), max);
-    }
 </script>
 
 </body>
