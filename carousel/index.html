@@ -2,122 +2,143 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <title>02 - Infinite Loop</title>
+    <title>Horizontal Compass</title>
     <style>
         body {
             overflow: hidden;
             background-color: whitesmoke;
+            font-family: system-ui, sans-serif;
         }
-        .slider {
+        .compass {
             width: 500px;
-            height: 100px;
-            border: 1px solid silver;
+            position: fixed;
+            left: 50%;
+            top: 30px;
+            translate: -50% 0;
             padding: 10px;
-            margin-inline: auto;
-            background-color: white;
+            border: 1px dashed silver;
+            user-select: none;
         }
-        .slider-window {
+        .compass .marks-wrapper {
             /* overflow: hidden; */
         }
-        .slider-items-container {
+        .compass .marks-container {
             display: flex;
-            gap: 10px;
+            gap: 20px;
             width: fit-content;
+            align-items: center;
         }
-        .slider-item {
-            --w: 100px;
-            --bgc: silver;
-            width: var(--w);
-            height: 100px;
-            background-color: var(--bgc);
+        .compass .marks-container .mark {
+            height: 10px;
+            width: 2px;
+            background-color: black;
+        }
+        .compass .marks-container .angle {
+            color: black;
+            line-height: 1;
         }
     </style>
 </head>
 <body>
     
-<div class="slider">
-    <div class="slider-window">
-        <div class="slider-items-container">
-            <div class="slider-item"></div>
-            <div class="slider-item" style="--w: 150px; --bgc: crimson"></div>
-            <div class="slider-item"></div>
-            <div class="slider-item" style="--w: 50px; --bgc: limegreen"></div>
-            <div class="slider-item"></div>
-            <div class="slider-item" style="--w: 250px; --bgc: dodgerblue"></div>
-            <div class="slider-item"></div>
-            <div class="slider-item" style="--w: 200px; --bgc: gold"></div>
-            <!-- <div class="slider-item"></div>
-            <div class="slider-item" style="--bgc: cyan"></div>
-            <div class="slider-item"></div>
-            <div class="slider-item" style="--bgc: magenta"></div>
-            <div class="slider-item"></div>
-            <div class="slider-item" style="--bgc: darkgray"></div>
-            <div class="slider-item"></div>
-            <div class="slider-item" style="--bgc: whitesmoke"></div> -->
-        </div>
+<div class="compass">
+    <div class="marks-wrapper">
+        <div class="marks-container"></div>
     </div>
 </div>
 
 <script>
-    let sliderWindow = document.querySelector(".slider-window");
-    let itemsContainer = document.querySelector(".slider-items-container");
+    let carousel = {
+        window   : document.querySelector(".marks-wrapper"),
+        platform : document.querySelector(".marks-container"),
+    };
+    carousel.windowRect = carousel.window.getBoundingClientRect();
+    carousel.platformGap = parseInt(getComputedStyle(carousel.platform).gap);
     
-    let windowRect = sliderWindow.getBoundingClientRect();
-    let flexSlideGap = 10;
+    buildMarks: {
+        let namedMarks = {
+            "0" : "N",
+            "45" : "NE",
+            "90" : "E",
+            "225" : "SE",
+            "180" : "S",
+            "225" : "SW",
+            "270" : "W",
+            "315" : "NW",
+        };
+        let namedMarksAngles = Object.keys(namedMarks).map(value => parseInt(value));
+        for (let index = 0; index < 360; index += 2.5) {
+            let content = null;
+            if (namedMarksAngles.includes(index)) {
+                content = `<div class="angle">${namedMarks[index]}</div>`;
+            } else if (index % 15 == 0) {
+                content = `<div class="angle">${index}</div>`;
+            } else {
+                content = `<div class="mark"></div>`;
+            }
+            carousel.platform.innerHTML += content;
+        }
+    }
     
-    let mouseSensitivity = 2;
-    let moveDir = -1; // panning to right moves the world to left
+    // center the compass
+    carousel.platform.style.translate = (carousel.platform.clientWidth - carousel.window.clientWidth) / 2 * -1 + "px";
+    
+    let oneLap = carousel.platform.clientWidth / innerWidth;
+    let mouseSensitivity = oneLap * 2;
+    let rotateDir = -1; // panning to right moves the world to left
+    
     document.addEventListener("mousemove", (e) => {
-        translateSlidesBy(e.movementX * moveDir * mouseSensitivity);
+        rotatePlatformBy(e.movementX * rotateDir * mouseSensitivity);
     });
     
-    function translateSlidesBy(value) {
+    function rotatePlatformBy(value) {
         setTranslateTo(
             getCurrentTranslateValue() + value
         );
-        let slidesMoveDir = value > 0 ? "right" : "left";
-        if (slidesMoveDir == "right") {
-            if (isFirstSlideVisible()) {
-                moveSlideFromRightToLeft();
+        let platformRotateDir = value > 0 ? "right" : "left";
+        if (platformRotateDir == "right") {
+            if (isFirstItemVisible()) {
+                moveItemFromRightToLeft();
             }
         } else {
-            if (isLastSlideVisible()) {
-                moveSlideFromLeftToRight();
+            if (isLastItemVisible()) {
+                moveItemFromLeftToRight();
             }
         }
     }
+    
     function setTranslateTo(value) {
-        itemsContainer.style.translate = value + "px";
+        carousel.platform.style.translate = value + "px";
     }
     function getCurrentTranslateValue() {
-        return parseInt(getComputedStyle(itemsContainer).translate) || 0;
+        return parseInt(getComputedStyle(carousel.platform).translate) || 0;
     }
     
-    function isFirstSlideVisible() {
-        return isSlideVisible(itemsContainer.firstElementChild);
+    function isFirstItemVisible() {
+        return isItemVisible(carousel.platform.firstElementChild);
     }
-    function isLastSlideVisible() {
-        return isSlideVisible(itemsContainer.lastElementChild);
+    function isLastItemVisible() {
+        return isItemVisible(carousel.platform.lastElementChild);
     }
-    function isSlideVisible(slide) {
-        let slideRect = slide.getBoundingClientRect();
+    function isItemVisible(item) {
+        let itemRect = item.getBoundingClientRect();
         return (
-            (slideRect.right > windowRect.left && slideRect.left < windowRect.right)
+            (itemRect.right > carousel.windowRect.left && itemRect.left < carousel.windowRect.right)
             ||
-            (slideRect.left < windowRect.right && slideRect.right > windowRect.left)
+            (itemRect.left < carousel.windowRect.right && itemRect.right > carousel.windowRect.left)
         );
     }
     
-    function moveSlideFromRightToLeft() {
-        let offset = itemsContainer.lastElementChild.clientWidth + flexSlideGap;
+    function moveItemFromRightToLeft() {
+        let offset = carousel.platform.lastElementChild.clientWidth + carousel.platformGap;
         let newTransX = getCurrentTranslateValue() - offset;
-        itemsContainer.prepend(itemsContainer.lastElementChild);
+        carousel.platform.prepend(carousel.platform.lastElementChild);
         setTranslateTo(newTransX);
     }
-    function moveSlideFromLeftToRight() {
-        let offset = itemsContainer.firstElementChild.clientWidth + flexSlideGap;
+    function moveItemFromLeftToRight() {
+        let offset = carousel.platform.firstElementChild.clientWidth + carousel.platformGap;
         let newTransX = getCurrentTranslateValue() + offset;
-        itemsContainer.append(itemsContainer.firstElementChild);
+        carousel.platform.append(carousel.platform.firstElementChild);
         setTranslateTo(newTransX);
     }
 </script>
