@@ -29,12 +29,12 @@ function getVideoFrameAsDataURL(video) {
     return dataURL;
 }
 
-function updateSeekbar() {
-    stepLength  = Math.floor(video.duration) / markCount;
+function updateSeekbar(seekValue = 0) {
+    stepLength  = video.duration / (markCountInput.valueAsNumber - 1);
     marksValues = range(0, video.duration, stepLength);
     marksValues = marksValues.map(value => Math.round(value));
     seekbar.max = video.duration;
-    seekbar.value = 0;
+    seekbar.value = seekValue;
     seekbarMarks.innerHTML = null;
     marksValues.forEach(value => seekbarMarks.append(elem("option", value)));
 }

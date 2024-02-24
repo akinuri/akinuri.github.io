@@ -1,12 +1,12 @@
-let videoInput   = qs("#video-input");
-let seekbar      = qs("#seekbar");
-let seekbarMarks = qs("#seekbar-marks");
-let timestamp    = qs("#timestamp");
-let video        = elem("video");
-let seekPreview  = qs("#seek-preview");
-let downloadButton = qs("#download-button");
+let videoInput      = qs("#video-input");
+let markCountInput  = qs("#mark-count-input");
+let seekbar         = qs("#seekbar");
+let seekbarMarks    = qs("#seekbar-marks");
+let timestamp       = qs("#timestamp");
+let video           = elem("video");
+let seekPreview     = qs("#seek-preview");
+let downloadButton  = qs("#download-button");
 
-let markCount = 6;
 seekPreview.width = 400;
 seekPreview.height = 200;
 
@@ -18,6 +18,12 @@ on(videoInput, "input", () => {
         seekPreview.height = (seekPreview.dataset.width * heightRatio);
         drawSpecificFrameFromVideo(video, seekPreview, 0);
     });
+});
+
+on(markCountInput, "input", () => {
+    if ((video.duration || 0) != 0) {
+        updateSeekbar(seekbar.value);
+    }
 });
 
 on(seekbar, "input", throttle(() => {

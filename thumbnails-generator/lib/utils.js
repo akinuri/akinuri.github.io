@@ -1,27 +1,6 @@
-function qs(query, parent) {
-    if (query instanceof HTMLElement) return query;
-    if (parent === null) {
-        return null;
-    }
-    if (parent === undefined) {
-        parent = document;
-    }
-    return parent.querySelector(query);
-}
-
-function qsa(query, parent) {
-    if (query instanceof HTMLElement) return query;
-    if (parent === null) {
-        return [];
-    }
-    if (parent === undefined) {
-        parent = document;
-    }
-    return Array.from(parent.querySelectorAll(query));
-}
-
 function range(start, end, step = 1) {
     const result = [];
+    const tolerance = Math.abs(step) * 0.1;
     if (step === 0) {
         throw new Error("Step cannot be zero.");
     }
@@ -31,8 +10,13 @@ function range(start, end, step = 1) {
     if (start >= end && step > 0) {
         throw new Error("Step must be negative when start is greater than or equal to end.");
     }
-    for (let i = start; start < end ? i <= end : i >= end; i += step) {
+    for (let i = start; start < end ? i <= end + tolerance : i >= end - tolerance; i += step) {
         result.push(i);
+    }
+    if (step > 0 && result[result.length - 1] > end) {
+        result[result.length - 1] = end;
+    } else if (step < 0 && result[result.length - 1] < end) {
+        result[result.length - 1] = end;
     }
     return result;
 }
