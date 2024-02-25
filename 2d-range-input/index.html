@@ -68,18 +68,22 @@
 
 <p>Resizable container? <input type="checkbox" id="resize-toggle"></p>
 
-<script src="range-2d.js"></script>
+<script src="drag-area-utils.js"></script>
+<script src="drag-area.js"></script>
+<script src="drag-item.js"></script>
 <script>
-    let range = new Range2D();
+    let dragarea = new DragArea(3);
+    
     let resizeToggle = document.querySelector("#resize-toggle");
-    resizeToggle.parentElement.before(range.container);
     resizeToggle.addEventListener("input", () => {
         if (resizeToggle.checked) {
-            range.makeResizable();
+            dragarea.makeResizable();
         } else {
-            range.makeNotResizable();
+            dragarea.makeNotResizable();
         }
     });
+    
+    resizeToggle.parentElement.before(dragarea.element);
 </script>
 
 </body>
