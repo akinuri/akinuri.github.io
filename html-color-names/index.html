@@ -16,11 +16,12 @@
 
             <table id="colors-table">
                 <thead>
-                    <tr class="*:font-semibold *:text-left *:border-b *:px-2 *:py-1">
+                    <tr class="*:font-semibold *:text-left *:border-b *:px-3 *:py-1">
                         <th>#</th>
                         <th>Color</th>
                         <th>Name</th>
                         <th>RGB</th>
+                        <th class="!px-8">Hex</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -31,17 +32,19 @@
     </div>
 
     <template id="color-row-template">
-        <tr class="hover:bg-slate-100 *:border-b *:px-2 *:py-1">
+        <tr class="hover:bg-slate-100 *:border-b *:px-3 *:py-1">
             <td></td>
             <td>
                 <div class="w-[200px] rounded h-8 bg-[rgb(var(--rgb))]"></div>
             </td>
             <td></td>
             <td></td>
+            <td class="font-mono uppercase !px-8"></td>
         </tr>
     </template>
 
     <script src="colors.js"></script>
+    <script src="utils.js"></script>
 
     <script>
         let table = document.querySelector("#colors-table tbody");
@@ -57,6 +60,9 @@
             row.children[1].style.setProperty("--rgb", rgb.join());
             row.children[2].textContent = name;
             row.children[3].textContent = rgb.join(", ");
+            row.children[4].textContent = convertHexToString(
+                convertRgbToHex(buildRgbFrom(...rgb))
+            );
             return row;
         }
     </script>
