@@ -1,0 +1,66 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>HTML Color Names</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-200">
+
+    <div class="container mx-auto my-8 mb-[calc(25vh+5rem)] w-fit">
+
+        <div class="bg-neutral-50 rounded shadow p-4">
+
+            <table id="colors-table">
+                <thead>
+                    <tr class="*:font-semibold *:text-left *:border-b *:px-2 *:py-1">
+                        <th>#</th>
+                        <th>Color</th>
+                        <th>Name</th>
+                        <th>RGB</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+
+        </div>
+
+    </div>
+
+    <template id="color-row-template">
+        <tr class="hover:bg-slate-100 *:border-b *:px-2 *:py-1">
+            <td></td>
+            <td>
+                <div class="w-[200px] rounded h-8 bg-[rgb(var(--rgb))]"></div>
+            </td>
+            <td></td>
+            <td></td>
+        </tr>
+    </template>
+
+    <script src="colors.js"></script>
+
+    <script>
+        let table = document.querySelector("#colors-table tbody");
+        let i = 1;
+        for (const color of colors) {
+            let row = buildColorRow(i++, color.name, color.rgb);
+            table.append(row);
+        }
+        function buildColorRow(index, name, rgb) {
+            let template = document.querySelector("#color-row-template");
+            let row = template.content.children[0].cloneNode(true);
+            row.children[0].textContent = index;
+            row.children[1].style.setProperty("--rgb", rgb.join());
+            row.children[2].textContent = name;
+            row.children[3].textContent = rgb.join(", ");
+            return row;
+        }
+    </script>
+
+</body>
+
+</html>
