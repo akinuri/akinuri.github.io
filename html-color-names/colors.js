@@ -8,7 +8,8 @@ var colors = [
         "rgb": [250, 235, 215]
     },
     {
-        "name": "Aqua or Cyan",
+        "name": "Cyan",
+        "alias": "Aqua",
         "rgb": [0, 255, 255]
     },
     {
@@ -176,7 +177,8 @@ var colors = [
         "rgb": [34, 139, 34]
     },
     {
-        "name": "Fuchsia or Magenta",
+        "name": "Magenta",
+        "alias": "Fuchsia",
         "rgb": [255, 0, 255]
     },
     {
