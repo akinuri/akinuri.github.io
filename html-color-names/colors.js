@@ -8,11 +8,6 @@ var colors = [
         "rgb": [250, 235, 215]
     },
     {
-        "name": "Cyan",
-        "alias": "Aqua",
-        "rgb": [0, 255, 255]
-    },
-    {
         "name": "Aquamarine",
         "rgb": [127, 255, 212]
     },
@@ -79,6 +74,11 @@ var colors = [
     {
         "name": "Crimson",
         "rgb": [220, 20, 60]
+    },
+    {
+        "name": "Cyan",
+        "alias": "Aqua",
+        "rgb": [0, 255, 255]
     },
     {
         "name": "DarkBlue",
@@ -175,11 +175,6 @@ var colors = [
     {
         "name": "ForestGreen",
         "rgb": [34, 139, 34]
-    },
-    {
-        "name": "Magenta",
-        "alias": "Fuchsia",
-        "rgb": [255, 0, 255]
     },
     {
         "name": "Gainsboro",
@@ -316,6 +311,11 @@ var colors = [
     {
         "name": "Linen",
         "rgb": [250, 240, 230]
+    },
+    {
+        "name": "Magenta",
+        "alias": "Fuchsia",
+        "rgb": [255, 0, 255]
     },
     {
         "name": "Maroon",

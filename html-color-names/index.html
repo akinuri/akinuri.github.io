@@ -6,6 +6,7 @@
     <title>HTML Color Names</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="sortable/sortable-theme-minimal.css">
 </head>
 
 <body class="bg-slate-200">
@@ -14,14 +15,14 @@
 
         <div class="bg-neutral-50 rounded shadow p-4">
 
-            <table id="colors-table">
+            <table id="colors-table" data-sortable>
                 <thead class="bg-neutral-200 sticky top-12 shadow">
                     <tr class="*:font-semibold *:text-left *:border-b *:px-3 *:py-1">
-                        <th>#</th>
-                        <th>Color</th>
+                        <th data-sortable="false">#</th>
+                        <th data-sortable="false">Color</th>
                         <th>Name</th>
-                        <th>RGB</th>
-                        <th class="!px-8">Hex</th>
+                        <th data-sortable="false">RGB</th>
+                        <th data-sortable="false" class="!px-8">Hex</th>
                         <th class="!px-5">Hue °</th>
                         <th class="!px-5" title="Saturation">Sat. %</th>
                         <th class="!px-5" title="Lightness">Lig. %</th>
@@ -53,6 +54,7 @@
 
     <script src="colors.js"></script>
     <script src="utils.js"></script>
+    <script src="sortable/sortable.min.js"></script>
 
     <script>
         let table = document.querySelector("#colors-table tbody");
