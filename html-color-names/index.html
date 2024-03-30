@@ -22,6 +22,9 @@
                         <th>Name</th>
                         <th>RGB</th>
                         <th class="!px-8">Hex</th>
+                        <th class="!px-4">Hue °</th>
+                        <th class="!px-4" title="Saturation">Sat. %</th>
+                        <th class="!px-4" title="Lightness">Lig. %</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -40,6 +43,9 @@
             <td></td>
             <td></td>
             <td class="font-mono uppercase !px-8"></td>
+            <td class="!px-4"></td>
+            <td class="!px-4"></td>
+            <td class="!px-4"></td>
         </tr>
     </template>
 
@@ -61,8 +67,13 @@
             row.children[2].textContent = name;
             row.children[3].textContent = rgb.join(", ");
             row.children[4].textContent = convertHexToString(
-                convertRgbToHex(buildRgbFrom(...rgb))
+                convertRgbToHex(buildRgbFrom(...rgb)),
+                false,
             );
+            let hsl = convertRgbToHsl(buildRgbFrom(...rgb));
+            row.children[5].textContent = hsl.hue;
+            row.children[6].textContent = hsl.saturation;
+            row.children[7].textContent = hsl.lightness;
             return row;
         }
     </script>
