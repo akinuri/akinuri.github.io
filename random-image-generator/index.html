@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Image Generator</title>
+</head>
+
+<body>
+
+<br>
+<textarea id="data" cols="80" rows="20"></textarea>
+<br>
+<button onclick="generate()">Generate</button>
+
+<script src="random.js"></script>
+<script src="utils.js"></script>
+
+<script>
+    let dataEl = document.querySelector("#data");
+    let canvas = Utils.canvas();
+    document.body.prepend(canvas);
+    generate();
+    function generate() {
+        Utils.fill(canvas, Random.color());
+        Utils.drawChar(canvas, Random.letter(), {
+            font : "50px Arial",
+            fillStyle : Random.color(),
+        });
+        Utils.drawChar(canvas, Random.int(0, 9), {
+            font : "50px Arial",
+            fillStyle : Random.color(),
+        });
+        dataEl.textContent = Utils.toData(canvas, { asRaw: true })
+    }
+</script>
+
+</body>
+
+</html>
