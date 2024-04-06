@@ -23,7 +23,9 @@
     document.body.prepend(canvas);
     generate();
     function generate() {
-        Utils.fill(canvas, Random.color());
+        Random.int(0,1) == 0
+            ? Utils.fill(canvas, Random.color())
+            : Utils.gradientFill(canvas, [...Random.colors(2, 3)]);
         Utils.drawChar(canvas, Random.letter(), {
             font : "50px Arial",
             fillStyle : Random.color(),

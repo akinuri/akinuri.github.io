@@ -47,4 +47,37 @@ class Utils {
         context.restore();
     }
 
+    static gradientFill(canvasOrContext, colors = []) {
+        let context = Utils.getContext(canvasOrContext);
+        context.save();
+        let hasStops = colors[0] instanceof Array && colors[0].length == 2;
+        if (!hasStops) {
+            colors = Utils.autoCalcStops(colors);
+        }
+        let gradient = context.createLinearGradient(
+            0,
+            context.canvas.height / 2,
+            context.canvas.width,
+            context.canvas.height / 2,
+        );
+        for (const entry of colors) {
+            let [color, stop] = entry;
+            gradient.addColorStop(stop, color);
+        }
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+        context.restore();
+    }
+
+    static autoCalcStops(colors = []) {
+        let result = [];
+        let distance = 1 / (colors.length - 1);
+        for (let i = 0; i < colors.length; i++) {
+            const color = colors[i];
+            let stop = parseFloat((i * distance).toFixed(2));
+            result.push([color, stop]);
+        }
+        return result;
+    }
+
 }
