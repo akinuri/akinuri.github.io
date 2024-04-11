@@ -12,15 +12,24 @@ class Random {
         return picks;
     }
 
-    static color() {
+    static hexColor() {
         return "#" + Random.pick("0123456789ABCDEF", 6).join("");
     }
 
-    static colors(min = 0, max = 5) {
+    static rgbColor(rgbValues) {
+        rgbValues = rgbValues || Random.rgbValues();
+        return `rgb(${rgbValues[0]}, ${rgbValues[1]}, ${rgbValues[2]})`;
+    }
+
+    static rgbValues() {
+        return Random.ints(0, 255, 3);
+    }
+
+    static colors(minCount = 1, maxCount = 5) {
         let colors = [];
-        let count = Random.int(min, max);
+        let count = Random.int(minCount, maxCount);
         for (let i = 0; i < count; i++) {
-            colors.push(Random.color());
+            colors.push(Random.hexColor());
         }
         return colors;
     }
@@ -41,6 +50,17 @@ class Random {
         }
         const int = Math.floor(Math.random() * (max - min + 1)) + min;
         return int;
+    }
+
+    static ints(min = 0, max = Number.MAX_SAFE_INTEGER, minCount = 1, maxCount = null) {
+        let ints = [];
+        let count = maxCount
+            ? Random.int(minCount, maxCount)
+            : minCount;
+        for (let i = 0; i < count; i++) {
+            ints.push(Random.int(min, max));
+        }
+        return ints;
     }
 
 }

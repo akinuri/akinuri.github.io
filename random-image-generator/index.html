@@ -15,26 +15,41 @@
 <button onclick="generate()">Generate</button>
 
 <script src="random.js"></script>
+<script src="distinct-color-generator.js"></script>
 <script src="utils.js"></script>
 
 <script>
     let dataEl = document.querySelector("#data");
-    let canvas = Utils.canvas();
+    let canvas = Utils.canvas(200, 200);
     document.body.prepend(canvas);
+    let dcg = new DistinctColorGenerator();
     generate();
     function generate() {
         Random.int(0,1) == 0
-            ? Utils.fill(canvas, Random.color())
-            : Utils.gradientFill(canvas, [...Random.colors(2, 3)]);
+            ? Utils.fill(canvas, dcg.generate())
+            : Utils.gradientFill(canvas, [...dcg.generateMultiple(2, 3)]);
+        let rectWidth = Random.int(canvas.width * 0.2, canvas.width * 0.8);
+        let rectHeight = Random.int(canvas.height * 0.2, canvas.height * 0.8);
+        let strokeStyle = Random.pick([null, dcg.generate()]);
+        Utils.drawRect(
+            canvas,
+            Random.int(0, canvas.width - rectWidth),
+            Random.int(0, canvas.height - rectHeight),
+            rectWidth,
+            rectHeight,
+            strokeStyle,
+            strokeStyle ? Random.pick([null, dcg.generate()]) : dcg.generate(),
+        );
         Utils.drawChar(canvas, Random.letter(), {
             font : "50px Arial",
-            fillStyle : Random.color(),
+            fillStyle : dcg.generate(),
         });
         Utils.drawChar(canvas, Random.int(0, 9), {
             font : "50px Arial",
-            fillStyle : Random.color(),
+            fillStyle : dcg.generate(),
         });
         dataEl.textContent = Utils.toData(canvas, { asRaw: true })
+        dcg.reset();
     }
 </script>
 

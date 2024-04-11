@@ -80,4 +80,20 @@ class Utils {
         return result;
     }
 
+    static drawRect(canvasOrContext, x, y, width, height, fillStyle, strokeStyle) {
+        let context = Utils.getContext(canvasOrContext);
+        context.save();
+        context.beginPath();
+        context.rect(x, y, width, height);
+        if (strokeStyle) {
+            context.strokeStyle = strokeStyle;
+            context.stroke();
+        }
+        if (fillStyle) {
+            context.fillStyle = fillStyle;
+            context.fill();
+        }
+        context.restore();
+    }
+
 }
