@@ -1,10 +1,11 @@
 function DragItem(area) {
 
-    this.element = document.createElement("div");
-    this.element.classList.add("drag-item");
     this.area = area;
 
-    this.rect = null;
+    this.element = document.createElement("div");
+    this.element.classList.add("drag-item");
+
+    this.elRect = null;
     this.posRatios = [0, 0];
 
     for (const prop in DragItem.defaultStyle) {
@@ -12,7 +13,7 @@ function DragItem(area) {
     }
 
     this.element.addEventListener("mousedown", this.startDragging.bind(this));
-    
+
     document.addEventListener("mouseup", this.stopDragging.bind(this));
 }
 
@@ -25,11 +26,11 @@ DragItem.defaultStyle = {
 
 DragItem.prototype = {
 
-    updateRect: function () {
+    updateElRect: function (rect) {
         rect = typeof rect == "undefined"
             ? this.element.getBoundingClientRect()
             : rect;
-        this.rect = rect;
+        this.elRect = rect;
     },
 
     startDragging: function startDragging(e) {
@@ -37,8 +38,8 @@ DragItem.prototype = {
             return;
         }
         e.preventDefault();
-        this.updateRect();
-        this.area.updateRect();
+        this.updateElRect();
+        this.area.updateElRect();
         if (!this.dragBound) {
             this.dragBound = this.drag.bind(this);
         }
@@ -53,39 +54,59 @@ DragItem.prototype = {
             return;
         }
         document.removeEventListener("mousemove", this.dragBound);
-        this.updateRect(null);
-        this.area.updateRect(null);
+        this.updateElRect(null);
+        this.area.updateElRect(null);
     },
 
     drag: function drag(e) {
-        let x = e.clientX - this.area.rect.left;
-        let y = e.clientY - this.area.rect.top;
-        this.move(x, y);
+        let x = e.clientX - this.area.elRect.left;
+        let y = e.clientY - this.area.elRect.top;
+        this.moveTo(x, y, true);
     },
 
-    move: function (x, y, skip = false) {
-        let maxX = this.area.rect.width - this.rect.width;
-        let maxY = this.area.rect.height - this.rect.height;
-        if (!skip) {
-            let halfWidth = this.rect.width / 2;
+    moveTo: function (x, y, refCenter = false) {
+        ({ x, y } = this.calcPos(x, y, refCenter));
+        this.element.style.left = x + "px";
+        this.element.style.top = y + "px";
+    },
+
+    calcPos: function (x, y, refCenter = false) {
+        let maxX = this.area.elRect.width - this.elRect.width;
+        let maxY = this.area.elRect.height - this.elRect.height;
+        if (refCenter) {
+            let halfWidth = this.elRect.width / 2;
             x -= halfWidth;
             y -= halfWidth;
         }
         x = DragAreaUtils.clamp(x, 0, maxX);
         y = DragAreaUtils.clamp(y, 0, maxY);
-        this.posRatios = [x / maxX, y / maxY];
-        this.element.style.left = x + "px";
-        this.element.style.top = y + "px";
+        logPos: {
+            this.posRatios = [x / maxX, y / maxY];
+        }
+        return { x, y };
     },
 
-    updatePos: function () {
-        this.updateRect();
-        this.area.updateRect();
-        let maxX = this.area.rect.width - this.rect.width;
-        let maxY = this.area.rect.height - this.rect.height;
+    updatePosFromLog: function () {
+        this.updateElRect();
+        this.area.updateElRect();
+        let maxX = this.area.elRect.width - this.elRect.width;
+        let maxY = this.area.elRect.height - this.elRect.height;
         let x = this.posRatios[0] * maxX;
         let y = this.posRatios[1] * maxY;
-        this.move(x, y, true);
+        this.moveTo(x, y);
+    },
+
+    getPos: function (refCenter = false) {
+        let computedStyle = getComputedStyle(this.element);
+        let x = parseFloat(computedStyle.left);
+        let y = parseFloat(computedStyle.top);
+        this.updateElRect();
+        if (refCenter) {
+            let halfWidth = this.elRect.width / 2;
+            x += halfWidth;
+            y += halfWidth;
+        }
+        return { x, y };
     },
 
 };
