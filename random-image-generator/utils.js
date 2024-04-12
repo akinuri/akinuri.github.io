@@ -96,4 +96,20 @@ class Utils {
         context.restore();
     }
 
+    static drawCircle(canvasOrContext, x, y, radius, fillStyle, strokeStyle) {
+        let context = Utils.getContext(canvasOrContext);
+        context.save();
+        context.beginPath();
+        context.arc(x, y, radius, 0, Math.PI * 2);
+        if (strokeStyle) {
+            context.strokeStyle = strokeStyle;
+            context.stroke();
+        }
+        if (fillStyle) {
+            context.fillStyle = fillStyle;
+            context.fill();
+        }
+        context.restore();
+    }
+
 }

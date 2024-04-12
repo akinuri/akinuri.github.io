@@ -30,15 +30,25 @@
             : Utils.gradientFill(canvas, [...dcg.generateMultiple(2, 3)]);
         let rectWidth = Random.int(canvas.width * 0.2, canvas.width * 0.8);
         let rectHeight = Random.int(canvas.height * 0.2, canvas.height * 0.8);
-        let strokeStyle = Random.pick([null, dcg.generate()]);
+        let circleRadius = Random.int(canvas.width * 0.5 * 0.2, canvas.width * 0.5 * 0.8);
+        let rectStrokeStyle = Random.pick([null, dcg.generate()]);
+        let circleStrokeStyle = Random.pick([null, dcg.generate()]);
         Utils.drawRect(
             canvas,
             Random.int(0, canvas.width - rectWidth),
             Random.int(0, canvas.height - rectHeight),
             rectWidth,
             rectHeight,
-            strokeStyle,
-            strokeStyle ? Random.pick([null, dcg.generate()]) : dcg.generate(),
+            rectStrokeStyle,
+            rectStrokeStyle ? Random.pick([null, dcg.generate()]) : dcg.generate(),
+        );
+        Utils.drawCircle(
+            canvas,
+            Random.int(0 + circleRadius, canvas.width - circleRadius),
+            Random.int(0 + circleRadius, canvas.height - circleRadius),
+            circleRadius,
+            circleStrokeStyle,
+            circleStrokeStyle ? Random.pick([null, dcg.generate()]) : dcg.generate(),
         );
         Utils.drawChar(canvas, Random.letter(), {
             font : "50px Arial",
