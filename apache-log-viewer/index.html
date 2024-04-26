@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apache Log Viewer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-100">
+
+<div class="p-8">
+    
+    <div class="bg-white p-4 rounded shadow">
+        <div class="flex gap-4">
+            <input type="file" id="file-input" hidden>
+            <button
+                id="parse-btn"
+                class="bg-slate-200 hover:bg-slate-300/75 active:bg-slate-300 rounded px-3 py-1"
+                >Parse</button>
+        </div>
+        <textarea id="text-input" rows="5" class="block w-full font-mono text-sm whitespace-nowrap border px-2 py-1 mt-4 bg-gray-50"></textarea>
+    </div>
+    
+    <div class="bg-white p-4 rounded shadow min-h-[100px] mt-4">
+        <div class="max-h-[400px] overflow-auto">
+            <table class="text-sm" id="ip-requests-table">
+                <thead>
+                    <tr class="*:font-semibold *:px-2 *:py-1 *:border *:text-left bg-slate-100">
+                        <th>#</th>
+                        <th>IP</th>
+                        <th>Requests</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    
+    <div class="bg-white p-4 rounded shadow min-h-[200px] mt-4">
+        
+        <div class="max-h-[400px] overflow-auto">
+            <table class="w-full text-sm" id="logs-table">
+                <thead>
+                    <tr class="*:font-semibold *:px-2 *:py-1 *:border *:text-left bg-slate-100">
+                        <th>#</th>
+                        <th>IP</th>
+                        <th>Identity</th>
+                        <th>User</th>
+                        <th>Date</th>
+                        <th>Method</th>
+                        <th>Path</th>
+                        <th>Protocol</th>
+                        <th>Status</th>
+                        <th>Length</th>
+                        <th>Referrer</th>
+                        <th>UA</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        
+    </div>
+    
+</div>
+
+<script src="lib/element.js"></script>
+<script src="lib/on.js"></script>
+<script src="lib/qs.js"></script>
+<script src="utils.js"></script>
+<script src="app.js"></script>
+
+</body>
+
+</html>
