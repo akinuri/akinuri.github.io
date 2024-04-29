@@ -1,6 +1,7 @@
 let textInputBox = qs("#text-input");
 let logsBody = qs("#logs-table tbody");
 let ipCountBody = qs("#ip-count-table tbody");
+let dateCountBody = qs("#date-count-table tbody");
 let methodCountBody = qs("#method-count-table tbody");
 let protocolCountBody = qs("#protocol-count-table tbody");
 let statusCountBody = qs("#status-count-table tbody");
@@ -26,6 +27,19 @@ on("#parse-btn", "click", () => {
     ipCountBody.innerHTML = "";
     for (const entry of ipFrequency) {
         ipCountBody.append( buildCountLine(entry, ipIndex++) );
+    }
+    
+    let dateFrequency = calcFrequency(
+        getColumn(logs, log => {
+            return isoDateFromParsedDate(parseISODateTime(log.datetime));
+        })
+    );
+    dateFrequency = Object.entries(dateFrequency);
+    dateFrequency = sortBy(dateFrequency, [1, -1], 0);
+    let dateIndex = 1;
+    dateCountBody.innerHTML = "";
+    for (const entry of dateFrequency) {
+        dateCountBody.append( buildCountLine(entry, dateIndex++) );
     }
     
     let methodFrequency = calcFrequency(getColumn(logs, "request.method"));

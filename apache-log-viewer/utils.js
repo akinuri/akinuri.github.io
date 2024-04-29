@@ -1,58 +1,3 @@
-function parseAccessLogs(text) {
-    let logs = [];
-    let lines = text.split(/\r?\n/);
-    lines = lines.filter(line => line.trim().length);
-    for (const line of lines) {
-        logs.push(parseAccessLogLine(line));
-    }
-    return logs;
-}
-
-function parseAccessLogLine(
-    logLine,
-    partNames = ["ip", "identity", "user", "datetime", "request", "status", "length", "referrer", "ua"],
-) {
-    let request = parseAccessLogLineRequestPart(logLine);
-    logLine = logLine.replace('"' + request.raw + '"', "");
-    const splitPattern = /[^\s\[]+|\[([^\]]+)\]/gi;
-    let parts = [];
-    let match;
-    while ((match = splitPattern.exec(logLine)) !== null) {
-        if (match[1]) {
-            parts.push(match[1]);
-        } else {
-            parts.push(match[0]);
-        }
-    }
-    let requestIndex = partNames.indexOf("request");
-    if (requestIndex !== -1) {
-        parts.splice(requestIndex, 0, request);
-    }
-    parts = arrayCombine(partNames, parts);
-    return parts;
-}
-
-function parseAccessLogLineRequestPart(logLine, partNames = ["method", "path", "protocol"]) {
-    let request = {
-        raw : /\] "(.*)" \d+ /s.exec(logLine)[1],
-    };
-    request = Object.assign(request, arrayCombine(partNames, Array(partNames.length).fill(null)));
-    let isRegularRequest = /^(GET|POST|HEAD|CONNECT|OPTIONS|PUT|PATCH|DELETE|TRACE)/.exec(request.raw);
-    if (isRegularRequest) {
-        let parts = request.raw.split(" ");
-        let namedParts = arrayCombine(partNames, parts);
-        request = Object.assign(request, namedParts);
-    }
-    if (request.protocol && request.protocol.includes("\\n")) {
-        request.protocol = request.protocol.replace("\\n", "");
-    }
-    if (request.protocol && !request.protocol.startsWith("HTTP/")) {
-        request.path += " " + request.protocol;
-        request.protocol = null;
-    }
-    return request;
-}
-
 function arrayCombine(keys, values) {
     let combined = {};
     for (let i = 0; i < keys.length; i++) {
@@ -79,8 +24,11 @@ function calcFrequency(array) {
 
 function getColumn(array, columnName) {
     return array.map(item => {
-        if (columnName.includes(".")) {
+        if (typeof columnName == "string" && columnName.includes(".")) {
             return getObjProp(item, columnName);
+        }
+        else if (typeof columnName == "function") {
+            return columnName(item);
         }
         return item[columnName];
     });
@@ -132,4 +80,69 @@ function sortBy(array, firstColumnName, secondColumnName) {
         }
         return 0;
     });
+}
+
+function getMonthIndexByName(monthName) {
+    let months = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+    ];
+    let index = months.findIndex(month => {
+        return month == monthName || month.slice(0, 3) == monthName;
+    });
+    if (index !== -1) {
+        index++;
+    } else {
+        index = null;
+    }
+    if (index) {
+        index = (index).toString().padStart(2, "0");
+    }
+    return index;
+}
+
+function isoDateTimeFromParsedDate(obj) {
+    let datetime = "";
+    if (obj.year && obj.month && obj.day) {
+        let date = [obj.year, obj.month, obj.day].join("-");
+        datetime += date;
+    }
+    if (obj.hour && obj.minute && obj.second) {
+        let time = [obj.hour, obj.minute, obj.second].join(":");
+        if (datetime) {
+            datetime += " ";
+        }
+        datetime += time;
+    }
+    if (obj.timezone) {
+        if (datetime) {
+            datetime += " ";
+        }
+        datetime += obj.timezone;
+    }
+    return datetime;
+}
+
+function isoDateFromParsedDate(obj) {
+    let date = null;
+    if (obj.year && obj.month && obj.day) {
+        date = [obj.year, obj.month, obj.day].join("-");
+    }
+    return date;
+}
+
+function parseISODateTime(dateStr) {
+    let parts = dateStr.split(/-|\s|:/);
+    let namedParts = arrayCombine(["year", "month", "day", "hour", "minute", "second", "timezone"], parts);
+    return namedParts;
 }
