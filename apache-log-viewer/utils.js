@@ -146,3 +146,27 @@ function parseISODateTime(dateStr) {
     let namedParts = arrayCombine(["year", "month", "day", "hour", "minute", "second", "timezone"], parts);
     return namedParts;
 }
+
+function trimTextWhitespace(text) {
+    let lines = text.split("\n");
+    lines = lines.map(line => line.trim());
+    lines = lines.filter(line => line);
+    text = lines.join("\n");
+    return text;
+}
+
+function debounce(callback, delay = 1000) {
+    var timeoutHandle = null;
+    let debounceInner = function debounceInner() {
+        let passedArgs = Array.from(arguments);
+        clearTimeout(timeoutHandle);
+        timeoutHandle = setTimeout(function () {
+            callback.apply(this, passedArgs);
+        }.bind(this), delay || 1000);
+    };
+    if (!(this instanceof Window)) {
+        debounceInner = debounceInner.bind(this);
+    }
+    return debounceInner;
+}
+

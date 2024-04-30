@@ -1,13 +1,21 @@
-let textInputBox = qs("#text-input");
+let accessLogTextInputBox = qs("#access-log-text-input");
+let pathGroupsInputBox = qs("#path-groups-input");
 let logsBody = qs("#logs-table tbody");
 let ipCountBody = qs("#ip-count-table tbody");
 let dateCountBody = qs("#date-count-table tbody");
 let methodCountBody = qs("#method-count-table tbody");
+let pathGroupsCountBody = qs("#path-groups-count-table tbody");
 let protocolCountBody = qs("#protocol-count-table tbody");
 let statusCountBody = qs("#status-count-table tbody");
 
+on(pathGroupsInputBox, "input", debounce(() => {
+    pathGroupsInputBox.value = trimTextWhitespace(pathGroupsInputBox.value);
+}));
+
+trigger(pathGroupsInputBox, "input");
+
 on("#parse-btn", "click", () => {
-    let logs = parseAccessLogs(textInputBox.value);
+    let logs = parseAccessLogs(accessLogTextInputBox.value);
     
     let maxLogRowCount = 1000;
     let logIndex = 1;
@@ -49,6 +57,42 @@ on("#parse-btn", "click", () => {
     methodCountBody.innerHTML = "";
     for (const entry of methodFrequency) {
         methodCountBody.append( buildCountLine(entry, methodIndex++) );
+    }
+    
+    let pathGroups = parsePathGroups(pathGroupsInputBox.value);
+    let pathGroupsFrequency = {
+        "[OTHER]" : 0,
+        "[INVALID]" : 0,
+    };
+    pathGroupsCountBody.innerHTML = "";
+    if (Object.keys(pathGroups).length) {
+        for (const log of logs) {
+            if (!log.request.path) {
+                pathGroupsFrequency["[INVALID]"]++;
+                continue;
+            }
+            let groupMatch = false;
+            for (const pathGroupName in pathGroups) {
+                const pathGroupRegex = pathGroups[pathGroupName];
+                if (pathGroupRegex.exec(log.request.path)) {
+                    groupMatch = true;
+                    if (pathGroupsFrequency[pathGroupName]) {
+                        pathGroupsFrequency[pathGroupName]++;
+                    } else {
+                        pathGroupsFrequency[pathGroupName] = 1;
+                    }
+                }
+            }
+            if (!groupMatch) {
+                pathGroupsFrequency["[OTHER]"]++;
+            }
+        }
+        pathGroupsFrequency = Object.entries(pathGroupsFrequency);
+        pathGroupsFrequency = sortBy(pathGroupsFrequency, [1, -1], 0);
+        let pathGroupIndex = 1;
+        for (const entry of pathGroupsFrequency) {
+            pathGroupsCountBody.append( buildCountLine(entry, pathGroupIndex++) );
+        }
     }
     
     let protocolFrequency = calcFrequency(getColumn(logs, "request.protocol"));

@@ -60,3 +60,22 @@ function parseAccessLogDate(dateStr) {
     namedParts.month = getMonthIndexByName(namedParts.month);
     return namedParts;
 }
+
+function parsePathGroups(text) {
+    let groups = {};
+    let pattern = /^(\w+):\s*(.+)/;
+    let lines = text.split("\n");
+    for (const line of lines) {
+        let match = line.match(pattern);
+        if (!match) {
+            continue;
+        }
+        let [groupName, groupPattern] = match.slice(1, 3);
+        if (groupName == "path group" || groupPattern == "regex") {
+            continue;
+        }
+        groups[groupName] = new RegExp(groupPattern);
+    }
+    return groups;
+}
+
