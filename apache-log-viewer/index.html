@@ -8,131 +8,200 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-slate-100">
+<body class="bg-gray-100">
 
-<div class="p-8">
+<div class="p-8 pb-[calc(4rem+25vh)]">
     
-    <div class="bg-white p-4 rounded shadow">
-        <div class="flex gap-4">
-            <input type="file" id="file-input" hidden>
-            <button
-                id="parse-btn"
-                class="bg-slate-200 hover:bg-slate-300/75 active:bg-slate-300 rounded px-3 py-1"
-                >Parse</button>
+    <div class="flex gap-8 items-start">
+        
+        <div class="bg-white rounded shadow grow">
+            <div class="bg-slate-50 px-4 py-2 text-sm text-slate-700/50 rounded-tl rounded-tr border-b">
+                Access Log
+            </div>
+            <div class="p-4 flex flex-col gap-4">
+                <textarea
+                    id="access-log-text-input"
+                    rows="5"
+                    class="block w-full font-mono text-sm whitespace-nowrap border px-2 py-1 bg-gray-50"
+                    placeholder="text"
+                    ></textarea>
+                <div class="flex gap-4">
+                    <input type="file" id="file-input" hidden>
+                    <button
+                        id="parse-btn"
+                        class="bg-slate-200 hover:bg-slate-300/75 active:bg-slate-300 rounded px-3 py-1"
+                        >Parse</button>
+                </div>
+            </div>
         </div>
-        <textarea
-            id="access-log-text-input"
-            rows="5"
-            class="block w-full font-mono text-sm whitespace-nowrap border px-2 py-1 mt-4 bg-gray-50"
-            placeholder="access_log text"
-            ></textarea>
-        <textarea
-            id="path-groups-input"
-            rows="5"
-            class="block w-full font-mono text-sm border px-2 py-1 mt-4 bg-gray-50"
-            >
-            path group: regex
-            assets: ^\/assets
-            uploads: ^\/uploads
-            gate: ^\/gate
-            dashboard: ^\/dashboard
-        </textarea>
-    </div>
-    
-    <div class="bg-white p-4 rounded shadow min-h-[100px] mt-4 flex gap-6 items-start">
         
-        <table class="text-sm" id="ip-count-table">
-            <thead>
-                <tr class="*:font-semibold *:px-2 *:py-1 *:border *:text-left bg-slate-100">
-                    <th>#</th>
-                    <th>IP</th>
-                    <th>Count</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-        
-        <table class="text-sm" id="date-count-table">
-            <thead>
-                <tr class="*:font-semibold *:px-2 *:py-1 *:border *:text-left bg-slate-100">
-                    <th>#</th>
-                    <th>Date</th>
-                    <th>Count</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-        
-        <table class="text-sm" id="method-count-table">
-            <thead>
-                <tr class="*:font-semibold *:px-2 *:py-1 *:border *:text-left bg-slate-100">
-                    <th>#</th>
-                    <th>Method</th>
-                    <th>Count</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-        
-        <table class="text-sm" id="path-groups-count-table">
-            <thead>
-                <tr class="*:font-semibold *:px-2 *:py-1 *:border *:text-left bg-slate-100">
-                    <th>#</th>
-                    <th>Path Group</th>
-                    <th>Count</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-        
-        <table class="text-sm" id="protocol-count-table">
-            <thead>
-                <tr class="*:font-semibold *:px-2 *:py-1 *:border *:text-left bg-slate-100">
-                    <th>#</th>
-                    <th>Protocol</th>
-                    <th>Count</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-        
-        <table class="text-sm" id="status-count-table">
-            <thead>
-                <tr class="*:font-semibold *:px-2 *:py-1 *:border *:text-left bg-slate-100">
-                    <th>#</th>
-                    <th>Status</th>
-                    <th>Count</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+        <div class="bg-white rounded shadow w-[400px]">
+            <div class="bg-slate-50 px-4 py-2 text-sm text-slate-700/50 rounded-tl rounded-tr border-b">
+                Config
+            </div>
+            <div class="p-4">
+                <textarea
+                    id="path-groups-input"
+                    rows="5"
+                    class="block w-full font-mono text-sm border px-2 py-1 bg-gray-50"
+                    >
+                    path group: regex
+                    assets: ^\/assets
+                    uploads: ^\/uploads
+                    gate: ^\/gate
+                    dashboard: ^\/dashboard
+                </textarea>
+            </div>
+        </div>
         
     </div>
     
-    <div class="bg-white p-4 rounded shadow min-h-[200px] mt-4">
-        
-        <div class="max-h-[400px] overflow-auto">
-            <table class="w-full text-sm" id="logs-table">
+    <div class="bg-white rounded shadow mt-6">
+        <div class="bg-slate-50 px-4 py-2 text-sm text-slate-700/50 rounded-tl rounded-tr border-b">
+            Counts
+        </div>
+        <div class="p-4 flex gap-6 items-start min-h-[200px]">
+            
+            <table class="text-sm" id="ip-count-table">
                 <thead>
                     <tr class="*:font-semibold *:px-2 *:py-1 *:border *:text-left bg-slate-100">
                         <th>#</th>
                         <th>IP</th>
-                        <th>Identity</th>
-                        <th>User</th>
-                        <th>Date</th>
-                        <th>Method</th>
-                        <th>Path</th>
-                        <th>Protocol</th>
-                        <th>Status</th>
-                        <th>Length</th>
-                        <th>Referrer</th>
-                        <th>UA</th>
+                        <th>Count</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
             </table>
+            
+            <table class="text-sm" id="date-count-table">
+                <thead>
+                    <tr class="*:font-semibold *:px-2 *:py-1 *:border *:text-left bg-slate-100">
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            
+            <table class="text-sm" id="method-count-table">
+                <thead>
+                    <tr class="*:font-semibold *:px-2 *:py-1 *:border *:text-left bg-slate-100">
+                        <th>#</th>
+                        <th>Method</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            
+            <table class="text-sm" id="path-groups-count-table">
+                <thead>
+                    <tr class="*:font-semibold *:px-2 *:py-1 *:border *:text-left bg-slate-100">
+                        <th>#</th>
+                        <th>Path Group</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            
+            <table class="text-sm" id="protocol-count-table">
+                <thead>
+                    <tr class="*:font-semibold *:px-2 *:py-1 *:border *:text-left bg-slate-100">
+                        <th>#</th>
+                        <th>Protocol</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            
+            <table class="text-sm" id="status-count-table">
+                <thead>
+                    <tr class="*:font-semibold *:px-2 *:py-1 *:border *:text-left bg-slate-100">
+                        <th>#</th>
+                        <th>Status</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            
         </div>
-        
+    </div>
+    
+    <div class="bg-white rounded shadow mt-6">
+        <div class="bg-slate-50 px-4 py-2 text-sm text-slate-700/50 rounded-tl rounded-tr border-b">
+            Transferred Bytes
+        </div>
+        <div class="p-4 flex gap-6 items-start min-h-[200px]">
+            
+            <table class="text-sm" id="ip-bytes-table">
+                <thead>
+                    <tr class="*:font-semibold *:px-2 *:py-1 *:border *:text-left bg-slate-100">
+                        <th>#</th>
+                        <th>IP</th>
+                        <th>MB</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            
+            <table class="text-sm" id="date-bytes-table">
+                <thead>
+                    <tr class="*:font-semibold *:px-2 *:py-1 *:border *:text-left bg-slate-100">
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>MB</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            
+            <table class="text-sm" id="method-bytes-table">
+                <thead>
+                    <tr class="*:font-semibold *:px-2 *:py-1 *:border *:text-left bg-slate-100">
+                        <th>#</th>
+                        <th>Method</th>
+                        <th>MB</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            
+        </div>
+    </div>
+    
+    <div class="bg-white rounded shadow mt-6">
+        <div class="bg-slate-50 px-4 py-2 text-sm text-slate-700/50 rounded-tl rounded-tr border-b">
+            Requests
+        </div>
+        <div class="p-4 min-h-[200px]">
+            
+            <div class="max-h-[400px] overflow-auto">
+                <table class="w-full text-sm" id="logs-table">
+                    <thead>
+                        <tr class="*:font-semibold *:px-2 *:py-1 *:border *:text-left bg-slate-100">
+                            <th>#</th>
+                            <th>IP</th>
+                            <th>Identity</th>
+                            <th>User</th>
+                            <th>Date</th>
+                            <th>Method</th>
+                            <th>Path</th>
+                            <th>Protocol</th>
+                            <th>Status</th>
+                            <th>Length</th>
+                            <th>Referrer</th>
+                            <th>UA</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            
+        </div>
     </div>
     
 </div>
