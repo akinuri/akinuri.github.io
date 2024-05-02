@@ -3,6 +3,13 @@ let pathGroupsInputBox = qs("#path-groups-input");
 
 let logsBody = qs("#logs-table tbody");
 
+let statEls = {
+    daysCount : qs("#days-count"),
+    requestsCount : qs("#requests-count"),
+    ipsCount : qs("#ips-count"),
+    bytesSum : qs("#bytes-sum"),
+};
+
 let ipCountBody = qs("#ip-count-table tbody");
 let dateCountBody = qs("#date-count-table tbody");
 let methodCountBody = qs("#method-count-table tbody");
@@ -10,9 +17,12 @@ let pathGroupsCountBody = qs("#path-groups-count-table tbody");
 let protocolCountBody = qs("#protocol-count-table tbody");
 let statusCountBody = qs("#status-count-table tbody");
 
-let ipBytesTable = qs("#ip-bytes-table tbody");
-let dateBytesTable = qs("#date-bytes-table tbody");
-let methodBytesTable = qs("#method-bytes-table tbody");
+let ipBytesBody = qs("#ip-bytes-table tbody");
+let dateBytesBody = qs("#date-bytes-table tbody");
+let methodBytesBody = qs("#method-bytes-table tbody");
+let pathGroupsBytesBody = qs("#path-groups-bytes-table tbody");
+let protocolBytesBody = qs("#protocol-bytes-table tbody");
+let statusBytesBody = qs("#status-bytes-table tbody");
 
 on(pathGroupsInputBox, "input", debounce(() => {
     pathGroupsInputBox.value = trimTextWhitespace(pathGroupsInputBox.value);
@@ -25,15 +35,36 @@ on("#parse-btn", "click", () => {
     
     printLogsLines(logs);
     
+    statEls.daysCount.textContent = new Set(
+        getColumn(
+            logs,
+            log => isoDateFromParsedDate(parseISODateTime(log.datetime))
+        )
+    ).size;
+    statEls.requestsCount.textContent = logs.length;
+    statEls.ipsCount.textContent = new Set(getColumn(logs, "ip")).size;
+    statEls.bytesSum.textContent = (
+        sum(
+            getColumn(logs, "length")
+                .filter(value => value != "-")
+                .map(value => parseInt(value))
+        )
+        / 1024 / 1024
+    ).toFixed(2);
+    
     printIpRequestCounts(logs);
     printDateRequestCounts(logs);
     printMethodRequestCounts(logs);
     printPathGroupsRequestCounts(logs);
+    printProtocolRequestCounts(logs);
     printStatusRequestCounts(logs);
     
     printIpRequestBytes(logs);
     printDateRequestBytes(logs);
     printMethodRequestBytes(logs);
+    printPathGroupsRequestBytes(logs);
+    printProtocolRequestBytes(logs);
+    printStatusRequestBytes(logs);
 });
 
 
@@ -164,7 +195,9 @@ function printPathGroupsRequestCounts(logs) {
             pathGroupsCountBody.append( buildCountLine(entry, pathGroupIndex++) );
         }
     }
-    
+}
+
+function printProtocolRequestCounts(logs) {
     let protocolFrequency = calcFrequency(getColumn(logs, "request.protocol"));
     protocolFrequency = Object.entries(protocolFrequency);
     protocolFrequency = sortBy(protocolFrequency, [1, -1], 0);
@@ -221,9 +254,9 @@ function printIpRequestBytes(logs) {
     bytes = sortBy(bytes, [1, -1], 0);
     bytes = bytes.slice(0, 10);
     let byteIndex = 1;
-    ipBytesTable.innerHTML = "";
+    ipBytesBody.innerHTML = "";
     for (const entry of bytes) {
-        ipBytesTable.append( buildCountLine(entry, byteIndex++) );
+        ipBytesBody.append( buildCountLine(entry, byteIndex++) );
     }
 }
 
@@ -252,9 +285,9 @@ function printDateRequestBytes(logs) {
     bytes = sortBy(bytes, [1, -1], 0);
     bytes = bytes.slice(0, 10);
     let byteIndex = 1;
-    dateBytesTable.innerHTML = "";
+    dateBytesBody.innerHTML = "";
     for (const entry of bytes) {
-        dateBytesTable.append( buildCountLine(entry, byteIndex++) );
+        dateBytesBody.append( buildCountLine(entry, byteIndex++) );
     }
 }
 
@@ -274,9 +307,97 @@ function printMethodRequestBytes(logs) {
     bytes = sortBy(bytes, [1, -1], 0);
     bytes = bytes.slice(0, 10);
     let byteIndex = 1;
-    methodBytesTable.innerHTML = "";
+    methodBytesBody.innerHTML = "";
     for (const entry of bytes) {
-        methodBytesTable.append( buildCountLine(entry, byteIndex++) );
+        methodBytesBody.append( buildCountLine(entry, byteIndex++) );
+    }
+}
+
+function printPathGroupsRequestBytes(logs) {
+    let pathGroups = parsePathGroups(pathGroupsInputBox.value);
+    let bytes = {
+        "[OTHER]" : [],
+        "[INVALID]" : [],
+    };
+    pathGroupsBytesBody.innerHTML = "";
+    if (Object.keys(pathGroups).length) {
+        for (const log of logs) {
+            let contentLength = log.length != "-" ? log.length : 0;
+            if (!log.request.path) {
+                bytes["[INVALID]"].push(contentLength);
+                continue;
+            }
+            let groupMatch = false;
+            for (const pathGroupName in pathGroups) {
+                const pathGroupRegex = pathGroups[pathGroupName];
+                if (pathGroupRegex.exec(log.request.path)) {
+                    groupMatch = true;
+                    if (bytes[pathGroupName]) {
+                        bytes[pathGroupName].push(contentLength);
+                    } else {
+                        bytes[pathGroupName] = [];
+                    }
+                }
+            }
+            if (!groupMatch) {
+                bytes["[OTHER]"].push(contentLength);
+            }
+        }
+        for (const pathGroupName in bytes) {
+            bytes[pathGroupName] = sum(bytes[pathGroupName]);
+            bytes[pathGroupName] = parseFloat((bytes[pathGroupName] / 1024 / 1024).toFixed(2));
+        }
+        bytes = Object.entries(bytes);
+        bytes = sortBy(bytes, [1, -1], 0);
+        let byteIndex = 1;
+        pathGroupsBytesBody.innerHTML = "";
+        for (const entry of bytes) {
+            pathGroupsBytesBody.append( buildCountLine(entry, byteIndex++) );
+        }
+    }
+}
+
+function printProtocolRequestBytes(logs) {
+    let bytes = {};
+    let protocols = Array.from(new Set(getColumn(logs, "request.protocol")));
+    for (const protocol of protocols) {
+        let protocolRequests = logs.filter(log => log.request.protocol == protocol);
+        let protocolBytes = getColumn(protocolRequests, "length")
+            .filter(value => value != "-")
+            .map(value => parseInt(value));
+        protocolBytes = sum(protocolBytes);
+        protocolBytes = parseFloat((protocolBytes / 1024 / 1024).toFixed(2));
+        bytes[protocol] = protocolBytes;
+    }
+    bytes = Object.entries(bytes);
+    bytes = sortBy(bytes, [1, -1], 0);
+    bytes = bytes.slice(0, 10);
+    let byteIndex = 1;
+    protocolBytesBody.innerHTML = "";
+    for (const entry of bytes) {
+        protocolBytesBody.append( buildCountLine(entry, byteIndex++) );
+    }
+}
+
+function printStatusRequestBytes(logs) {
+    let bytes = {};
+    let statuses = Array.from(new Set(getColumn(logs, "status")));
+    for (const status of statuses) {
+        let statusRequests = logs.filter(log => log.status == status);
+        let statusBytes = getColumn(statusRequests, "length")
+            .filter(value => value != "-")
+            .map(value => parseInt(value));
+        statusBytes = sum(statusBytes);
+        statusBytes = parseFloat((statusBytes / 1024 / 1024).toFixed(2));
+        bytes[status] = statusBytes;
+    }
+    bytes = Object.entries(bytes);
+    bytes = sortBy(bytes, [1, -1], 0);
+    bytes = bytes.slice(0, 10);
+    let byteIndex = 1;
+    statusBytesBody.innerHTML = "";
+    for (const entry of bytes) {
+        statusBytesBody.append( buildCountLine(entry, byteIndex++) );
     }
 }
 
