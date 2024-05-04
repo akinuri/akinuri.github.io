@@ -12,35 +12,45 @@ function parseAccessLogLine(
     logLine,
     partNames = ["ip", "identity", "user", "datetime", "request", "status", "length", "referrer", "ua"],
 ) {
-    let request = parseAccessLogLineRequestPart(logLine);
-    logLine = logLine.replace('"' + request.raw + '"', "");
+    let quotedParts;
+    ({logLine, parts : quotedParts} = getAccessLogQuotedParts(logLine));
     const splitPattern = /[^\s\[]+|\[([^\]]+)\]/gi;
     let parts = [];
     let match;
     while ((match = splitPattern.exec(logLine)) !== null) {
-        if (match[1]) {
-            parts.push(match[1]);
-        } else {
-            parts.push(match[0]);
-        }
-    }
-    let requestIndex = partNames.indexOf("request");
-    if (requestIndex !== -1) {
-        parts.splice(requestIndex, 0, request);
+        parts.push(match[1] ?? match[0]);
     }
     parts = arrayCombine(partNames, parts);
     parts.datetime = isoDateTimeFromParsedDate(parseAccessLogDate(parts.datetime));
+    parts.request = parseAccessLogLineRequestPart(quotedParts.request);
+    parts.referrer = quotedParts.referrer;
+    parts.ua = quotedParts.ua;
     return parts;
 }
 
-function parseAccessLogLineRequestPart(logLine, partNames = ["method", "path", "protocol"]) {
+function getAccessLogQuotedParts(logLine, partNames = ["request", "referrer", "ua"]) {
+    let result = {
+        logLine,
+        parts : [],
+    };
+    let pattern = /"(?:\\.|[^"\\])*"/g;
+    let i = 0;
+    result.logLine = result.logLine.replace(pattern, function (match) {
+        result.parts.push(match);
+        return `%${partNames[i++]}%`;
+    });
+    result.parts = arrayCombine(partNames, result.parts);
+    return result;
+}
+
+function parseAccessLogLineRequestPart(requestStr, partNames = ["method", "path", "protocol"]) {
     let request = {
-        raw: /\] "(.*)" \d+ /s.exec(logLine)[1],
+        raw: requestStr,
     };
     request = Object.assign(request, arrayCombine(partNames, Array(partNames.length).fill(null)));
-    let isRegularRequest = /^(GET|POST|HEAD|CONNECT|OPTIONS|PUT|PATCH|DELETE|TRACE)/.exec(request.raw);
+    let isRegularRequest = /^"(GET|POST|HEAD|CONNECT|OPTIONS|PUT|PATCH|DELETE|TRACE)/.exec(request.raw);
     if (isRegularRequest) {
-        let parts = request.raw.split(" ");
+        let parts = request.raw.slice(1, -1).split(" ");
         let namedParts = arrayCombine(partNames, parts);
         request = Object.assign(request, namedParts);
     }

@@ -93,7 +93,7 @@ function buildLogLine(log, index) {
             elem("td", log.ip),
             elem("td", log.identity),
             elem("td", log.user),
-            elem("td", log.datetime),
+            elem("td", {"class" : "whitespace-nowrap"}, log.datetime),
         ],
     );
     if (log.request.method) {
@@ -110,8 +110,8 @@ function buildLogLine(log, index) {
     row.append(
         elem("td", log.status),
         elem("td", log.length),
-        elem("td", log.referrer),
-        elem("td", log.ua),
+        elem("td", log.referrer.slice(1, -1)),
+        elem("td", log.ua.slice(1, -1)),
     );
     return row;
 }
