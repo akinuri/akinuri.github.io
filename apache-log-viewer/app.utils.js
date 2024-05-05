@@ -89,3 +89,17 @@ function parsePathGroups(text) {
     return groups;
 }
 
+function getLogReferrerHost(referrer) {
+    if (!referrer) {
+        return referrer;
+    }
+    if (isQuoted(referrer)) {
+        referrer = unquote(referrer);
+    }
+    if (referrer != "-") {
+        let url = new URL(referrer);
+        return url.hostname || url.href;
+    }
+    return referrer;
+}
+

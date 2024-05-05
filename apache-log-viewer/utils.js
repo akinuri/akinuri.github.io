@@ -179,3 +179,12 @@ function sum() {
         0,
     );
 }
+
+function isQuoted(value) {
+    return value.match(/^['"].*['"]$/) != null;
+}
+
+function unquote(value) {
+    return value.slice(1, -1);
+}
+
