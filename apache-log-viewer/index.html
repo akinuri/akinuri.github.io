@@ -73,13 +73,21 @@
             <span id="bytes-sum" class="inline-block">0</span>
             <span class="text-slate-700/75">MB</span>
         </div>
+        <div class="bg-white rounded shadow mt-6 p-4 px-5 flex gap-4">
+            <span id="referrers-count" class="inline-block">0</span>
+            <span class="text-slate-700/75">Referrers</span>
+        </div>
+        <div class="bg-white rounded shadow mt-6 p-4 px-5 flex gap-4">
+            <span id="ua-count" class="inline-block">0</span>
+            <span class="text-slate-700/75">User Agents</span>
+        </div>
     </div>
     
     <div class="bg-white rounded shadow mt-6">
         <div class="bg-slate-50 px-4 py-2 text-sm text-slate-700/50 rounded-tl rounded-tr border-b">
             Counts
         </div>
-        <div class="p-4 flex gap-6 items-start min-h-[200px]">
+        <div class="p-4 flex gap-6 items-start min-h-[200px] flex-wrap">
             
             <table class="text-sm" id="ip-count-table">
                 <thead>
@@ -158,6 +166,17 @@
                 <tbody></tbody>
             </table>
             
+            <table class="text-sm" id="ua-count-table">
+                <thead>
+                    <tr class="*:font-semibold *:px-2 *:py-1 *:border *:text-left bg-slate-100">
+                        <th>#</th>
+                        <th>User Agent</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            
         </div>
     </div>
     
@@ -165,7 +184,7 @@
         <div class="bg-slate-50 px-4 py-2 text-sm text-slate-700/50 rounded-tl rounded-tr border-b">
             Transferred Bytes
         </div>
-        <div class="p-4 flex gap-6 items-start min-h-[200px]">
+        <div class="p-4 flex gap-6 items-start min-h-[200px] flex-wrap">
             
             <table class="text-sm" id="ip-bytes-table">
                 <thead>

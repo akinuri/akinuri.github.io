@@ -93,12 +93,19 @@ function getLogReferrerHost(referrer) {
     if (!referrer) {
         return referrer;
     }
-    if (isQuoted(referrer)) {
-        referrer = unquote(referrer);
-    }
+    referrer = unquote(referrer);
     if (referrer != "-") {
-        let url = new URL(referrer);
-        return url.hostname || url.href;
+        let url;
+        if (!referrer.startsWith("http")) {
+            referrer = "https://" + referrer;
+        }
+        try {
+            url = new URL(referrer);
+        } catch (error) {
+            console.log([referrer]);
+            throw error;
+        }
+        return url.host || url.href;
     }
     return referrer;
 }

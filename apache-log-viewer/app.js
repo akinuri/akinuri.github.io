@@ -8,6 +8,8 @@ let statEls = {
     requestsCount : qs("#requests-count"),
     ipsCount : qs("#ips-count"),
     bytesSum : qs("#bytes-sum"),
+    referrersCount : qs("#referrers-count"),
+    uaCount : qs("#ua-count"),
 };
 
 let ipCountBody = qs("#ip-count-table tbody");
@@ -17,6 +19,7 @@ let pathGroupsCountBody = qs("#path-groups-count-table tbody");
 let protocolCountBody = qs("#protocol-count-table tbody");
 let statusCountBody = qs("#status-count-table tbody");
 let referrerCountBody = qs("#referrer-count-table tbody");
+let uaCountBody = qs("#ua-count-table tbody");
 
 let ipBytesBody = qs("#ip-bytes-table tbody");
 let dateBytesBody = qs("#date-bytes-table tbody");
@@ -53,6 +56,10 @@ on("#parse-btn", "click", () => {
         )
         / 1024 / 1024
     ).toFixed(2);
+    statEls.referrersCount.textContent = new Set(
+        getColumn(logs, "referrer").map(ref => getLogReferrerHost(ref))
+    ).size;
+    statEls.uaCount.textContent = new Set(getColumn(logs, "ua")).size;
     
     printIpRequestCounts(logs);
     printDateRequestCounts(logs);
@@ -61,6 +68,7 @@ on("#parse-btn", "click", () => {
     printProtocolRequestCounts(logs);
     printStatusRequestCounts(logs);
     printReferrerRequestCounts(logs);
+    printUARequestCounts(logs);
     
     printIpRequestBytes(logs);
     printDateRequestBytes(logs);
@@ -233,6 +241,26 @@ function printReferrerRequestCounts(logs) {
     referrerCountBody.innerHTML = "";
     for (const entry of referrerFrequency) {
         referrerCountBody.append( buildCountLine(entry, referrerIndex++) );
+    }
+}
+
+function printUARequestCounts(logs) {
+    let uaFrequency = calcFrequency(getColumn(logs, "ua"));
+    uaFrequency = Object.entries(uaFrequency);
+    uaFrequency = sortBy(uaFrequency, [1, -1], 0);
+    uaFrequency = uaFrequency.slice(0, 10);
+    uaFrequency = uaFrequency.map(entry => {
+        entry[0] = unquote(entry[0]);
+        if (entry[0].startsWith("Mozilla/5.0")) {
+            entry[0] = entry[0].replace("Mozilla/5.0 ", "");
+        }
+        entry[0] = ellipsis(entry[0], 64);
+        return entry;
+    });
+    let uaIndex = 1;
+    uaCountBody.innerHTML = "";
+    for (const entry of uaFrequency) {
+        uaCountBody.append( buildCountLine(entry, uaIndex++) );
     }
 }
 
