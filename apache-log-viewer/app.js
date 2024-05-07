@@ -28,18 +28,40 @@ let pathGroupsBytesBody = qs("#path-groups-bytes-table tbody");
 let protocolBytesBody = qs("#protocol-bytes-table tbody");
 let statusBytesBody = qs("#status-bytes-table tbody");
 let referrerBytesBody = qs("#referrer-bytes-table tbody");
+let uaBytesBody = qs("#ua-bytes-table tbody");
 
 on(pathGroupsInputBox, "input", debounce(() => {
     pathGroupsInputBox.value = trimTextWhitespace(pathGroupsInputBox.value);
 }));
 
+on(accessLogTextInputBox, "paste", function logPasteDuration() {
+    const startTime = performance.now();
+    setTimeout(function() {
+        const endTime = performance.now();
+        const pasteTime = endTime - startTime;
+        let charCount = accessLogTextInputBox.value.length;
+        let size = (charCount / 1024 / 1024).toFixed(2);
+        console.log(`Pasted ${charCount} chars (${size} MB) in ${Math.round(pasteTime)} ms`);
+    });
+});
+
 trigger(pathGroupsInputBox, "input");
 
 on("#parse-btn", "click", () => {
+    
+    let sw = new Stopwatch();
+    
+    sw.time("all");
+    
+    sw.time("parse");
     let logs = parseAccessLogs(accessLogTextInputBox.value);
+    sw.timeEnd("parse");
     
+    sw.time("print lines");
     printLogsLines(logs);
+    sw.timeEnd("print lines");
     
+    sw.time("stats");
     statEls.daysCount.textContent = new Set(
         getColumn(
             logs,
@@ -60,7 +82,9 @@ on("#parse-btn", "click", () => {
         getColumn(logs, "referrer").map(ref => getLogReferrerHost(ref))
     ).size;
     statEls.uaCount.textContent = new Set(getColumn(logs, "ua")).size;
+    sw.timeEnd("stats");
     
+    sw.time("counts");
     printIpRequestCounts(logs);
     printDateRequestCounts(logs);
     printMethodRequestCounts(logs);
@@ -69,7 +93,9 @@ on("#parse-btn", "click", () => {
     printStatusRequestCounts(logs);
     printReferrerRequestCounts(logs);
     printUARequestCounts(logs);
+    sw.timeEnd("counts");
     
+    sw.time("bytes");
     printIpRequestBytes(logs);
     printDateRequestBytes(logs);
     printMethodRequestBytes(logs);
@@ -77,6 +103,12 @@ on("#parse-btn", "click", () => {
     printProtocolRequestBytes(logs);
     printStatusRequestBytes(logs);
     printReferrerRequestBytes(logs);
+    printUARequestBytes(logs);
+    sw.timeEnd("bytes");
+    
+    sw.timeEnd("all");
+    
+    console.table(sw.getResult(), ["duration"]);
 });
 
 
@@ -467,6 +499,36 @@ function printReferrerRequestBytes(logs) {
     referrerBytesBody.innerHTML = "";
     for (const entry of bytes) {
         referrerBytesBody.append( buildCountLine(entry, byteIndex++) );
+    }
+}
+
+function printUARequestBytes(logs) {
+    let bytes = {};
+    let uas = Array.from(new Set(getColumn(logs, "ua")));
+    for (const ua of uas) {
+        let uaRequests = logs.filter(log => log.ua == ua);
+        let uaBytes = getColumn(uaRequests, "length")
+            .filter(value => value != "-")
+            .map(value => parseInt(value));
+        uaBytes = sum(uaBytes);
+        uaBytes = parseFloat((uaBytes / 1024 / 1024).toFixed(2));
+        bytes[ua] = uaBytes;
+    }
+    bytes = Object.entries(bytes);
+    bytes = sortBy(bytes, [1, -1], 0);
+    bytes = bytes.slice(0, 10);
+    bytes = bytes.map(entry => {
+        entry[0] = unquote(entry[0]);
+        if (entry[0].startsWith("Mozilla/5.0")) {
+            entry[0] = entry[0].replace("Mozilla/5.0 ", "");
+        }
+        entry[0] = ellipsis(entry[0], 64);
+        return entry;
+    });
+    let uaIndex = 1;
+    uaBytesBody.innerHTML = "";
+    for (const entry of bytes) {
+        uaBytesBody.append( buildCountLine(entry, uaIndex++) );
     }
 }
 
