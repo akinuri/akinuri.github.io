@@ -96,19 +96,44 @@ on("#parse-btn", "click", () => {
     sw.timeEnd("counts");
     
     sw.time("bytes");
+    
+    sw.time("bytes - ip");
     printIpRequestBytes(logs);
+    sw.timeEnd("bytes - ip");
+    
+    sw.time("bytes - date");
     printDateRequestBytes(logs);
+    sw.timeEnd("bytes - date");
+    
+    sw.time("bytes - method");
     printMethodRequestBytes(logs);
+    sw.timeEnd("bytes - method");
+    
+    sw.time("bytes - path");
     printPathGroupsRequestBytes(logs);
+    sw.timeEnd("bytes - path");
+    
+    sw.time("bytes - protocol");
     printProtocolRequestBytes(logs);
+    sw.timeEnd("bytes - protocol");
+    
+    sw.time("bytes - status");
     printStatusRequestBytes(logs);
+    sw.timeEnd("bytes - status");
+    
+    sw.time("bytes - referrer");
     printReferrerRequestBytes(logs);
+    sw.timeEnd("bytes - referrer");
+    
+    sw.time("bytes - ua");
     printUARequestBytes(logs);
+    sw.timeEnd("bytes - ua");
+    
     sw.timeEnd("bytes");
     
     sw.timeEnd("all");
     
-    console.table(sw.getResult(), ["duration"]);
+    console.table(sw.getDurations());
 });
 
 
@@ -317,24 +342,40 @@ function buildCountLine(entry, index) {
 
 function printIpRequestBytes(logs) {
     let bytes = {};
+    // let sw = new Stopwatch();
+    // sw.time("bytes - ip - get");
     let ips = Array.from(new Set(getColumn(logs, "ip")));
+    // sw.timeEnd("bytes - ip - get");
+    // sw.time("bytes - ip - calc");
     for (const ip of ips) {
+        // sw.time("bytes - ip - calc - requests");
         let ipRequests = logs.filter(log => log.ip == ip);
+        // sw.timeEnd("bytes - ip - calc - requests");
+        // sw.time("bytes - ip - calc - bytes");
         let ipBytes = getColumn(ipRequests, "length")
             .filter(value => value != "-")
             .map(value => parseInt(value));
+        // sw.timeEnd("bytes - ip - calc - bytes");
+        // sw.time("bytes - ip - calc - sum");
         ipBytes = sum(ipBytes);
         ipBytes = parseFloat((ipBytes / 1024 / 1024).toFixed(2));
         bytes[ip] = ipBytes;
+        // sw.timeEnd("bytes - ip - calc - sum");
     }
+    // sw.timeEnd("bytes - ip - calc");
+    // sw.time("bytes - ip - sort");
     bytes = Object.entries(bytes);
     bytes = sortBy(bytes, [1, -1], 0);
     bytes = bytes.slice(0, 10);
+    // sw.timeEnd("bytes - ip - sort");
+    // sw.time("bytes - ip - print");
     let byteIndex = 1;
     ipBytesBody.innerHTML = "";
     for (const entry of bytes) {
         ipBytesBody.append( buildCountLine(entry, byteIndex++) );
     }
+    // sw.timeEnd("bytes - ip - print");
+    // console.table(sw.getDurations(), ["duration"]);
 }
 
 function printDateRequestBytes(logs) {
