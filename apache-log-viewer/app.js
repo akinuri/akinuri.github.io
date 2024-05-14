@@ -1,3 +1,5 @@
+// #region ==================== ELEMENTS
+
 let accessLogTextInputBox = qs("#access-log-text-input");
 let pathGroupsInputBox = qs("#path-groups-input");
 
@@ -29,6 +31,11 @@ let protocolBytesBody = qs("#protocol-bytes-table tbody");
 let statusBytesBody = qs("#status-bytes-table tbody");
 let referrerBytesBody = qs("#referrer-bytes-table tbody");
 let uaBytesBody = qs("#ua-bytes-table tbody");
+
+// #endregion
+
+
+// #region ==================== EVENTS
 
 on(pathGroupsInputBox, "input", debounce(() => {
     pathGroupsInputBox.value = trimTextWhitespace(pathGroupsInputBox.value);
@@ -136,6 +143,8 @@ on("#parse-btn", "click", () => {
     console.table(sw.getDurations());
 });
 
+// #endregion
+
 
 // #region ==================== LOGS
 
@@ -209,7 +218,7 @@ function printDateRequestCounts(logs) {
         })
     );
     dateFrequency = Object.entries(dateFrequency);
-    dateFrequency = sortBy(dateFrequency, [1, -1], 0);
+    // dateFrequency = sortBy(dateFrequency, [1, -1], 0);
     let dateIndex = 1;
     dateCountBody.innerHTML = "";
     for (const entry of dateFrequency) {
@@ -342,40 +351,47 @@ function buildCountLine(entry, index) {
 
 function printIpRequestBytes(logs) {
     let bytes = {};
-    // let sw = new Stopwatch();
-    // sw.time("bytes - ip - get");
+    let sw = new Stopwatch();
+    sw.time("bytes - ip - get");
     let ips = Array.from(new Set(getColumn(logs, "ip")));
-    // sw.timeEnd("bytes - ip - get");
-    // sw.time("bytes - ip - calc");
+    sw.timeEnd("bytes - ip - get");
+    sw.time("bytes - ip - calc");
     for (const ip of ips) {
-        // sw.time("bytes - ip - calc - requests");
+        sw.time("bytes - ip - calc - requests");
+        /**
+         * Woah. 
+         * 550m loops for 7500 ips and 74000 requests.
+         * This takes the most time.
+         * // TODO: group the requests by ips?
+         */
         let ipRequests = logs.filter(log => log.ip == ip);
-        // sw.timeEnd("bytes - ip - calc - requests");
-        // sw.time("bytes - ip - calc - bytes");
+        sw.timeAggregate("bytes - ip - calc - requests");
+        sw.time("bytes - ip - calc - bytes");
         let ipBytes = getColumn(ipRequests, "length")
             .filter(value => value != "-")
             .map(value => parseInt(value));
-        // sw.timeEnd("bytes - ip - calc - bytes");
-        // sw.time("bytes - ip - calc - sum");
+        sw.timeAggregate("bytes - ip - calc - bytes");
+        sw.time("bytes - ip - calc - sum");
         ipBytes = sum(ipBytes);
         ipBytes = parseFloat((ipBytes / 1024 / 1024).toFixed(2));
         bytes[ip] = ipBytes;
-        // sw.timeEnd("bytes - ip - calc - sum");
+        sw.timeAggregate("bytes - ip - calc - sum");
     }
-    // sw.timeEnd("bytes - ip - calc");
-    // sw.time("bytes - ip - sort");
+    sw.timeEnd("bytes - ip - calc");
+    sw.time("bytes - ip - sort");
     bytes = Object.entries(bytes);
     bytes = sortBy(bytes, [1, -1], 0);
     bytes = bytes.slice(0, 10);
-    // sw.timeEnd("bytes - ip - sort");
-    // sw.time("bytes - ip - print");
+    sw.timeEnd("bytes - ip - sort");
+    sw.time("bytes - ip - print");
     let byteIndex = 1;
     ipBytesBody.innerHTML = "";
     for (const entry of bytes) {
         ipBytesBody.append( buildCountLine(entry, byteIndex++) );
     }
-    // sw.timeEnd("bytes - ip - print");
-    // console.table(sw.getDurations(), ["duration"]);
+    sw.timeEnd("bytes - ip - print");
+    console.table(sw.getDurations());
+    console.table(sw.getAggregateDurations());
 }
 
 function printDateRequestBytes(logs) {
@@ -400,7 +416,7 @@ function printDateRequestBytes(logs) {
         bytes[date] = dateBytes;
     }
     bytes = Object.entries(bytes);
-    bytes = sortBy(bytes, [1, -1], 0);
+    // bytes = sortBy(bytes, [1, -1], 0);
     bytes = bytes.slice(0, 10);
     let byteIndex = 1;
     dateBytesBody.innerHTML = "";

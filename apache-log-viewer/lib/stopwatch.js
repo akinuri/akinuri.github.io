@@ -1,7 +1,11 @@
 class Stopwatch {
 
     #logs = {};
+    #aggregates = {};
 
+    /**
+     * Starts an interval.
+     */
     time(label = "default") {
         if (!this.#logs[label]) {
             this.#logs[label] = new StopwatchInterval(true);
@@ -10,10 +14,30 @@ class Stopwatch {
         }
     }
 
+    /**
+     * Ends an interval.
+     */
     timeEnd(label = "default") {
         const interval = this.#logs[label];
         if (interval) {
             interval.end();
+        } else {
+            console.error(`No timer registered for label: ${label}`);
+        }
+    }
+
+    /**
+     * Ends an interval and collects intervals with the same label.
+     */
+    timeAggregate(label = "default") {
+        const interval = this.#logs[label];
+        if (interval) {
+            interval.end();
+            if (!this.#aggregates[label]) {
+                this.#aggregates[label] = [];
+            }
+            this.#aggregates[label].push(interval);
+            delete this.#logs[label];
         } else {
             console.error(`No timer registered for label: ${label}`);
         }
@@ -29,6 +53,19 @@ class Stopwatch {
             if (Object.hasOwnProperty.call(this.#logs, label)) {
                 const interval = this.#logs[label];
                 durations[label] = interval.getDuration();
+            }
+        }
+        return durations;
+    }
+
+    getAggregateDurations() {
+        let durations = {};
+        for (const label in this.#aggregates) {
+            if (Object.hasOwnProperty.call(this.#aggregates, label)) {
+                const intervals = this.#aggregates[label];
+                let durs = intervals.map(_int => _int.getDuration());
+                let dur = sum(durs);
+                durations[label] = dur;
             }
         }
         return durations;
