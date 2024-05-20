@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-100 p-4">
+
+<div class="flex gap-4 flex-col">
+    <textarea
+        class="px-2 py-1 border"
+        id="input-box"
+        placeholder="input"
+        rows="5"
+        ></textarea>
+    <button
+        id="parse-btn"
+        class="px-2 py-1 bg-slate-200 hover:bg-slate-300/75 active:bg-slate-300"
+        >
+        Parse
+    </button>
+    <textarea
+        class="px-2 py-1 border"
+        id="output-box"
+        placeholder="output"
+        rows="20"
+        ></textarea>
+</div>
+
+<script>
+    let inputBox = document.querySelector("#input-box");
+    let outputBox = document.querySelector("#output-box");
+    let parseBtn = document.querySelector("#parse-btn");
+    
+    parseBtn.addEventListener("click", () => {
+        const xmlStr = inputBox.value;
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(xmlStr, "application/xml");
+        const root = doc.documentElement;
+        const formattedXML = formatAttributes(root).trim();
+        outputBox.value = formattedXML;
+        console.log(root);
+    });
+    
+    function formatXML(xmlString) {
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlString, 'application/xml');
+        const root = xmlDoc.documentElement;
+        const formattedXML = formatAttributes(root).trim();
+        return formattedXML;
+    }
+    
+    function formatAttributes(element, level = 0) {
+        const indent = '    ';
+        const newline = '\n';
+        let result = `${newline}${indent.repeat(level)}<${element.tagName}`;
+        for (let attr of element.attributes) {
+            result += `${newline}${indent.repeat(level + 1)}${attr.name}="${attr.value}"`;
+        }
+        result += `${newline}${indent.repeat(level + 1)}>`;
+        if (element.children.length > 0 || element.textContent.trim()) {
+            if (element.textContent.trim()) {
+                result += `${newline}${indent.repeat(level + 1)}${element.textContent.trim()}`;
+            }
+            for (let child of element.children) {
+                result += formatAttributes(child, level + 1);
+            }
+            result += `${newline}${indent.repeat(level)}</${element.tagName}>`;
+        } else {
+            result = result.slice(0, -1);
+            result += `/>`;
+        }
+        return result;
+    }
+</script>
+
+</body>
+
+</html>
