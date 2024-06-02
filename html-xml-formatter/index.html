@@ -3,13 +3,14 @@
 
 <head>
     <meta charset="UTF-8">
+    <title>HTML/XML Formatter</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
 <body class="bg-slate-100 p-8 text-slate-700">
 
-<div class="flex gap-6 flex-col">
+<div class="flex gap-6 flex-col mb-24">
     <textarea
         class="px-2 py-1 border rounded shadow-sm"
         id="input-box"
@@ -17,64 +18,52 @@
         rows="5"
         ></textarea>
     <button
-        id="parse-btn"
+        id="format-btn"
         class="px-2 py-1 bg-slate-300 hover:bg-slate-400/50 active:bg-slate-400/60 rounded shadow-sm"
         >
-        Parse
+        Format
     </button>
-    <textarea
-        class="px-2 py-1 border rounded shadow"
+    <pre
+        class="px-2 py-1 border rounded shadow bg-white min-h-[10rem] max-h-[40rem] overflow-y-auto language-html"
         id="output-box"
-        placeholder="output"
-        rows="20"
-        ></textarea>
+        ><span class="opacity-50">output</span></pre>
+    <button
+        id="copy-btn"
+        class="px-2 py-1 bg-slate-200 hover:bg-slate-300/50 active:bg-slate-300/60 rounded shadow-sm"
+        >
+        Copy
+    </button>
 </div>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<style>
+    pre code.hljs {
+        padding: 0 !important;
+        font-size: 14px;
+    }
+</style>
+
+<script src="utils.js"></script>
 <script>
     let inputBox = document.querySelector("#input-box");
     let outputBox = document.querySelector("#output-box");
-    let parseBtn = document.querySelector("#parse-btn");
+    let formatBtn = document.querySelector("#format-btn");
+    let copyBtn = document.querySelector("#copy-btn");
     
-    parseBtn.addEventListener("click", () => {
-        const xmlStr = inputBox.value;
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(xmlStr, "application/xml");
-        const root = doc.documentElement;
-        const formattedXML = formatAttributes(root).trim();
-        outputBox.value = formattedXML;
-        console.log(root);
+    formatBtn.addEventListener("click", () => {
+        let parsedXML = parseXML(inputBox.value);
+        let formattedXML = formatXML(parsedXML);
+        let code = document.createElement("code");
+        code.classList.add("language-xml");
+        code.textContent = formattedXML;
+        outputBox.innerHTML = code.outerHTML;
+        hljs.highlightAll();
     });
     
-    function formatXML(xmlString) {
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlString, 'application/xml');
-        const root = xmlDoc.documentElement;
-        const formattedXML = formatAttributes(root).trim();
-        return formattedXML;
-    }
-    
-    function formatAttributes(element, level = 0) {
-        const indent = '    ';
-        const newline = '\n';
-        let result = `${newline}${indent.repeat(level)}<${element.tagName}`;
-        for (let attr of element.attributes) {
-            result += `${newline}${indent.repeat(level + 1)}${attr.name}="${attr.value}"`;
-        }
-        result += `${newline}${indent.repeat(level + 1)}>`;
-        if (element.children.length > 0 || element.textContent.trim()) {
-            if (element.textContent.trim()) {
-                result += `${newline}${indent.repeat(level + 1)}${element.textContent.trim()}`;
-            }
-            for (let child of element.children) {
-                result += formatAttributes(child, level + 1);
-            }
-            result += `${newline}${indent.repeat(level)}</${element.tagName}>`;
-        } else {
-            result = result.slice(0, -1);
-            result += `/>`;
-        }
-        return result;
-    }
+    copyBtn.addEventListener("click", () => {
+        navigator.clipboard.writeText(outputBox.innerText);
+    });
 </script>
 
 </body>
