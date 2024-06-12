@@ -14,6 +14,7 @@ on(window, "resize", () => {
 });
 
 function onDragStart(event) {
+    event.preventDefault();
     const isTouchEvent = event.type === "touchstart";
     const startX = isTouchEvent ? event.touches[0].clientX : event.clientX;
     const startY = isTouchEvent ? event.touches[0].clientY : event.clientY;
@@ -37,5 +38,5 @@ function onDragStart(event) {
     on(document, isTouchEvent ? "touchend" : "mouseup", onDragEnd, { once: true });
 };
 
-on(shape.el, "mousedown", onDragStart);
-on(shape.el, "touchstart", onDragStart);
+on(shape.el, "mousedown", onDragStart, { passive: false });
+on(shape.el, "touchstart", onDragStart, { passive: false });
