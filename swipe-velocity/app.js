@@ -54,5 +54,7 @@ function onDragStart(event) {
     on(document, isTouchEvent ? "touchend" : "mouseup", onDragEnd, { once: true });
 };
 
+on(document, "touchstart", (e) => e.preventDefault(), { passive: false });
+
 on(shape.el, "mousedown", onDragStart, { passive: false });
 on(shape.el, "touchstart", onDragStart, { passive: false });
