@@ -12,9 +12,62 @@
 
 <div id="shape" class="size-[100px] bg-white rounded-full shadow absolute"></div>
 
+<div class="absolute right-4 top-4 bg-white/50 shadow p-2 rounded pointer-events-none text-sm">
+    <table class="table-fixed">
+        <tr class="*:px-1">
+            <td colspan="4" class="border-b border-b-slate-300 font-semibold">Position</td>
+        </tr>
+        <tr class="*:px-1">
+            <td class="min-w-[40px]">X</td>
+            <td class="min-w-[15px]">:</td>
+            <td class="min-w-[60px]" id="posX">0</td>
+            <td class="min-w-[32px]"></td>
+        </tr>
+        <tr class="*:px-1">
+            <td>Y</td>
+            <td>:</td>
+            <td id="posY">0</td>
+            <td></td>
+        </tr>
+        <tr class="*:px-1 *:pt-4">
+            <td colspan="4" class="border-b border-b-slate-300 font-semibold">Velocity</td>
+        </tr>
+        <tr class="*:px-1">
+            <td>Mag</td>
+            <td>:</td>
+            <td id="velMag">0</td>
+            <td class="text-xs">px/s</td>
+        </tr>
+        <tr class="*:px-1">
+            <td>Dir</td>
+            <td>:</td>
+            <td id="velAng">0°</td>
+            <td>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-4"
+                    style="--offset: 90deg; --offset-dir: -1; --rotate: 0deg; rotate: calc((var(--rotate) + var(--offset)) * var(--offset-dir))"
+                    >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15.75 17.25 12 21m0 0-3.75-3.75M12 21V3"
+                        />
+                </svg>
+            </td>
+        </tr>
+    </table>
+</div>
+
 <script src="lib/qs.js"></script>
 <script src="lib/on.js"></script>
 <script src="utils.js"></script>
+<script src="shapes.js"></script>
+<script src="stats.js"></script>
 <script src="app.js"></script>
 
 </body>
