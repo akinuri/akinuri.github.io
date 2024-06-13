@@ -26,8 +26,8 @@ function onDragStart(event) {
         y = clamp(y, 0, container.height - shape.radius);
         shape.el.style.left = `${x}px`;
         shape.el.style.top = `${y}px`;
-        stats.pos.x.textContent = x + shape.radius;
-        stats.pos.y.textContent = y + shape.radius;
+        stats.pos.x.textContent = (x + shape.radius).toFixed(0);
+        stats.pos.y.textContent = (y + shape.radius).toFixed(0);
 
         const currentTime = performance.now();
         const deltaTime = (currentTime - lastTime) / 1000;
