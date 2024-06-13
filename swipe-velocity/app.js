@@ -37,7 +37,7 @@ function onDragStart(event) {
         const velX = deltaX / deltaTime;
         const velY = deltaY / deltaTime;
         
-        let angle = calcRelAngleDegrees(-lastX, lastY, -moveX, moveY);
+        let angle = calcRelAngleDegrees(lastX, -lastY, moveX, -moveY);
         stats.vel.mag.textContent = getMagnitude(velX, velY).toFixed(1);
         stats.vel.ang.textContent = angle.toFixed(1) + "°";
         stats.vel.angIcon.style.setProperty("--rotate", angle + "deg");

@@ -7,20 +7,19 @@ function getMagnitude(x, y) {
 }
 
 function calcRelAngleDegrees(originX, originY, targetX, targetY) {
-    let deltaX = originX - targetX;
-    let deltaY = originY - targetY;
-    let angle = calcAngleDegrees(deltaX, deltaY);
-    return angle;
+    return calcAngleDegrees(
+        targetX - originX,
+        targetY - originY,
+    );
 }
 
 function calcAngleDegrees(x, y) {
-    let angle = rad2deg(Math.atan2(y, x));
-    if (angle < 0) {
-        angle += 360;
-    }
-    return angle;
+    let rad = Math.atan2(y, x);
+    if (rad < 0) rad += 2 * Math.PI;
+    return rad2deg(rad);
 }
 
-function rad2deg(angle) {
-    return angle * 180 / Math.PI;
+function rad2deg(angleInRadians) {
+    const RAD_IN_DEG = 360 / (2 * Math.PI);
+    return angleInRadians * RAD_IN_DEG;
 }
