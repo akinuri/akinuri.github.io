@@ -30,7 +30,10 @@
             <td></td>
         </tr>
         <tr class="*:px-1 *:pt-4">
-            <td colspan="4" class="border-b border-b-slate-300 font-semibold">Velocity</td>
+            <td colspan="4" class="border-b border-b-slate-300 font-semibold">
+                Velocity
+                <span class="opacity-50 font-normal">(Drag)</span>
+            </td>
         </tr>
         <tr class="*:px-1">
             <td>Mag</td>
@@ -43,21 +46,23 @@
             <td>:</td>
             <td id="velAng">0°</td>
             <td>
-                <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    class="size-4"
-                    style="--offset: 90deg; --offset-dir: -1; --rotate: 0deg; rotate: calc((var(--rotate) + var(--offset)) * var(--offset-dir))"
-                    >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        d="M15.75 17.25 12 21m0 0-3.75-3.75M12 21V3"
-                        />
-                </svg>
+                <div class="flex w-fit -rotate-90">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="size-4"
+                        style="--rotate-dir: -1; --rotate: 0deg; rotate: calc(var(--rotate) * var(--rotate-dir))"
+                        >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M15.75 17.25 12 21m0 0-3.75-3.75M12 21V3"
+                            />
+                    </svg>
+                </div>
             </td>
         </tr>
     </table>
@@ -65,6 +70,9 @@
 
 <script src="lib/qs.js"></script>
 <script src="lib/on.js"></script>
+<script src="lib/stack.js"></script>
+<script src="point.js"></script>
+<script src="vector.js"></script>
 <script src="utils.js"></script>
 <script src="shapes.js"></script>
 <script src="stats.js"></script>
