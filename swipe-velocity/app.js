@@ -24,30 +24,13 @@ function onDragStart(event) {
         let y = moveY - offsetY;
         shape.moveTo(x, y);
         shape.logDragPos(moveX, moveY);
-        let dragVel = shape.calcDragVel();
-        stats.pos.x.textContent = (shape.getCenterPos().x).toFixed(0);
-        stats.pos.y.textContent = (shape.getCenterPos().y).toFixed(0);
-        stats.vel.mag.textContent = dragVel.getMagnitude().toFixed(1);
-        stats.vel.ang.textContent = dragVel.getAngle(-1).toFixed(1) + "°";
-        stats.vel.angIcon.style.setProperty("--rotate", dragVel.getAngle(-1) + "deg");
+        stats.updateDrag(shape, shape.calcDragVel());
     }
     function onDragEnd(event) {
         off(document, isTouchEvent ? "touchmove" : "mousemove", onMove);
         off(document, isTouchEvent ? "touchend" : "mouseup", onDragEnd);
         let moveDragVel = shape.calcDragVel();
-        const moveX = isTouchEvent ? event.changedTouches[0].clientX : event.clientX;
-        const moveY = isTouchEvent ? event.changedTouches[0].clientY : event.clientY;
-        shape.logDragPos(moveX, moveY);
-        let endDragVel = shape.calcDragVel();
-        let moveElapsed = shape.dragPosLog.peek(0).time - shape.dragPosLog.peek(1).time;
-        const ALLOWED_RELEASE_DELAY = 50;
-        if (moveElapsed > ALLOWED_RELEASE_DELAY) {
-            shape.logDragPos(moveX, moveY);
-            shape.vel = Vector.createFromAngle(0, 0);
-            stats.vel.mag.textContent = endDragVel.getMagnitude().toFixed(1);
-            stats.vel.ang.textContent = endDragVel.getAngle().toFixed(1) + "°";
-            stats.vel.angIcon.style.setProperty("--rotate", endDragVel.dir + "deg");
-        } else {
+        if (moveDragVel.getMagnitude() > 0) {
             shape.vel = moveDragVel;
             gameLoop();
         }
@@ -63,6 +46,7 @@ on(shape.el, "touchstart", onDragStart, { passive: false });
 
 const FRICTION = 0.98;
 let lastFrameTime = 0;
+let rafId = 0;
 function gameLoop() {
     let currentFrameTime = performance.now();
     if (lastFrameTime == 0) {
@@ -71,15 +55,17 @@ function gameLoop() {
     let elapsedFrameTime = (currentFrameTime - lastFrameTime) / 1000;
     lastFrameTime = currentFrameTime;
     if (elapsedFrameTime == 0) {
-        requestAnimationFrame(gameLoop);
+        rafId = requestAnimationFrame(gameLoop);
         return;
     }
     shape.vel.multiply(FRICTION);
+    stats.updateInertia(shape, shape.vel);
     shape.move(elapsedFrameTime);
     if (shape.vel.getMagnitude() > 2) {
-        requestAnimationFrame(gameLoop);
+        rafId = requestAnimationFrame(gameLoop);
     } else {
         shape.vel = Vector.createFromAngle(0, 0);
+        stats.updateInertia(shape, shape.vel);
         lastFrameTime = 0;
     }
 }

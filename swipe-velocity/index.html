@@ -38,13 +38,49 @@
         <tr class="*:px-1">
             <td>Mag</td>
             <td>:</td>
-            <td id="velMag">0</td>
+            <td id="dragVelMag">0</td>
             <td class="text-xs">px/s</td>
         </tr>
         <tr class="*:px-1">
             <td>Dir</td>
             <td>:</td>
-            <td id="velAng">0°</td>
+            <td id="dragVelAng">0°</td>
+            <td>
+                <div class="flex w-fit -rotate-90">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="size-4"
+                        style="--rotate-dir: -1; --rotate: 0deg; rotate: calc(var(--rotate) * var(--rotate-dir))"
+                        >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M15.75 17.25 12 21m0 0-3.75-3.75M12 21V3"
+                            />
+                    </svg>
+                </div>
+            </td>
+        </tr>
+        <tr class="*:px-1 *:pt-4">
+            <td colspan="4" class="border-b border-b-slate-300 font-semibold">
+                Velocity
+                <span class="opacity-50 font-normal">(Inertia)</span>
+            </td>
+        </tr>
+        <tr class="*:px-1">
+            <td>Mag</td>
+            <td>:</td>
+            <td id="inVelMag">0</td>
+            <td class="text-xs">px/s</td>
+        </tr>
+        <tr class="*:px-1">
+            <td>Dir</td>
+            <td>:</td>
+            <td id="inVelAng">0°</td>
             <td>
                 <div class="flex w-fit -rotate-90">
                     <svg
