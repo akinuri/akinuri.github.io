@@ -10,7 +10,15 @@
 
 <body class="bg-slate-200">
 
-<div id="shape" class="size-[100px] bg-white rounded-full shadow absolute"></div>
+<div
+    id="container"
+    class="fixed w-[90%] h-[90%] top-[5%] left-[5%] rounded border border-dashed border-slate-400/50 overflow-hidden"
+    >
+    <div
+        id="shape"
+        class="size-[100px] bg-white rounded-full shadow absolute"
+        ></div>
+</div>
 
 <div class="absolute right-4 top-4 bg-white/50 shadow p-2 rounded pointer-events-none text-sm">
     <table class="table-fixed">
@@ -110,7 +118,8 @@
 <script src="point.js"></script>
 <script src="vector.js"></script>
 <script src="utils.js"></script>
-<script src="shapes.js"></script>
+<script src="circle.js"></script>
+<script src="rectangle.js"></script>
 <script src="stats.js"></script>
 <script src="app.js"></script>
 

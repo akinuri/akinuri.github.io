@@ -1,32 +1,47 @@
 let shape = new Circle(qs("#shape"));
-let container = new Rectangle(0, 0, innerWidth, innerHeight);
+let container = new Rectangle(qs("#container"));
 shape.container = container;
 
-shape.moveTo(innerWidth / 2 - shape.radius, innerHeight / 2 - shape.radius);
-
-on(window, "resize", () => {
-    container.width = innerWidth;
-    container.height = innerHeight;
-});
+container.center(shape);
 
 function onDragStart(event) {
     event.preventDefault();
     const isTouchEvent = event.type === "touchstart";
-    const startX = isTouchEvent ? event.touches[0].clientX : event.clientX;
-    const startY = isTouchEvent ? event.touches[0].clientY : event.clientY;
-    const offsetX = startX - shape.el.getBoundingClientRect().left;
-    const offsetY = startY - shape.el.getBoundingClientRect().top;
+    let containerRect = container.el.getBoundingClientRect();
+    const startX = isTouchEvent
+        ? event.touches[0].clientX - containerRect.left
+        : event.clientX - containerRect.left;
+    const startY = isTouchEvent
+        ? event.touches[0].clientY - containerRect.top
+        : event.clientY - containerRect.top;
+    const offsetX = startX - shape.pos.x;
+    const offsetY = startY - shape.pos.y;
     shape.logDragPos(startX, startY);
+    let moveTimeoutHandle = null;
+    const ALLOWED_RELEASE_DELAY = 50;
+    let isDragEnded = false;
     function onMove(event) {
-        const moveX = isTouchEvent ? event.touches[0].clientX : event.clientX;
-        const moveY = isTouchEvent ? event.touches[0].clientY : event.clientY;
+        const moveX = isTouchEvent
+            ? event.touches[0].clientX - containerRect.left
+            : event.clientX - containerRect.left;
+        const moveY = isTouchEvent
+            ? event.touches[0].clientY - containerRect.top
+            : event.clientY - containerRect.top;
         let x = moveX - offsetX;
         let y = moveY - offsetY;
         shape.moveTo(x, y);
         shape.logDragPos(moveX, moveY);
         stats.updateDrag(shape, shape.calcDragVel());
+        clearTimeout(moveTimeoutHandle);
+        moveTimeoutHandle = setTimeout(() => {
+            if (isDragEnded) return;
+            shape.logDragPos(moveX, moveY);
+            shape.vel = Vector.createFromAngle(0, 0);
+            stats.updateDrag(shape, shape.calcDragVel());
+        }, ALLOWED_RELEASE_DELAY);
     }
     function onDragEnd(event) {
+        isDragEnded = true;
         off(document, isTouchEvent ? "touchmove" : "mousemove", onMove);
         off(document, isTouchEvent ? "touchend" : "mouseup", onDragEnd);
         let moveDragVel = shape.calcDragVel();

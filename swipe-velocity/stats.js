@@ -1,17 +1,17 @@
 let stats = {
-    pos : {
-        x : qs("#posX"),
-        y : qs("#posY"),
+    pos: {
+        x: qs("#posX"),
+        y: qs("#posY"),
     },
-    dragVel : {
-        mag : qs("#dragVelMag"),
-        ang : qs("#dragVelAng"),
-        angIcon : qs("svg", qs("#dragVelAng").nextElementSibling),
+    dragVel: {
+        mag: qs("#dragVelMag"),
+        ang: qs("#dragVelAng"),
+        angIcon: qs("svg", qs("#dragVelAng").nextElementSibling),
     },
-    inVel : {
-        mag : qs("#inVelMag"),
-        ang : qs("#inVelAng"),
-        angIcon : qs("svg", qs("#inVelAng").nextElementSibling),
+    inVel: {
+        mag: qs("#inVelMag"),
+        ang: qs("#inVelAng"),
+        angIcon: qs("svg", qs("#inVelAng").nextElementSibling),
     },
     updateDrag: function (shape, vel) {
         stats.pos.x.textContent = (shape.getCenterPos().x).toFixed(0);

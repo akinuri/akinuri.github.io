@@ -19,13 +19,13 @@ class Circle {
         if (this.container) {
             x = clamp(
                 x,
-                this.container.pos.x,
-                this.container.pos.x + this.container.width - this.radius * 2,
+                0,
+                this.container.el.clientWidth - this.radius * 2,
             );
             y = clamp(
                 y,
-                this.container.pos.y,
-                this.container.pos.y + this.container.height - this.radius * 2,
+                0,
+                this.container.el.clientHeight - this.radius * 2,
             );
         }
         this.pos.x = x;
@@ -42,16 +42,16 @@ class Circle {
     logDragPos(x, y, time) {
         time = time || performance.now();
         this.dragPosLog.push(
-            {x, y, time}
+            { x, y, time }
         );
     }
     getDragPosDelta() {
         let prev = this.dragPosLog.peek(1);
         let current = this.dragPosLog.peek(0);
         let delta = {
-            x : 0,
-            y : 0,
-            time : 0,
+            x: 0,
+            y: 0,
+            time: 0,
         };
         if (prev && current) {
             delta.time = (current.time - prev.time) / 1000;
@@ -71,10 +71,10 @@ class Circle {
     }
     checkBounds() {
         if (!this.container) return;
-        const leftBound = this.container.pos.x;
-        const rightBound = this.container.pos.x + this.container.width - this.radius * 2;
-        const topBound = this.container.pos.y;
-        const bottomBound = this.container.pos.y + this.container.height - this.radius * 2;
+        const leftBound = 0;
+        const topBound = 0;
+        const rightBound = this.container.el.clientWidth - this.radius * 2;
+        const bottomBound = this.container.el.clientHeight - this.radius * 2;
         if (this.pos.x <= leftBound) {
             this.pos.x = leftBound;
             this.vel.x *= -1;
@@ -89,17 +89,5 @@ class Circle {
             this.pos.y = bottomBound;
             this.vel.y *= -1;
         }
-    }
-}
-
-class Rectangle {
-    pos = new Point();
-    width = 0;
-    height = 0;
-    constructor(x, y, width, height) {
-        this.pos.x = x;
-        this.pos.y = y;
-        this.width = width;
-        this.height = height;
     }
 }
