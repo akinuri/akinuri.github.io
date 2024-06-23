@@ -44,3 +44,18 @@ function deg2rad(angleInDegrees) {
     const DEG_IN_RAD = (2 * Math.PI) / 360;
     return angleInDegrees * DEG_IN_RAD;
 }
+
+Math.avg = function avg() {
+    let numbers = Array.from(arguments).flat(Infinity);
+    return Math.sum(numbers) / numbers.length;
+};
+
+Math.sum = function sum() {
+    let numbers = Array.from(arguments).flat(Infinity);
+    return numbers.reduce(
+        function (sum, currentValue) {
+            return sum + (parseFloat(currentValue) || 0);
+        },
+        0,
+    );
+};

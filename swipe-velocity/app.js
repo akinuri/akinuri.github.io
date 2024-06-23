@@ -20,7 +20,16 @@ function onDragStart(event) {
     let moveTimeoutHandle = null;
     const ALLOWED_RELEASE_DELAY = 50;
     let isDragEnded = false;
+    let lastMoveTime = 0;
+    let moveTimes = new Stack(100, true);
     function onMove(event) {
+        let currentMoveTime = performance.now();
+        if (lastMoveTime == 0) {
+            lastMoveTime = currentMoveTime;
+        }
+        let elapsedMoveTime = currentMoveTime - lastMoveTime;
+        moveTimes.push(elapsedMoveTime);
+        lastMoveTime = currentMoveTime;
         const moveX = isTouchEvent
             ? event.touches[0].clientX - containerRect.left
             : event.clientX - containerRect.left;
@@ -31,7 +40,7 @@ function onDragStart(event) {
         let y = moveY - offsetY;
         shape.moveTo(x, y);
         shape.logDragPos(moveX, moveY);
-        stats.updateDrag(shape, shape.calcDragVel());
+        stats.updateDrag(shape, shape.calcDragVel(), moveTimes);
         clearTimeout(moveTimeoutHandle);
         moveTimeoutHandle = setTimeout(() => {
             if (isDragEnded) return;
@@ -62,19 +71,21 @@ on(shape.el, "touchstart", onDragStart, { passive: false });
 const FRICTION = 0.98;
 let lastFrameTime = 0;
 let rafId = 0;
+let frameTimes = new Stack(100, true);
 function gameLoop() {
     let currentFrameTime = performance.now();
     if (lastFrameTime == 0) {
         lastFrameTime = currentFrameTime;
     }
     let elapsedFrameTime = (currentFrameTime - lastFrameTime) / 1000;
+    frameTimes.push(elapsedFrameTime);
     lastFrameTime = currentFrameTime;
     if (elapsedFrameTime == 0) {
         rafId = requestAnimationFrame(gameLoop);
         return;
     }
     shape.vel.multiply(FRICTION);
-    stats.updateInertia(shape, shape.vel);
+    stats.updateInertia(shape, shape.vel, frameTimes);
     shape.move(elapsedFrameTime);
     if (shape.vel.getMagnitude() > 2) {
         rafId = requestAnimationFrame(gameLoop);
