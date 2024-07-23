@@ -17,9 +17,17 @@ on(parseBtn, "click", () => {
     outputArea.append(graphsContainer);
 });
 
-function buildDayGraph(date, commits) {
+function buildDayGraph(dateStr, commits) {
     let container = elem("div", { "class": "flex gap-4 items-center" });
-    container.append(elem("span", date));
+    let date = new Date(dateStr);
+    let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    let day = days[date.getDay()];
+    container.append(
+        elem("span", { "class": "w-[130px] flex gap-3 items-center" }, [
+            elem("span", dateStr),
+            elem("span", {"class" : "text-sm text-black/50"}, day),
+        ])
+    );
     let graph = elem("div", { "class": "w-[480px] bg-white h-[2rem] border rounded relative" });
     let hoursContainer = elem("div", { "class": "h-full flex absolute w-[480px] text-[8px] text-black/50" });
     for (let hour = 0; hour < 24; hour++) {
