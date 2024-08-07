@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Viewer</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+            .scanned > .folder > .contents {
+                --level: 1;
+            }
+            .scanned > .folder > .contents > .folder > .contents {
+                --level: 2;
+            }
+            .scanned > .folder > .contents > .folder > .contents > .folder > .contents {
+                --level: 3;
+            }
+            .scanned
+                > .folder
+                > .contents
+                > .folder
+                > .contents
+                > .folder
+                > .contents
+                > .folder
+                > .contents {
+                --level: 4;
+            }
+            .scanned .item-name {
+                --indent-unit: 2rem;
+                padding-left: calc(var(--indent-unit) * var(--level, 0));
+            }
+            :is(.folder-item, .file-item):hover {
+                background-color: hsl(200, 20%, 50%, 0.075);
+            }
+            :root {
+                --col-1-width: 18%;
+                --col-width: 7%;
+                --total-cols-count: 11;
+                --gap-width: calc(
+                    (
+                        100%
+                        - (var(--col-1-width) + (var(--total-cols-count) - 1) * var(--col-width))
+                    ) / var(--total-cols-count)
+                );
+            }
+        </style>
+    </head>
+
+    <body class="bg-slate-100 p-4">
+        <div id="controls" class="">
+            <textarea
+                id="scan-input-box"
+                class="p-2 border border-gray-300 rounded block resize-y text-sm min-h-[100px] max-h-[400px] w-full"
+                placeholder="scan output"
+            ></textarea>
+            <button
+                class="px-2 py-1 bg-slate-300 hover:bg-slate-400/50 active:bg-slate-400/60 rounded mt-4"
+            >
+                Analyze
+            </button>
+        </div>
+
+        <svg xmlns="http://www.w3.org/2000/svg" style="display: none">
+            <symbol
+                viewBox="0 0 24 24"
+                id="chevron-down"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="m19.5 8.25-7.5 7.5-7.5-7.5"
+                />
+            </symbol>
+        </svg>
+
+        <div id="result" class="mt-8">
+            <div class="w-full flex border-b border-slate-200/75 gap-[var(--gap-width)] font-semibold">
+                <div class="w-[var(--col-1-width)]"></div>
+                <div class="w-[calc((var(--col-width)+var(--gap-width))*3-(var(--gap-width)*0.65))]">Definition</div>
+                <div class="w-[calc((var(--col-width)+var(--gap-width))*4-(var(--gap-width)*0.6))]">Use</div>
+                <div>Lines</div>
+            </div>
+           
+            <div
+                class="w-full justify-between flex items-center border-b border-slate-300 *:w-[7%]"
+            >
+                <div class="!w-[18%]">Items</div>
+                <div>Classes</div>
+                <div>Methods</div>
+                <div>Functions</div>
+                <div>Includes</div>
+                <div>Classes</div>
+                <div>Methods</div>
+                <div>Functions</div>
+                <div>Physical</div>
+                <div>Logical</div>
+                <div>Size</div>
+            </div>
+
+            <div class="scanned">
+                <div class="folder">
+                    <div class="folder-item flex *:w-[7%] justify-between">
+                        <div class="item-name !w-[18%] flex gap-1 items-center">
+                            <svg class="size-4 rounded cursor-pointer hover:bg-slate-300/50 active:bg-slate-300/75">
+                                <use href="#chevron-down" />
+                            </svg>
+                            <span>Loader</span>
+                        </div>
+                        <div>x</div>
+                        <div>x</div>
+                        <div>x</div>
+                        <div>x</div>
+                        <div>x</div>
+                        <div>x</div>
+                        <div>x</div>
+                        <div>x</div>
+                        <div>x</div>
+                        <div>x</div>
+                    </div>
+                    <div class="contents">
+                        <div class="folder">
+                            <div class="folder-item flex *:w-[7%] justify-between">
+                                <div class="item-name !w-[18%] flex gap-1 items-center">
+                                    <svg class="size-4 rounded cursor-pointer hover:bg-slate-300/70 active:bg-slate-300/95">
+                                        <use href="#chevron-down" />
+                                    </svg>
+                                    <span>Generator</span>
+                                </div>
+                                <div>x</div>
+                                <div>x</div>
+                                <div>x</div>
+                                <div>x</div>
+                                <div>x</div>
+                                <div>x</div>
+                                <div>x</div>
+                                <div>x</div>
+                                <div>x</div>
+                                <div>x</div>
+                            </div>
+                            <div class="contents">
+                                <div class="file-item flex *:w-[7%] justify-between">
+                                    <div class="!w-[18%]">
+                                        <span class="item-name">GeneratorInterface.php</span>
+                                    </div>
+                                    <div>x</div>
+                                    <div>x</div>
+                                    <div>x</div>
+                                    <div>x</div>
+                                    <div>x</div>
+                                    <div>x</div>
+                                    <div>x</div>
+                                    <div>x</div>
+                                    <div>x</div>
+                                    <div>x</div>
+                                </div>
+                                <div class="file-item flex *:w-[7%] justify-between">
+                                    <div class="!w-[18%]">
+                                        <span class="item-name">PoGenerator.php</span>
+                                    </div>
+                                    <div>x</div>
+                                    <div>x</div>
+                                    <div>x</div>
+                                    <div>x</div>
+                                    <div>x</div>
+                                    <div>x</div>
+                                    <div>x</div>
+                                    <div>x</div>
+                                    <div>x</div>
+                                    <div>x</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="file-item flex *:w-[7%] justify-between">
+                            <div class="!w-[18%]">
+                                <span class="item-name">LoaderInterface.php</span>
+                            </div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                        </div>
+                        <div class="file-item flex *:w-[7%] justify-between">
+                            <div class="!w-[18%]">
+                                <span class="item-name">MoLoader.php</span>
+                            </div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="folder">
+                    <div class="folder-item flex *:w-[7%] justify-between">
+                        <div class="item-name !w-[18%] flex gap-1 items-center">
+                            <svg class="size-4 rounded cursor-pointer hover:bg-slate-300/50 active:bg-slate-300/75">
+                                <use href="#chevron-down" />
+                            </svg>
+                            <span>Scanner</span>
+                        </div>
+                        <div>x</div>
+                        <div>x</div>
+                        <div>x</div>
+                        <div>x</div>
+                        <div>x</div>
+                        <div>x</div>
+                        <div>x</div>
+                        <div>x</div>
+                        <div>x</div>
+                        <div>x</div>
+                    </div>
+                    <div class="contents">
+                        <div class="file-item flex *:w-[7%] justify-between">
+                            <div class="!w-[18%]">
+                                <span class="item-name">FunctionsHandlersTrait.php</span>
+                            </div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                        </div>
+                        <div class="file-item flex *:w-[7%] justify-between">
+                            <div class="!w-[18%]">
+                                <span class="item-name">ParsedFunction.php</span>
+                            </div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                            <div>x</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="lib/element.js"></script>
+        <script src="lib/on.js"></script>
+        <script src="lib/qs.js"></script>
+
+    </body>
+</html>
