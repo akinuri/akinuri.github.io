@@ -6,29 +6,38 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <script src="https://cdn.tailwindcss.com"></script>
         <style>
-            .scanned > .folder > .contents {
+            .root-folder > .folder > .folder-contents {
                 --level: 1;
             }
-            .scanned > .folder > .contents > .folder > .contents {
+            .root-folder > .folder > .folder-contents > .folder > .folder-contents {
                 --level: 2;
             }
-            .scanned > .folder > .contents > .folder > .contents > .folder > .contents {
+            .root-folder
+                > .folder
+                > .folder-contents
+                > .folder
+                > .folder-contents
+                > .folder
+                > .folder-contents {
                 --level: 3;
             }
-            .scanned
+            .root-folder
                 > .folder
-                > .contents
+                > .folder-contents
                 > .folder
-                > .contents
+                > .folder-contents
                 > .folder
-                > .contents
+                > .folder-contents
                 > .folder
-                > .contents {
+                > .folder-contents {
                 --level: 4;
             }
-            .scanned .item-name {
+            .root-folder .item-name {
                 --indent-unit: 2rem;
                 padding-left: calc(var(--indent-unit) * var(--level, 0));
+            }
+            :is(.folder-item, .file-item) {
+                padding-left: 0.5rem;
             }
             :is(.folder-item, .file-item):hover {
                 background-color: hsl(200, 20%, 50%, 0.075);
@@ -102,7 +111,7 @@
                 <div>Size</div>
             </div>
 
-            <div class="scanned">
+            <div class="root-folder folder-contents">
                 <div class="folder">
                     <div class="folder-item flex *:w-[7%] justify-between">
                         <div class="item-name !w-[18%] flex gap-1 items-center">
@@ -122,7 +131,7 @@
                         <div>x</div>
                         <div>x</div>
                     </div>
-                    <div class="contents">
+                    <div class="folder-contents">
                         <div class="folder">
                             <div class="folder-item flex *:w-[7%] justify-between">
                                 <div class="item-name !w-[18%] flex gap-1 items-center">
@@ -142,7 +151,7 @@
                                 <div>x</div>
                                 <div>x</div>
                             </div>
-                            <div class="contents">
+                            <div class="folder-contents">
                                 <div class="file-item flex *:w-[7%] justify-between">
                                     <div class="!w-[18%]">
                                         <span class="item-name">GeneratorInterface.php</span>
@@ -226,7 +235,7 @@
                         <div>x</div>
                         <div>x</div>
                     </div>
-                    <div class="contents">
+                    <div class="folder-contents">
                         <div class="file-item flex *:w-[7%] justify-between">
                             <div class="!w-[18%]">
                                 <span class="item-name">FunctionsHandlersTrait.php</span>
@@ -258,6 +267,21 @@
                             <div>x</div>
                         </div>
                     </div>
+                </div>
+                <div class="file-item flex *:w-[7%] justify-between">
+                    <div class="!w-[18%]">
+                        <span class="item-name">test.php</span>
+                    </div>
+                    <div>x</div>
+                    <div>x</div>
+                    <div>x</div>
+                    <div>x</div>
+                    <div>x</div>
+                    <div>x</div>
+                    <div>x</div>
+                    <div>x</div>
+                    <div>x</div>
+                    <div>x</div>
                 </div>
             </div>
         </div>
