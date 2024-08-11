@@ -33,8 +33,10 @@
                 --level: 4;
             }
             .root-folder .item-name {
-                --indent-unit: 2rem;
+                --indent-unit: 1.5rem;
                 padding-left: calc(var(--indent-unit) * var(--level, 0));
+                font-size: 0.9rem;
+                letter-spacing: -0.5px;
             }
             :is(.folder-item, .file-item) {
                 padding-left: 0.5rem;
@@ -43,8 +45,8 @@
                 background-color: hsl(200, 20%, 50%, 0.075);
             }
             :root {
-                --col-1-width: 18%;
-                --col-width: 7%;
+                --col-1-width: 20%;
+                --col-width: 6%;
                 --total-cols-count: 11;
                 --gap-width: calc(
                     (
@@ -56,14 +58,15 @@
         </style>
     </head>
 
-    <body class="bg-slate-100 p-4">
+    <body class="bg-slate-100 p-4 pb-[calc(5vh_+_4rem)]">
         <div id="controls" class="">
             <textarea
                 id="scan-input-box"
-                class="p-2 border border-gray-300 rounded block resize-y text-sm min-h-[100px] max-h-[400px] w-full"
+                class="p-2 border border-gray-300 rounded block resize-y text-sm min-h-[100px] max-h-[400px] w-full font-mono"
                 placeholder="scan output"
             ></textarea>
             <button
+                id="analyze-btn"
                 class="px-2 py-1 bg-slate-300 hover:bg-slate-400/50 active:bg-slate-400/60 rounded mt-4"
             >
                 Analyze
@@ -87,18 +90,26 @@
             </symbol>
         </svg>
 
-        <div id="result" class="mt-8">
-            <div class="w-full flex border-b border-slate-200/75 gap-[var(--gap-width)] font-semibold">
+        <div id="result" class="mt-8 border rounded overflow-hidden">
+            <div
+                class="w-full pl-2 bg-slate-200/75 flex border-b border-slate-300/35 gap-[var(--gap-width)] font-semibold pr-[17px]"
+            >
                 <div class="w-[var(--col-1-width)]"></div>
-                <div class="w-[calc((var(--col-width)+var(--gap-width))*3-(var(--gap-width)*0.65))]">Definition</div>
-                <div class="w-[calc((var(--col-width)+var(--gap-width))*4-(var(--gap-width)*0.6))]">Use</div>
+                <div
+                    class="w-[calc((var(--col-width)+var(--gap-width))*3-(var(--gap-width)*0.65))]"
+                >
+                    Definition
+                </div>
+                <div class="w-[calc((var(--col-width)+var(--gap-width))*4-(var(--gap-width)*0.6))]">
+                    Use
+                </div>
                 <div>Lines</div>
             </div>
-           
+
             <div
-                class="w-full justify-between flex items-center border-b border-slate-300 *:w-[7%]"
+                class="w-full pl-2 bg-slate-200/50 justify-between flex items-center border-b border-slate-300/35 *:w-[var(--col-width)] pr-[17px]"
             >
-                <div class="!w-[18%]">Items</div>
+                <div class="!w-[var(--col-1-width)]">Items</div>
                 <div>Classes</div>
                 <div>Methods</div>
                 <div>Functions</div>
@@ -108,14 +119,16 @@
                 <div>Functions</div>
                 <div>Physical</div>
                 <div>Logical</div>
-                <div>Size</div>
+                <div>Size (KB)</div>
             </div>
 
-            <div class="root-folder folder-contents">
+            <div class="root-folder folder-contents overflow-auto max-h-[500px] bg-white">
                 <div class="folder">
-                    <div class="folder-item flex *:w-[7%] justify-between">
-                        <div class="item-name !w-[18%] flex gap-1 items-center">
-                            <svg class="size-4 rounded cursor-pointer hover:bg-slate-300/50 active:bg-slate-300/75">
+                    <div class="folder-item flex *:w-[var(--col-width)] justify-between">
+                        <div class="item-name !w-[var(--col-1-width)] flex gap-1 items-center">
+                            <svg
+                                class="size-4 rounded cursor-pointer hover:bg-slate-300/50 active:bg-slate-300/75"
+                            >
                                 <use href="#chevron-down" />
                             </svg>
                             <span>Loader</span>
@@ -133,9 +146,13 @@
                     </div>
                     <div class="folder-contents">
                         <div class="folder">
-                            <div class="folder-item flex *:w-[7%] justify-between">
-                                <div class="item-name !w-[18%] flex gap-1 items-center">
-                                    <svg class="size-4 rounded cursor-pointer hover:bg-slate-300/70 active:bg-slate-300/95">
+                            <div class="folder-item flex *:w-[var(--col-width)] justify-between">
+                                <div
+                                    class="item-name !w-[var(--col-1-width)] flex gap-1 items-center"
+                                >
+                                    <svg
+                                        class="size-4 rounded cursor-pointer hover:bg-slate-300/70 active:bg-slate-300/95"
+                                    >
                                         <use href="#chevron-down" />
                                     </svg>
                                     <span>Generator</span>
@@ -152,8 +169,8 @@
                                 <div>x</div>
                             </div>
                             <div class="folder-contents">
-                                <div class="file-item flex *:w-[7%] justify-between">
-                                    <div class="!w-[18%]">
+                                <div class="file-item flex *:w-[var(--col-width)] justify-between">
+                                    <div class="!w-[var(--col-1-width)]">
                                         <span class="item-name">GeneratorInterface.php</span>
                                     </div>
                                     <div>x</div>
@@ -167,8 +184,8 @@
                                     <div>x</div>
                                     <div>x</div>
                                 </div>
-                                <div class="file-item flex *:w-[7%] justify-between">
-                                    <div class="!w-[18%]">
+                                <div class="file-item flex *:w-[var(--col-width)] justify-between">
+                                    <div class="!w-[var(--col-1-width)]">
                                         <span class="item-name">PoGenerator.php</span>
                                     </div>
                                     <div>x</div>
@@ -184,8 +201,8 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="file-item flex *:w-[7%] justify-between">
-                            <div class="!w-[18%]">
+                        <div class="file-item flex *:w-[var(--col-width)] justify-between">
+                            <div class="!w-[var(--col-1-width)]">
                                 <span class="item-name">LoaderInterface.php</span>
                             </div>
                             <div>x</div>
@@ -199,8 +216,8 @@
                             <div>x</div>
                             <div>x</div>
                         </div>
-                        <div class="file-item flex *:w-[7%] justify-between">
-                            <div class="!w-[18%]">
+                        <div class="file-item flex *:w-[var(--col-width)] justify-between">
+                            <div class="!w-[var(--col-1-width)]">
                                 <span class="item-name">MoLoader.php</span>
                             </div>
                             <div>x</div>
@@ -217,9 +234,11 @@
                     </div>
                 </div>
                 <div class="folder">
-                    <div class="folder-item flex *:w-[7%] justify-between">
-                        <div class="item-name !w-[18%] flex gap-1 items-center">
-                            <svg class="size-4 rounded cursor-pointer hover:bg-slate-300/50 active:bg-slate-300/75">
+                    <div class="folder-item flex *:w-[var(--col-width)] justify-between">
+                        <div class="item-name !w-[var(--col-1-width)] flex gap-1 items-center">
+                            <svg
+                                class="size-4 rounded cursor-pointer hover:bg-slate-300/50 active:bg-slate-300/75"
+                            >
                                 <use href="#chevron-down" />
                             </svg>
                             <span>Scanner</span>
@@ -236,8 +255,8 @@
                         <div>x</div>
                     </div>
                     <div class="folder-contents">
-                        <div class="file-item flex *:w-[7%] justify-between">
-                            <div class="!w-[18%]">
+                        <div class="file-item flex *:w-[var(--col-width)] justify-between">
+                            <div class="!w-[var(--col-1-width)]">
                                 <span class="item-name">FunctionsHandlersTrait.php</span>
                             </div>
                             <div>x</div>
@@ -251,8 +270,8 @@
                             <div>x</div>
                             <div>x</div>
                         </div>
-                        <div class="file-item flex *:w-[7%] justify-between">
-                            <div class="!w-[18%]">
+                        <div class="file-item flex *:w-[var(--col-width)] justify-between">
+                            <div class="!w-[var(--col-1-width)]">
                                 <span class="item-name">ParsedFunction.php</span>
                             </div>
                             <div>x</div>
@@ -268,8 +287,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="file-item flex *:w-[7%] justify-between">
-                    <div class="!w-[18%]">
+                <div class="file-item flex *:w-[var(--col-width)] justify-between">
+                    <div class="!w-[var(--col-1-width)]">
                         <span class="item-name">test.php</span>
                     </div>
                     <div>x</div>
@@ -290,5 +309,7 @@
         <script src="lib/on.js"></script>
         <script src="lib/qs.js"></script>
 
+        <script src="app.functions.js"></script>
+        <script src="app.js"></script>
     </body>
 </html>
