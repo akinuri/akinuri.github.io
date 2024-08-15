@@ -1,0 +1,15 @@
+body {
+    margin: 0;
+    overflow: hidden;
+}
+#game {
+    width: 100vw;
+    height: 100vh;
+    background-color: azure;
+    background-image: linear-gradient(azure, teal);
+}
+#crab {
+    width: 100px;
+    position: absolute;
+    opacity: 0.75;
+}
