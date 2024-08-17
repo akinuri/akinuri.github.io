@@ -1,27 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Crab</title>
+        <link rel="stylesheet" href="style.css" />
+        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                corePlugins: {
+                    preflight: false,
+                },
+            };
+        </script>
+    </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crab</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-</head>
+    <body>
+        <div id="game">
+            <img src="crab.png" id="crab" />
+        </div>
+        <div class="absolute right-4 top-4 bg-slate-300/50 p-2 rounded border shadow font-sans">
+            <table>
+                <tr>
+                    <td class="pr-2">
+                        <label for="debug-toggle">Debug?</label>
+                    </td>
+                    <td>
+                        <input id="debug-toggle" type="checkbox" onclick="toggleDebug(this)" />
+                    </td>
+                </tr>
+            </table>
+        </div>
 
-<body>
-
-    <div id="game">
-        <img src="crab.png" id="crab">
-    </div>
-
-    <script src="lib/vector-utils.js"></script>
-    <script src="lib/point.js"></script>
-    <script src="lib/vector.js"></script>
-    <script src="lib/gameloop.js"></script>
-    <script src="character.js"></script>
-    <script src="game.js"></script>
-    
-</body>
-
+        <script src="lib/utils.js"></script>
+        <script src="lib/vector-utils.js"></script>
+        <script src="lib/position.js"></script>
+        <script src="lib/vector.js"></script>
+        <script src="lib/gameloop.js"></script>
+        <script src="character.js"></script>
+        <script src="rectangle.js"></script>
+        <script src="game.utils.js"></script>
+        <script src="game.js"></script>
+    </body>
 </html>

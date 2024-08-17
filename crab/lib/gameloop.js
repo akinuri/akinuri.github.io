@@ -14,7 +14,7 @@ class GameLoop {
     // TODO: explain ignoreTime
     // TODO: explain restartTime
     // TODO: explain shouldContinue
-    
+
     tick(ignoreTime = false, restartTime = false) {
         if (restartTime) {
             this.lastFrameTime = Date.now();

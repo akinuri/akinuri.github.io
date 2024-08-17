@@ -3,39 +3,99 @@ class Character {
     width = 0;
     height = 0;
     vel = new Vector();
-    maxSpeed = 50;
-    minSpeed = 2;
+    pos = new Position();
+
+    moveSpeed = getWindowSize().width * 0.25;
+    gravity = getWindowSize().height * 2;
+    jumpHeight = 0;
+    isJumping = false;
+
+    container = null;
+
     constructor(el) {
         this.el = el;
         this.width = el.clientWidth;
         this.height = el.clientHeight;
+        this.jumpHeight = this.height * 2;
     }
+
     setPos(x, y) {
+        if (typeof x == "object") {
+            y = x.y;
+            x = x.x;
+        }
+        if (this.container) {
+            x = clamp(
+                x,
+                this.container.pos.x + this.width / 2,
+                this.container.pos.x + this.container.width - this.width / 2
+            );
+            y = clamp(
+                y,
+                this.container.pos.y,
+                this.container.pos.y + this.container.height - this.height / 2
+            );
+        }
+        this.pos.set(x, y);
+    }
+
+    adjPos(x, y) {
+        if (typeof x == "object") {
+            y = x.y;
+            x = x.x;
+        }
+        this.setPos(this.pos.x + x, this.pos.y + y);
+    }
+
+    render(isCenterOffset = false) {
+        let { x, y } = this.pos;
+        if (!isCenterOffset) {
+            x -= this.width / 2;
+            y -= this.height / 2;
+        }
         this.el.style.left = x + "px";
         this.el.style.top = y + "px";
     }
-    getPos() {
-        return {
-            x: parseInt(this.el.style.left),
-            y: parseInt(this.el.style.top),
-        };
-    }
-    update(targetX, targetY) {
-        // TODO: dive deeper, switch to vectors, base on time
-        const pos = this.getPos();
-        const dx = targetX - pos.x;
-        const dy = targetY - pos.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        const speed = Math.min(this.maxSpeed, Math.max(this.minSpeed, distance * 0.05));
-        if (distance < speed) {
-            this.setPos(targetX, targetY);
-            this.vel.x = 0;
-            this.vel.y = 0;
+
+    update(elapsedFrameTime) {
+        if (this.isJumping) {
+            this.vel.y += getPixelInTime(this.gravity, elapsedFrameTime);
+        }
+
+        this.adjPos(
+            getPixelInTime(this.vel.x, elapsedFrameTime),
+            getPixelInTime(this.vel.y, elapsedFrameTime)
+        );
+
+        let groundY = 0;
+        if (this.container) {
+            groundY = this.container.pos.y + this.container.height - this.height / 2;
         } else {
-            const angle = Math.atan2(dy, dx);
-            this.vel.x = Math.cos(angle) * speed;
-            this.vel.y = Math.sin(angle) * speed;
-            this.setPos(pos.x + this.vel.x, pos.y + this.vel.y);
+            groundY = getWindowSize().height - this.height / 2;
+        }
+        if (this.pos.y >= groundY) {
+            this.vel.y = 0;
+            this.isJumping = false;
+        }
+    }
+
+    handleInput(keys) {
+        this.vel.x = 0;
+
+        let leftMovement = keys["arrowleft"] || keys["a"] || 0;
+        let rightMovement = keys["arrowright"] || keys["d"] || 0;
+        if (leftMovement > rightMovement) {
+            this.vel.x = -this.moveSpeed;
+        }
+        if (rightMovement > leftMovement) {
+            this.vel.x = this.moveSpeed;
+        }
+
+        if ((keys["arrowup"] || keys["w"] || keys[" "]) && !this.isJumping) {
+            playSound(sounds.jump, true);
+            const jumpSpeed = Math.sqrt(2 * this.gravity * this.jumpHeight);
+            this.vel.y = -jumpSpeed;
+            this.isJumping = true;
         }
     }
 }

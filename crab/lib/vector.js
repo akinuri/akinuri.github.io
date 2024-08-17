@@ -1,7 +1,21 @@
 class Vector {
     constructor(x = 0, y = 0) {
+        this.set(x, y);
+    }
+
+    set(x, y) {
+        if (typeof x == "object") {
+            y = x.y;
+            x = x.x;
+        }
         this.x = x;
         this.y = y;
+    }
+
+    add(vector) {
+        this.x += vector.x;
+        this.y += vector.y;
+        return this;
     }
 
     multiply(scalar) {
