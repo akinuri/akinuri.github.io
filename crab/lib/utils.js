@@ -28,20 +28,14 @@ function applyStyle(el, styles) {
     }
 }
 
-function getRelWindowRect(xPad = 0, yPad = 0) {
-    let rect = {
-        x: 0,
-        y: 0,
-        width: innerWidth,
-        height: innerHeight,
-    };
-    if (xPad) {
-        rect.x = xPad;
-        rect.width -= xPad * 2;
-    }
-    if (yPad) {
-        rect.y = yPad;
-        rect.height -= yPad * 2;
-    }
-    return rect;
-}
+Math.avg = function avg() {
+    let numbers = Array.from(arguments).flat(Infinity);
+    return Math.sum(numbers) / numbers.length;
+};
+
+Math.sum = function sum() {
+    let numbers = Array.from(arguments).flat(Infinity);
+    return numbers.reduce(function (sum, currentValue) {
+        return sum + (parseFloat(currentValue) || 0);
+    }, 0);
+};

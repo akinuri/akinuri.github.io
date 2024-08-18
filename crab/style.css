@@ -1,5 +1,4 @@
 * {
-    user-select: none;
     box-sizing: border-box;
 }
 body {
@@ -7,11 +6,12 @@ body {
     overflow: hidden;
 }
 
-#game {
+#game-canvas {
     width: 100vw;
     height: 100vh;
     background-color: azure;
     background-image: linear-gradient(azure, teal);
+    user-select: none;
 }
 
 #crab {
@@ -20,30 +20,11 @@ body {
     opacity: 0.75;
 }
 
-.moustache-wrapper {
-    position: absolute;
-    opacity: 0.75;
-    bottom: 150px;
-    left: 50%;
-    translate: -50%;
-    animation: 400ms infinite linear spin;
-    width: fit-content;
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-}
-.moustache {
-    width: 50px;
-}
-.moustache-wrapper:hover {
-    animation-duration: 1s;
-}
-
 @keyframes spin {
     from {
-      transform: rotate(0deg);
+        transform: rotate(0deg);
     }
     to {
-      transform: rotate(360deg);
+        transform: rotate(360deg);
     }
-  }
+}

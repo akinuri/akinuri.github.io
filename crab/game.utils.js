@@ -24,7 +24,7 @@ function showAxes() {
         top: "0",
         opacity: "0.5",
     });
-    document.querySelector("#game").append(axes);
+    gameCanvas.prepend(axes);
 }
 
 function hideAxes() {
@@ -60,12 +60,35 @@ function loadSounds(sounds) {
     }
 }
 
-function toggleDebug(input) {
-    if (input.checked) {
+let fpsDisplayEl = document.querySelector("#fps-display");
+let fpsStack = new Stack(100, true);
+function updateFPS() {
+    fpsStack.push(parseInt(gl.fps));
+    let avgFps = Math.avg(fpsStack.getItems());
+    fpsDisplayEl.textContent = parseInt(avgFps);
+}
+
+let deltaTimeDisplayEl = document.querySelector("#delta-time-display");
+let deltaTimeStack = new Stack(100, true);
+function updateDeltaTime() {
+    deltaTimeStack.push(parseInt(gl.elapsedFrameTime));
+    let avgDeltaTime = Math.avg(deltaTimeStack.getItems());
+    deltaTimeDisplayEl.textContent = parseInt(avgDeltaTime);
+}
+
+let debugToggleEl = document.querySelector("#debug-toggle");
+function isDebugging() {
+    return debugToggleEl.checked;
+}
+
+function toggleDebug() {
+    if (isDebugging()) {
         showAxes();
         crab.container.show();
+        document.querySelectorAll(".stat").forEach(el => el.hidden = false);
     } else {
         hideAxes();
         crab.container.hide();
+        document.querySelectorAll(".stat").forEach(el => el.hidden = true);
     }
 }

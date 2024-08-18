@@ -8,6 +8,8 @@ class Rectangle {
         this.pos.y = y;
         this.width = width;
         this.height = height;
+        this.right = this.pos.x + this.width;
+        this.bottom = this.pos.y + this.height;
     }
 
     show() {
@@ -22,7 +24,7 @@ class Rectangle {
                 border: "1px dashed black",
                 opacity: "0.5",
             });
-            document.querySelector("#game").append(this.el);
+            gameCanvas.prepend(this.el);
         }
     }
 

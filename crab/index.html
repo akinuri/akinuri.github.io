@@ -17,33 +17,62 @@
     </head>
 
     <body>
-        <div id="game">
+        <div id="game-canvas">
             <img src="crab.png" id="crab" />
-            <div class="moustache-wrapper">
-                <img src="moustache.png" class="moustache" />
-            </div>
         </div>
-        <div class="absolute right-4 top-4 bg-slate-300/50 p-2 rounded border shadow font-sans">
+        <div
+            id="debug"
+            class="absolute right-4 top-4 bg-slate-300/50 p-2 rounded border shadow font-sans"
+        >
             <table>
                 <tr>
                     <td class="pr-2">
-                        <label for="debug-toggle">Debug?</label>
+                        <label for="debug-toggle" class="block">Debug?</label>
                     </td>
                     <td>
-                        <input id="debug-toggle" type="checkbox" onclick="toggleDebug(this)" />
+                        <input
+                            id="debug-toggle"
+                            type="checkbox"
+                            oninput="toggleDebug(this)"
+                        />
+                    </td>
+                </tr>
+                <tr class="stat" hidden>
+                    <td class="pr-2">FPS</td>
+                    <td>
+                        <span id="fps-display">0</span>
+                    </td>
+                </tr>
+                <tr class="stat" hidden>
+                    <td class="pr-2">Delta Time</td>
+                    <td>
+                        <span id="delta-time-display">0</span>
+                    </td>
+                </tr>
+                <tr class="stat" hidden>
+                    <td class="pr-2">
+                        <label for="spin-toggle" class="block">Spin?</label>
+                    </td>
+                    <td>
+                        <input id="spin-toggle" type="checkbox" checked />
                     </td>
                 </tr>
             </table>
         </div>
 
-        <script src="lib/utils.js"></script>
-        <script src="lib/vector-utils.js"></script>
-        <script src="lib/position.js"></script>
-        <script src="lib/vector.js"></script>
-        <script src="lib/gameloop.js"></script>
-        <script src="character.js"></script>
-        <script src="rectangle.js"></script>
-        <script src="game.utils.js"></script>
-        <script src="game.js"></script>
+        <div hidden>
+            <script src="lib/utils.js"></script>
+            <script src="lib/vector-utils.js"></script>
+            <script src="lib/position.js"></script>
+            <script src="lib/vector.js"></script>
+            <script src="lib/gameloop.js"></script>
+            <script src="lib/stack.js"></script>
+            <script src="lib/time-frequency-counter.js"></script>
+            <script src="character.js"></script>
+            <script src="rectangle.js"></script>
+            <script src="projectile.js"></script>
+            <script src="game.utils.js"></script>
+            <script src="game.js"></script>
+        </div>
     </body>
 </html>

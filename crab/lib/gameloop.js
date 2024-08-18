@@ -1,38 +1,22 @@
 class GameLoop {
-    constructor(fps = 60, callback) {
+    constructor(callback) {
         this.init(...arguments);
     }
 
-    init(fps = 60, callback) {
-        this.fps = fps;
-        this.fpsInterval = 1000 / this.fps;
-        this.lastFrameTime = Date.now();
+    init(callback) {
+        this.lastFrameTime = performance.now();
         this.frameRequestHandle = null;
         this.callback = callback;
+        this.frameCounter = new TimeFrequencyCounter();
     }
 
-    // TODO: explain ignoreTime
-    // TODO: explain restartTime
-    // TODO: explain shouldContinue
-
-    tick(ignoreTime = false, restartTime = false) {
-        if (restartTime) {
-            this.lastFrameTime = Date.now();
-        }
-        let currentFrameTime = Date.now();
-        let elapsedFrameTime = currentFrameTime - this.lastFrameTime;
-        let shouldContinue = true;
-        if (ignoreTime || elapsedFrameTime > this.fpsInterval) {
-            this.lastFrameTime = currentFrameTime - (elapsedFrameTime % this.fpsInterval);
-            if (this.callback) {
-                shouldContinue = this.callback(elapsedFrameTime);
-                if (shouldContinue == undefined) {
-                    shouldContinue = true;
-                }
-            }
-        }
-        if (shouldContinue) {
-            this.frameRequestHandle = requestAnimationFrame(this.tick.bind(this));
-        }
+    tick() {
+        let currentFrameTime = performance.now();
+        this.elapsedFrameTime = currentFrameTime - this.lastFrameTime;
+        this.lastFrameTime = currentFrameTime;
+        this.callback(this.elapsedFrameTime);
+        this.frameCounter.count();
+        this.fps = this.frameCounter.getSize();
+        this.frameRequestHandle = requestAnimationFrame(this.tick.bind(this));
     }
 }

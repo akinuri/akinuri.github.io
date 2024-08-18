@@ -10,6 +10,8 @@ class Character {
     jumpHeight = 0;
     isJumping = false;
 
+    lastFiredAt = 0;
+
     container = null;
 
     constructor(el) {
@@ -28,12 +30,12 @@ class Character {
             x = clamp(
                 x,
                 this.container.pos.x + this.width / 2,
-                this.container.pos.x + this.container.width - this.width / 2
+                this.container.right - this.width / 2
             );
             y = clamp(
                 y,
-                this.container.pos.y,
-                this.container.pos.y + this.container.height - this.height / 2
+                this.container.pos.y + this.height / 2,
+                this.container.bottom - this.height / 2
             );
         }
         this.pos.set(x, y);
@@ -69,7 +71,7 @@ class Character {
 
         let groundY = 0;
         if (this.container) {
-            groundY = this.container.pos.y + this.container.height - this.height / 2;
+            groundY = this.container.bottom - this.height / 2;
         } else {
             groundY = getWindowSize().height - this.height / 2;
         }
@@ -79,7 +81,7 @@ class Character {
         }
     }
 
-    handleInput(keys) {
+    handleInput(keys, clicks) {
         this.vel.x = 0;
 
         let leftMovement = keys["arrowleft"] || keys["a"] || 0;
@@ -97,5 +99,37 @@ class Character {
             this.vel.y = -jumpSpeed;
             this.isJumping = true;
         }
+
+        let fireCooldown = 200;
+        if (clicks["left"]) {
+            let now = performance.now();
+            let elapsed = now - this.lastFiredAt;
+            if (elapsed >= fireCooldown) {
+                this.lastFiredAt = now;
+                this.fire();
+            }
+        }
+    }
+
+    fire() {
+        let img = el(`<img src="moustache.png" />`)[0];
+        applyStyle(img, {
+            src: "moustache.png",
+            position: "absolute",
+            width: "50px",
+            aspectRatio: "1",
+            objectFit: "contain",
+            opacity: "0.75",
+        });
+        if (spinToggle.checked) {
+            applyStyle(img, {
+                animation: "500ms infinite linear spin",
+            });
+        }
+        let moustache = new Projectile(img, 50, 50);
+        moustache.setPos(this.pos);
+        moustache.vel = Vector.createFromAngle(-90, getWindowSize().height);
+        addWorldObject(moustache);
+        playSound(sounds.throw);
     }
 }
