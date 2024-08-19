@@ -10,6 +10,17 @@ crab.container = new Rectangle(
 crab.setPos(getWindowCenter().x, crab.container.bottom);
 crab.render();
 
+
+function makeBubble() {
+    let bubble = new Bubble(100);
+    bubble.setPos(0, getWindowSize().height / 2);
+    setTimeout(() => {
+        addWorldObject(bubble);
+    });
+}
+makeBubble();
+
+
 let keys = {};
 window.addEventListener("keydown", (e) => {
     keys[e.key.toLowerCase()] = performance.now();
