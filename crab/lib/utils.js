@@ -39,3 +39,7 @@ Math.sum = function sum() {
         return sum + (parseFloat(currentValue) || 0);
     }, 0);
 };
+
+function random(min, max) {
+    return min + Math.random() * (max - min);
+}

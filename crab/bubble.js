@@ -6,9 +6,9 @@ class Bubble {
     pos = new Position();
 
     // TODO: refactor the perlin noise
-    noiseOffset = Math.random() * 1000;
-    noiseSpeed = 0.0075;
-    noiseAmplitude = 2;
+    noiseOffset = Math.random() * 1000; // Random starting point for noise
+    noiseSpeed = 0.005; // Controls the speed of noise changes
+    noiseAmplitude = 2; // Controls the range of vertical movement
 
     constructor(size) {
         this.el = el(`<div class="bubble"></div>`)[0];
@@ -18,7 +18,8 @@ class Bubble {
         });
         this.width = size;
         this.height = size;
-        this.vel = Vector.createFromAngle(0, getWindowSize().width * 0.1);
+        this.vel = Vector.createFromAngle(0, random(getWindowSize().width * 0.05, getWindowSize().width * 0.15));
+        noise.seed(Math.random());
     }
 
     setPos(x, y) {
@@ -49,17 +50,18 @@ class Bubble {
 
     update(elapsedFrameTime) {
         this.noiseOffset += this.noiseSpeed;
-
         const noiseValue = noise.simplex2(this.noiseOffset, 0);
 
         this.adjPos(
             getPixelInTime(this.vel.x, elapsedFrameTime),
-            getPixelInTime(this.vel.y, elapsedFrameTime) + this.noiseAmplitude * noiseValue
+            getPixelInTime(this.vel.y, elapsedFrameTime) + noiseValue * this.noiseAmplitude
         );
 
         if (this.isOffScreen()) {
             removeWorldObject(this);
-            makeBubble();
+            setTimeout(() => {
+                makeBubble();
+            }, random(500, 1000));
         }
     }
 

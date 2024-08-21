@@ -10,16 +10,18 @@ crab.container = new Rectangle(
 crab.setPos(getWindowCenter().x, crab.container.bottom);
 crab.render();
 
-
 function makeBubble() {
     let bubble = new Bubble(100);
-    bubble.setPos(0, getWindowSize().height / 2);
+    bubble.setPos(0, random(getWindowSize().height * 0.1, getWindowSize().height * 0.5));
     setTimeout(() => {
         addWorldObject(bubble);
     });
 }
-makeBubble();
-
+for (let index = 0; index < 10; index++) {
+    setTimeout(() => {
+        makeBubble(); 
+    }, index * random(500, 5000));
+}
 
 let keys = {};
 window.addEventListener("keydown", (e) => {
