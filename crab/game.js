@@ -10,8 +10,8 @@ crab.container = new Rectangle(
 crab.setPos(getWindowCenter().x, crab.container.bottom);
 crab.render();
 
-function makeBubble() {
-    let bubble = new Bubble(100);
+function makeBubble(size = 50) {
+    let bubble = new Bubble(size);
     bubble.setPos(0, random(getWindowSize().height * 0.1, getWindowSize().height * 0.5));
     setTimeout(() => {
         addWorldObject(bubble);
@@ -19,7 +19,7 @@ function makeBubble() {
 }
 for (let index = 0; index < 10; index++) {
     setTimeout(() => {
-        makeBubble(); 
+        makeBubble(random(50, 100)); 
     }, index * random(500, 5000));
 }
 

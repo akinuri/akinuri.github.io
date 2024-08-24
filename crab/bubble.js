@@ -5,12 +5,11 @@ class Bubble {
     vel = new Vector();
     pos = new Position();
 
-    // TODO: refactor the perlin noise
-    noiseOffset = Math.random() * 1000; // Random starting point for noise
-    noiseSpeed = 0.005; // Controls the speed of noise changes
-    noiseAmplitude = 2; // Controls the range of vertical movement
+    noiseOffsetX = random(1000); // Arbitrary starting point
+    noiseOffsetXSpeed = 1 / 60; // Updates noise offset each frame; 60 for fps
+    noiseScale = 2;
 
-    constructor(size) {
+    constructor(size = 50) {
         this.el = el(`<div class="bubble"></div>`)[0];
         applyStyle(this.el, {
             width: size + "px",
@@ -18,8 +17,10 @@ class Bubble {
         });
         this.width = size;
         this.height = size;
-        this.vel = Vector.createFromAngle(0, random(getWindowSize().width * 0.05, getWindowSize().width * 0.15));
-        noise.seed(Math.random());
+        this.vel = Vector.createFromAngle(
+            0,
+            random(getWindowSize().width * 0.05, getWindowSize().width * 0.15)
+        );
     }
 
     setPos(x, y) {
@@ -49,18 +50,18 @@ class Bubble {
     }
 
     update(elapsedFrameTime) {
-        this.noiseOffset += this.noiseSpeed;
-        const noiseValue = noise.simplex2(this.noiseOffset, 0);
+        this.noiseOffsetX += this.noiseOffsetXSpeed;
+        const noiseValue = noise.perlin2(this.noiseOffsetX, 0);
 
         this.adjPos(
             getPixelInTime(this.vel.x, elapsedFrameTime),
-            getPixelInTime(this.vel.y, elapsedFrameTime) + noiseValue * this.noiseAmplitude
+            getPixelInTime(this.vel.y, elapsedFrameTime) + (noiseValue * this.noiseScale)
         );
 
         if (this.isOffScreen()) {
             removeWorldObject(this);
             setTimeout(() => {
-                makeBubble();
+                makeBubble(random(50, 100));
             }, random(500, 1000));
         }
     }

@@ -41,5 +41,13 @@ Math.sum = function sum() {
 };
 
 function random(min, max) {
+    if (typeof min == "undefined") {
+        min = 0;
+        max = 1;
+    }
+    if (typeof max == "undefined") {
+        max = min;
+        min = 0;
+    }
     return min + Math.random() * (max - min);
 }
