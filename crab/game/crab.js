@@ -1,62 +1,22 @@
-class Character {
-    el = null;
-    width = 0;
-    height = 0;
-    vel = new Vector();
-    pos = new Position();
-
+class Crab extends WorldObject {
     moveSpeed = getWindowSize().width * 0.25;
     gravity = getWindowSize().height * 2;
     jumpHeight = 0;
     isJumping = false;
 
     lastFiredAt = 0;
+    fireCooldown = 200;
+    fireSpeed = getWindowSize().height;
 
-    container = null;
-
-    constructor(el) {
-        this.el = el;
-        this.width = el.clientWidth;
-        this.height = el.clientHeight;
+    constructor() {
+        let img = el(`<img src="assets/crab.png" />`)[0];
+        applyStyle(img, {
+            position: "absolute",
+            width: "100px",
+            opacity: "0.75",
+        });
+        super(img, 100, 82);
         this.jumpHeight = this.height * 2;
-    }
-
-    setPos(x, y) {
-        if (typeof x == "object") {
-            y = x.y;
-            x = x.x;
-        }
-        if (this.container) {
-            x = clamp(
-                x,
-                this.container.pos.x + this.width / 2,
-                this.container.right - this.width / 2
-            );
-            y = clamp(
-                y,
-                this.container.pos.y + this.height / 2,
-                this.container.bottom - this.height / 2
-            );
-        }
-        this.pos.set(x, y);
-    }
-
-    adjPos(x, y) {
-        if (typeof x == "object") {
-            y = x.y;
-            x = x.x;
-        }
-        this.setPos(this.pos.x + x, this.pos.y + y);
-    }
-
-    render(isCenterOffset = false) {
-        let { x, y } = this.pos;
-        if (!isCenterOffset) {
-            x -= this.width / 2;
-            y -= this.height / 2;
-        }
-        this.el.style.left = x + "px";
-        this.el.style.top = y + "px";
     }
 
     update(elapsedFrameTime) {
@@ -64,7 +24,8 @@ class Character {
             this.vel.y += getPixelInTime(this.gravity, elapsedFrameTime);
         }
 
-        this.adjPos(
+        super.update(
+            elapsedFrameTime,
             getPixelInTime(this.vel.x, elapsedFrameTime),
             getPixelInTime(this.vel.y, elapsedFrameTime)
         );
@@ -94,17 +55,16 @@ class Character {
         }
 
         if ((keys["arrowup"] || keys["w"] || keys[" "]) && !this.isJumping) {
-            playSound(sounds.jump, true);
+            playSound(sounds.jump, 0.5);
             const jumpSpeed = Math.sqrt(2 * this.gravity * this.jumpHeight);
             this.vel.y = -jumpSpeed;
             this.isJumping = true;
         }
 
-        let fireCooldown = 200;
         if (clicks["left"]) {
             let now = performance.now();
             let elapsed = now - this.lastFiredAt;
-            if (elapsed >= fireCooldown) {
+            if (elapsed >= this.fireCooldown) {
                 this.lastFiredAt = now;
                 this.fire();
             }
@@ -112,9 +72,8 @@ class Character {
     }
 
     fire() {
-        let img = el(`<img src="moustache.png" />`)[0];
+        let img = el(`<img src="assets/moustache.png" />`)[0];
         applyStyle(img, {
-            src: "moustache.png",
             position: "absolute",
             width: "50px",
             aspectRatio: "1",
@@ -128,8 +87,8 @@ class Character {
         }
         let moustache = new Projectile(img, 50, 50);
         moustache.setPos(this.pos);
-        moustache.vel = Vector.createFromAngle(-90, getWindowSize().height);
-        addWorldObject(moustache);
-        playSound(sounds.throw);
+        moustache.vel = Vector.createFromAngle(-90, this.fireSpeed);
+        world.add(moustache);
+        playSound(sounds.throw, 0.5);
     }
 }

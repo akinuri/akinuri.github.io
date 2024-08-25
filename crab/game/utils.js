@@ -24,40 +24,11 @@ function showAxes() {
         top: "0",
         opacity: "0.5",
     });
-    gameCanvas.prepend(axes);
+    world.canvas.prepend(axes);
 }
 
 function hideAxes() {
     document.querySelector("#axes")?.remove();
-}
-
-let lastSoundPlayTime = Date.now();
-let soundPlayOffset = 50;
-function playSound(sound, ignoreTime = false) {
-    let currentSoundTime = Date.now();
-    let elapsedSoundTime = currentSoundTime - lastSoundPlayTime;
-    if (ignoreTime || elapsedSoundTime > soundPlayOffset) {
-        lastSoundPlayTime = currentSoundTime;
-        if (sound instanceof Audio) {
-            sound = sound.cloneNode(true);
-        } else if (typeof sound == "string") {
-            sound = new Audio(sound);
-        }
-        sound.play();
-    }
-}
-
-function loadSounds(sounds) {
-    for (let soundName in sounds) {
-        let soundPath = sounds[soundName];
-        let audio = new Audio();
-        audio.preload = "auto";
-        audio.addEventListener("canplaythrough", () => {
-            console.log("canplaythrough " + soundPath);
-        });
-        audio.src = soundPath;
-        sounds[soundName] = audio;
-    }
 }
 
 let fpsDisplayEl = document.querySelector("#fps-display");
@@ -86,9 +57,15 @@ function toggleDebug() {
         showAxes();
         crab.container.show();
         document.querySelectorAll(".stat").forEach(el => el.hidden = false);
+        for (const obj of world.objects) {
+            obj.el.classList.add("bounding-box");
+        }
     } else {
         hideAxes();
         crab.container.hide();
         document.querySelectorAll(".stat").forEach(el => el.hidden = true);
+        for (const obj of world.objects) {
+            obj.el.classList.remove("bounding-box");
+        }
     }
 }

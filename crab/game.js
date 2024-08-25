@@ -1,6 +1,6 @@
-let gameCanvas = document.querySelector("#game-canvas");
+let world = new World(document.querySelector("#game-canvas"));
 
-let crab = new Character(document.querySelector("#crab"));
+let crab = new Crab();
 crab.container = new Rectangle(
     20,
     innerHeight - 20 - crab.height - crab.jumpHeight,
@@ -8,90 +8,72 @@ crab.container = new Rectangle(
     crab.height + crab.jumpHeight
 );
 crab.setPos(getWindowCenter().x, crab.container.bottom);
-crab.render();
+world.add(crab);
 
 function makeBubble(size = 50) {
-    let bubble = new Bubble(size);
+    let bubble = new Bubble(
+        size,
+        0,
+        random(getWindowSize().width * 0.05, getWindowSize().width * 0.15)
+    );
     bubble.setPos(0, random(getWindowSize().height * 0.1, getWindowSize().height * 0.5));
-    setTimeout(() => {
-        addWorldObject(bubble);
-    });
+    return bubble;
 }
-for (let index = 0; index < 10; index++) {
+function spawnBubble(delay) {
+    delay = delay || random(500, 1000);
     setTimeout(() => {
-        makeBubble(random(50, 100)); 
-    }, index * random(500, 5000));
+        world.add(makeBubble(random(50, 100)));
+    }, delay);
 }
 
-let keys = {};
-window.addEventListener("keydown", (e) => {
-    keys[e.key.toLowerCase()] = performance.now();
-});
-window.addEventListener("keyup", (e) => {
-    keys[e.key.toLowerCase()] = 0;
-});
+for (let index = 0; index < 11; index++) {
+    spawnBubble(index * random(index * 100, index * 500));
+}
 
-let clicks = {};
-window.addEventListener("mousedown", (e) => {
-    if (e.target.closest("#debug")) {
-        return;
-    }
-    if (e.button == 0 && e.buttons == 1) {
-        clicks["left"] = performance.now();
-    }
-});
-window.addEventListener("mouseup", (e) => {
-    if (e.target.closest("#debug")) {
-        return;
-    }
-    if (e.button == 0 && e.buttons == 0) {
-        clicks["left"] = 0;
-    }
-});
+let keys = listenKeys();
+let clicks = listenClicks();
 
-let sounds = {
-    jump: "sounds/jump.mp3",
-    throw: "sounds/throw.mp3",
-};
-loadSounds(sounds);
+let sounds = loadSounds({
+    jump: "assets/sounds/jump.mp3",
+    throw: "assets/sounds/throw.mp3",
+    pop: "assets/sounds/pop.mp3",
+});
 
 toggleDebug();
-
-let worldObjects = [crab];
-function addWorldObject(obj) {
-    worldObjects.push(obj);
-    if (obj.el) {
-        gameCanvas.append(obj.el);
-    }
-}
-function removeWorldObject(obj) {
-    for (let index = 0; index < worldObjects.length; index++) {
-        const wobj = worldObjects[index];
-        if (wobj === obj) {
-            if (obj.el) {
-                obj.el.remove();
-                obj.el = null;
-            }
-            worldObjects.splice(index, 1);
-            break;
-        }
-    }
-}
 
 let spinToggle = document.querySelector("#spin-toggle");
 
 let gl = new GameLoop(function game(elapsedFrameTime) {
-    for (const obj of worldObjects) {
+    for (const obj of world.objects) {
         if ("handleInput" in obj) {
             obj.handleInput(keys, clicks);
         }
     }
-    for (const obj of worldObjects) {
+
+    let toRemove = [];
+    let projectiles = world.objects.filter((obj) => obj instanceof Projectile);
+    let bubbles = world.objects.filter((obj) => obj instanceof Bubble);
+    for (const projectile of projectiles) {
+        for (const bubble of bubbles) {
+            if (CollisionMonitor.doObjectsTouch(projectile, bubble)) {
+                toRemove.push(projectile);
+                toRemove.push(bubble);
+                playSound(sounds.pop);
+                spawnBubble();
+                break;
+            }
+        }
+    }
+    for (const obj of toRemove) {
+        world.remove(obj);
+    }
+
+    for (const obj of world.objects) {
         if ("update" in obj) {
             obj.update(elapsedFrameTime);
         }
     }
-    for (const obj of worldObjects) {
+    for (const obj of world.objects) {
         if ("render" in obj) {
             obj.render();
         }

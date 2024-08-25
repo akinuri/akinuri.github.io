@@ -24,7 +24,7 @@ class Rectangle {
                 border: "1px dashed black",
                 opacity: "0.5",
             });
-            gameCanvas.prepend(this.el);
+            world.canvas.prepend(this.el);
         }
     }
 

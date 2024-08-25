@@ -4,7 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Crab</title>
-        <link rel="stylesheet" href="style.css" />
+        <link rel="stylesheet" href="assets/style.css" />
         <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
         <script src="https://cdn.tailwindcss.com"></script>
         <script>
@@ -16,10 +16,8 @@
         </script>
     </head>
 
-    <body>
-        <div id="game-canvas">
-            <img src="crab.png" id="crab" />
-        </div>
+    <body oncontextmenu="return false">
+        <div id="game-canvas"></div>
         <div
             id="debug"
             class="absolute right-4 top-4 bg-slate-300/50 p-2 rounded border shadow font-sans"
@@ -30,7 +28,7 @@
                         <label for="debug-toggle" class="block">Debug?</label>
                     </td>
                     <td>
-                        <input id="debug-toggle" type="checkbox" oninput="toggleDebug(this)" />
+                        <input id="debug-toggle" type="checkbox" oninput="toggleDebug(this); this.blur()" />
                     </td>
                 </tr>
                 <tr class="stat" hidden>
@@ -50,7 +48,7 @@
                         <label for="spin-toggle" class="block">Spin?</label>
                     </td>
                     <td>
-                        <input id="spin-toggle" type="checkbox" checked />
+                        <input id="spin-toggle" type="checkbox" checked oninput="this.blur()" />
                     </td>
                 </tr>
             </table>
@@ -58,18 +56,27 @@
 
         <div hidden>
             <script src="lib/utils.js"></script>
-            <script src="lib/vector-utils.js"></script>
-            <script src="lib/position.js"></script>
-            <script src="lib/vector.js"></script>
-            <script src="lib/gameloop.js"></script>
             <script src="lib/stack.js"></script>
             <script src="lib/time-frequency-counter.js"></script>
+            
             <script src="ext/perlin.js"></script>
-            <script src="character.js"></script>
-            <script src="rectangle.js"></script>
-            <script src="projectile.js"></script>
-            <script src="bubble.js"></script>
-            <script src="game.utils.js"></script>
+            
+            <script src="engine/world-object.js"></script>
+            <script src="engine/world.js"></script>
+            <script src="engine/position.js"></script>
+            <script src="engine/vector.js"></script>
+            <script src="engine/vector-utils.js"></script>
+            <script src="engine/gameloop.js"></script>
+            <script src="engine/utils.js"></script>
+            <script src="engine/input-listener.js"></script>
+            
+            <script src="game/rectangle.js"></script>
+            <script src="game/crab.js"></script>
+            <script src="game/bubble.js"></script>
+            <script src="game/projectile.js"></script>
+            <script src="game/utils.js"></script>
+            <script src="game/collision-monitor.js"></script>
+            
             <script src="game.js"></script>
         </div>
     </body>

@@ -19,4 +19,8 @@ class GameLoop {
         this.fps = this.frameCounter.getSize();
         this.frameRequestHandle = requestAnimationFrame(this.tick.bind(this));
     }
+    
+    stop() {
+        cancelAnimationFrame(this.frameRequestHandle);
+    }
 }
