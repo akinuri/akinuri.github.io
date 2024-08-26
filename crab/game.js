@@ -1,31 +1,34 @@
 let world = new World(document.querySelector("#game-canvas"));
 
+
 let crab = new Crab();
 crab.container = new Rectangle(
     20,
-    innerHeight - 20 - crab.height - crab.jumpHeight,
+    innerHeight - 20 - ((crab.height + crab.jumpHeight) * 1.5),
     innerWidth - 20 - 20,
-    crab.height + crab.jumpHeight
+    (crab.height + crab.jumpHeight) * 1.5
 );
-crab.setPos(getWindowCenter().x, crab.container.bottom);
+crab.setPos(getWindowCenter().x * 0.8, crab.container.bottom);
 world.add(crab);
 
-function makeBubble(size = 50) {
-    let bubble = new Bubble(
-        size,
-        0,
-        random(getWindowSize().width * 0.05, getWindowSize().width * 0.15)
-    );
-    bubble.setPos(0, random(getWindowSize().height * 0.1, getWindowSize().height * 0.5));
-    return bubble;
-}
+
+let lobster = new Lobster();
+lobster.setPos(getWindowSize().width * 0.7, crab.container.bottom - lobster.height / 2);
+world.add(lobster);
+
+
 function spawnBubble(delay) {
     delay = delay || random(500, 1000);
     setTimeout(() => {
-        world.add(makeBubble(random(50, 100)));
+        let bubble = new Bubble(
+            random(50, 100),
+            0,
+            random(getWindowSize().width * 0.05, getWindowSize().width * 0.15)
+        );
+        bubble.setPos(0, random(getWindowSize().height * 0.1, getWindowSize().height * 0.5));
+        world.add(bubble);
     }, delay);
 }
-
 for (let index = 0; index < 11; index++) {
     spawnBubble(index * random(index * 100, index * 500));
 }
@@ -37,6 +40,7 @@ let sounds = loadSounds({
     jump: "assets/sounds/jump.mp3",
     throw: "assets/sounds/throw.mp3",
     pop: "assets/sounds/pop.mp3",
+    fail: "assets/sounds/fail.wav",
 });
 
 toggleDebug();
@@ -73,6 +77,21 @@ let gl = new GameLoop(function game(elapsedFrameTime) {
             obj.update(elapsedFrameTime);
         }
     }
+    
+    if (CollisionMonitor.doObjectsTouch(crab, lobster)) {
+        let collisionSide = crab.pos.x < lobster.pos.x ? "left" : "right";
+        let isOnTop = crab.pos.y < lobster.pos.y;
+        if (isOnTop) {
+            crab.pos.y = lobster.pos.y - lobster.height / 2 - crab.height / 2 - 1;
+        } else {
+            if (collisionSide == "left") {
+                crab.pos.x = lobster.pos.x - lobster.width / 2 - crab.width / 2;
+            } else {
+                crab.pos.x = lobster.pos.x + lobster.width / 2 + crab.width / 2;
+            }
+        }
+    }
+    
     for (const obj of world.objects) {
         if ("render" in obj) {
             obj.render();

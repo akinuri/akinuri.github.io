@@ -12,7 +12,7 @@ body {
     height: 100vh;
     background-color: azure;
     background-image: linear-gradient(hsl(180, 40%, 80%), hsl(180, 100%, 25%));
-    user-select: none;
+    pointer-events: none;
 }
 
 @keyframes spin {
@@ -51,7 +51,6 @@ body {
     bottom: calc(0px - var(--border));
     outline: 1px dashed black;
     border-radius: 0;
-    pointer-events: none;
 }
 img.bounding-box {
     outline: 1px dashed black;
