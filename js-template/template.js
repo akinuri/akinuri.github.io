@@ -23,7 +23,15 @@ function getTemplates(parentEl) {
  * @returns {HTMLTemplateElement}
  */
 function getTemplate(templateName, parentEl) {
+    if (!templateName) {
+        return null;
+    }
     return (parentEl ?? document.body).querySelector(`template[data-name=${templateName}]`);
+}
+
+function getPlaceholders(parentEl) {
+    parentEl ??= document.body;
+    return Array.from(parentEl.querySelectorAll(`[data-template-name], [data-template-data]`));
 }
 
 /**
@@ -33,18 +41,28 @@ function getTemplate(templateName, parentEl) {
  * @returns {Element[]} A list of custom elements with a template name as the tag,
  * or a normal element with a data-template="name" attribute.
  */
-function getTemplateInstancePlaceholders(templateName, parentEl) {
+function getPlaceholdersByTemplateName(templateName, parentEl) {
     parentEl ??= document.body;
-    let placeholders = Array.from(parentEl.querySelectorAll(templateName));
-    placeholders = placeholders.concat(
-        Array.from(parentEl.querySelectorAll(`[data-template-name=${templateName}]`))
+    return Array.from(
+        parentEl.querySelectorAll(`${templateName}, [data-template-name=${templateName}]`)
     );
-    return placeholders;
+}
+
+function getPlaceholderTemplateName(placeholderEl) {
+    return (
+        placeholderEl.dataset.templateName ??
+        (placeholderEl instanceof HTMLUnknownElement ? placeholderEl.tagName.toLowerCase() : null)
+    );
 }
 
 // #endregion
 
 // #region ==================== RENDER
+
+let writeBag = [];
+function write(text) {
+    writeBag.push(text);
+}
 
 /**
  * Renders the expressions in the template string.
@@ -56,7 +74,16 @@ function replaceTemplateExpressions(templateString, data = {}) {
     let expressionPattern = /{{\s*(.*?)\s*}}/gs;
     return templateString.replace(expressionPattern, (match, expression) => {
         try {
-            return evaluateExpression(expression, data);
+            writeBag = [];
+            let text = evaluateExpression(expression, data);
+            if (text == undefined) {
+                text = "";
+            }
+            if (writeBag.length) {
+                text += writeBag.join("");
+                writeBag = [];
+            }
+            return text;
         } catch (error) {
             console.warn(`Error evaluating expression: ${expression}`, error);
             return "";
@@ -85,7 +112,7 @@ function evaluateExpression(expression, context) {
  * @param {string} htmlString The processed HTML string.
  * @returns {Element} The resulting DOM element.
  */
-function htmlStringToElement(htmlString) {
+function htmlFromString(htmlString) {
     const template = document.createElement("template");
     template.innerHTML = htmlString.trim();
     return template.content.firstChild;
@@ -95,30 +122,44 @@ function htmlStringToElement(htmlString) {
 
 // #region ==================== SWAP
 
+function buildInstanceFromPlaceholder(placeholderEl) {
+    let instance = null;
+    if (!placeholderEl) {
+        return instance;
+    }
+    let template = getTemplate(getPlaceholderTemplateName(placeholderEl));
+    if (!template) {
+        return instance;
+    }
+    let data = placeholderEl.dataset.templateData ?? {};
+    if (typeof data == "string") {
+        data = JSON.parse(data);
+    }
+    let templateString = template.content.firstElementChild.outerHTML;
+    templateString = templateString.replace("&gt;", ">");
+    templateString = templateString.replace("&lt;", "<");
+    templateString = replaceTemplateExpressions(templateString, data);
+    instance = htmlFromString(templateString);
+    return instance;
+}
+
 /**
  * Creates an instance from the template and replaces the placeholder with the instance.
  * @param {Element} placeholder
  * @param {HTMLTemplateElement} template
  */
-function replacePlaceholderWithInstance(placeholder, template) {
-    let data = placeholder.dataset.templateData ?? {};
-    if (typeof data == "string") {
-        data = JSON.parse(data);
+function replacePlaceholderWithInstance(placeholder) {
+    let instance = buildInstanceFromPlaceholder(placeholder);
+    if (placeholder && instance) {
+        placeholder.replaceWith(instance);
     }
-    let templateHTML = template.content.firstElementChild.outerHTML;
-    templateHTML = replaceTemplateExpressions(templateHTML, data);
-    let instance = htmlStringToElement(templateHTML);
-    placeholder.replaceWith(instance);
 }
 
 function renderTemplateInstances(parent) {
     parent ??= document.body;
-    let templates = getTemplates(parent);
-    for (const [templateName, template] of Object.entries(templates)) {
-        let placeholders = getTemplateInstancePlaceholders(templateName, parent);
-        for (const placeholder of placeholders) {
-            replacePlaceholderWithInstance(placeholder, template);
-        }
+    let placeholders = getPlaceholders(parent);
+    for (const placeholder of placeholders) {
+        replacePlaceholderWithInstance(placeholder);
     }
 }
 
