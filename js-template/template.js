@@ -59,9 +59,16 @@ function getPlaceholderTemplateName(placeholderEl) {
 
 // #region ==================== RENDER
 
-let writeBag = [];
-function write(text) {
-    writeBag.push(text);
+class OutputBuffer {
+    constructor() {
+        this.items = [];
+    }
+    add(item) {
+        this.items.push(item);
+    }
+    toString() {
+        return this.items.join("");
+    }
 }
 
 /**
@@ -73,16 +80,14 @@ function write(text) {
 function replaceTemplateExpressions(templateString, data = {}) {
     let expressionPattern = /{{\s*(.*?)\s*}}/gs;
     return templateString.replace(expressionPattern, (match, expression) => {
+        let ob = new OutputBuffer();
+        data.write = (item) => ob.add(item);
         try {
-            writeBag = [];
             let text = evaluateExpression(expression, data);
             if (text == undefined) {
                 text = "";
             }
-            if (writeBag.length) {
-                text += writeBag.join("");
-                writeBag = [];
-            }
+            text += ob;
             return text;
         } catch (error) {
             console.warn(`Error evaluating expression: ${expression}`, error);
