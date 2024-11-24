@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Templating in JS</title>
+</head>
+
+<body class="bg-slate-100 p-6">
+
+    <template data-name="mybutton">
+        <button class="px-2 py-1 bg-slate-300/60 rounded hover:bg-slate-300 active:bg-slate-400/55">
+            {{ text }}
+        </button>
+    </template>
+
+    <div class="flex gap-4 p-4 rounded border border-dashed border-slate-500">
+        <div data-template-name="mybutton" data-template-data='{"text":"View"}'></div>
+        <div data-template-name="mybutton" data-template-data='{"text":"Edit"}'></div>
+        <mybutton data-template-data='{"text":"Delete"}'></mybutton>
+    </div>
+
+    <script src="template.js"></script>
+    <script>
+        window.addEventListener("load", () => {
+
+            templates = getTemplates();
+            console.log("templates:", templates);
+
+            for (const templateName in templates) {
+                console.log("placeholder:", getTemplateInstancePlaceholders(templateName));
+            }
+
+            console.log("evaluate:", evaluateExpression("(num_1 / num_2).toFixed(2)", { num_1: 12, num_2: 34 }));
+
+            console.log("replace:", replaceTemplateExpressions("The result is: {{ (num_1 / num_2).toFixed(2) }}", { num_1: 12, num_2: 34 }));
+
+            for (const templateName in templates) {
+                placeholders = getTemplateInstancePlaceholders(templateName);
+                for (const placeholder of placeholders) {
+                    replacePlaceholderWithInstance(placeholder, templates[templateName]);
+                }
+            }
+
+            // renderTemplateInstances(); // does the above operations automatically
+
+        });
+    </script>
+
+</body>
+
+</html>
