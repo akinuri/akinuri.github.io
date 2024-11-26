@@ -26,14 +26,14 @@
     </template>
 
     <div class="flex gap-4 p-4 rounded border border-dashed border-slate-500">
-        <div data-template-name="mybutton" data-template-data='{"text":"View"}'></div>
-        <div data-template-name="mybutton" data-template-data='{"text":"Edit"}'></div>
-        <mybutton data-template-data='{"text":"Delete"}'></mybutton>
+        <div data-template="mybutton" data-template-data='{"text":"View"}'></div>
+        <div data-template-name="mybutton" data-template-data='{"text":"Edit"}' class="!bg-blue-300 hover:!bg-blue-400/75 active:!bg-blue-400/90"></div>
+        <mybutton data-template-data='{"text":"Delete"}' class="!bg-red-300 hover:!bg-red-400/75 active:!bg-red-400/90"></mybutton>
     </div>
 
     <div class="flex gap-4 p-4 rounded border border-dashed border-slate-500 mt-6">
         <div data-template-name="mylist" data-template-data='{"name": "color", "items":["red", "green", "blue"]}'></div>
-        <mylist data-template-data='{"name": "random", "items":["foo", "bar", "baz"]}'></mylist>
+        <mylist data-template-data='{"name": "random", "items":["foo", "bar", "baz"]}' class="!bg-green-200"></mylist>
     </div>
 
     <script src="template.js"></script>

@@ -31,7 +31,7 @@ function getTemplate(templateName, parentEl) {
 
 function getPlaceholders(parentEl) {
     parentEl ??= document.body;
-    return Array.from(parentEl.querySelectorAll(`[data-template-name], [data-template-data]`));
+    return Array.from(parentEl.querySelectorAll(`[data-template], [data-template-name], [data-template-data]`));
 }
 
 /**
@@ -44,13 +44,14 @@ function getPlaceholders(parentEl) {
 function getPlaceholdersByTemplateName(templateName, parentEl) {
     parentEl ??= document.body;
     return Array.from(
-        parentEl.querySelectorAll(`${templateName}, [data-template-name=${templateName}]`)
+        parentEl.querySelectorAll(`${templateName}, [data-template=${templateName}], [data-template-name=${templateName}]`)
     );
 }
 
 function getPlaceholderTemplateName(placeholderEl) {
     return (
         placeholderEl.dataset.templateName ??
+        placeholderEl.dataset.template ??
         (placeholderEl instanceof HTMLUnknownElement ? placeholderEl.tagName.toLowerCase() : null)
     );
 }
@@ -145,6 +146,20 @@ function buildInstanceFromPlaceholder(placeholderEl) {
     templateString = templateString.replace("&lt;", "<");
     templateString = replaceTemplateExpressions(templateString, data);
     instance = htmlFromString(templateString);
+    for (const attr of Array.from(placeholderEl.attributes)) {
+        if (["data-template", "data-template-name", "data-template-data"].includes(attr.name)) {
+            continue;
+        }
+        if (attr.name == "class") {
+            if (instance.className.length) {
+                instance.className += " " + attr.value;
+            } else {
+                instance.setAttribute(attr.name, attr.value);
+            }
+        } else {
+            instance.setAttribute(attr.name, attr.value);
+        }
+    }
     return instance;
 }
 
