@@ -31,7 +31,11 @@ function getTemplate(templateName, parentEl) {
 
 function getPlaceholders(parentEl) {
     parentEl ??= document.body;
-    return Array.from(parentEl.querySelectorAll(`[data-template], [data-template-name], [data-template-data]`));
+    let placeholders = [];
+    for (const templateName in getTemplates()) {
+        placeholders = placeholders.concat(getPlaceholdersByTemplateName(templateName));
+    }
+    return placeholders;
 }
 
 /**
@@ -44,7 +48,9 @@ function getPlaceholders(parentEl) {
 function getPlaceholdersByTemplateName(templateName, parentEl) {
     parentEl ??= document.body;
     return Array.from(
-        parentEl.querySelectorAll(`${templateName}, [data-template=${templateName}], [data-template-name=${templateName}]`)
+        parentEl.querySelectorAll(
+            `${templateName}, [data-template=${templateName}], [data-template-name=${templateName}]`
+        )
     );
 }
 

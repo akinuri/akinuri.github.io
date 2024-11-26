@@ -20,6 +20,7 @@
         <div class="bg-slate-200 px-3 py-2 rounded">
             This is a {{ name }} list.
             <ul class="list-disc pl-6">
+                <li>default item</li>
                 {{ items.forEach(item => write(`<li>${item}</li>`)) }}
             </ul>
         </div>
@@ -34,6 +35,7 @@
     <div class="flex gap-4 p-4 rounded border border-dashed border-slate-500 mt-6">
         <div data-template-name="mylist" data-template-data='{"name": "color", "items":["red", "green", "blue"]}'></div>
         <mylist data-template-data='{"name": "random", "items":["foo", "bar", "baz"]}' class="!bg-green-200"></mylist>
+        <mylist class="!bg-purple-200/80"></mylist>
     </div>
 
     <script src="template.js"></script>
@@ -57,7 +59,7 @@
             for (const templateName in templates) {
                 placeholders = getPlaceholdersByTemplateName(templateName);
                 for (const placeholder of placeholders) {
-                    replacePlaceholderWithInstance(placeholder, templates[templateName]);
+                    replacePlaceholderWithInstance(placeholder);
                 }
             }
 
