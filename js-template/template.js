@@ -33,7 +33,7 @@ function getPlaceholders(parentEl) {
     parentEl ??= document.body;
     let placeholders = [];
     for (const templateName in getTemplates()) {
-        placeholders = placeholders.concat(getPlaceholdersByTemplateName(templateName));
+        placeholders = placeholders.concat(getPlaceholdersByTemplateName(templateName, parentEl));
     }
     return placeholders;
 }
@@ -147,6 +147,7 @@ function buildInstanceFromPlaceholder(placeholderEl) {
     if (typeof data == "string") {
         data = JSON.parse(data);
     }
+    data.content = placeholderEl.innerHTML;
     let templateString = template.content.firstElementChild.outerHTML;
     templateString = templateString.replace("&gt;", ">");
     templateString = templateString.replace("&lt;", "<");
@@ -166,6 +167,7 @@ function buildInstanceFromPlaceholder(placeholderEl) {
             instance.setAttribute(attr.name, attr.value);
         }
     }
+    renderTemplateInstances(instance);
     return instance;
 }
 
@@ -181,9 +183,9 @@ function replacePlaceholderWithInstance(placeholder) {
     }
 }
 
-function renderTemplateInstances(parent) {
-    parent ??= document.body;
-    let placeholders = getPlaceholders(parent);
+function renderTemplateInstances(parentEl) {
+    parentEl ??= document.body;
+    let placeholders = getPlaceholders(parentEl);
     for (const placeholder of placeholders) {
         replacePlaceholderWithInstance(placeholder);
     }

@@ -12,24 +12,28 @@
 
     <template data-name="mybutton">
         <button class="px-2 py-1 bg-slate-300/60 rounded hover:bg-slate-300 active:bg-slate-400/55">
-            {{ text }}
+            {{ content }}
         </button>
+    </template>
+
+    <template data-name="myli">
+        <li class="hover:underline hover:text-blue-600 hover:cursor-pointer active:text-blue-900">{{ content }}</li>
     </template>
 
     <template data-name="mylist">
         <div class="bg-slate-200 px-3 py-2 rounded">
             This is a {{ name }} list.
-            <ul class="list-disc pl-6">
-                <li>default item</li>
-                {{ items.forEach(item => write(`<li>${item}</li>`)) }}
+            <ul class="list-disc pl-6 mt-2">
+                <myli>default item</myli>
+                {{ items.forEach(item => write(`<myli>${item}</myli>`)) }}
             </ul>
         </div>
     </template>
 
     <div class="flex gap-4 p-4 rounded border border-dashed border-slate-500">
-        <div data-template="mybutton" data-template-data='{"text":"View"}'></div>
-        <div data-template-name="mybutton" data-template-data='{"text":"Edit"}' class="!bg-blue-300 hover:!bg-blue-400/75 active:!bg-blue-400/90"></div>
-        <mybutton data-template-data='{"text":"Delete"}' class="!bg-red-300 hover:!bg-red-400/75 active:!bg-red-400/90"></mybutton>
+        <div data-template="mybutton">View</div>
+        <div data-template-name="mybutton" class="!bg-blue-300 hover:!bg-blue-400/75 active:!bg-blue-400/90">Edit</div>
+        <mybutton class="!bg-red-300 hover:!bg-red-400/75 active:!bg-red-400/90">Delete</mybutton>
     </div>
 
     <div class="flex gap-4 p-4 rounded border border-dashed border-slate-500 mt-6">
