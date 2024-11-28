@@ -38,6 +38,16 @@ function getPlaceholders(parentEl) {
     return placeholders;
 }
 
+function isPlaceholder(element) {
+    let templateName = getPlaceholderTemplateName(element);
+    let query = `[data-template=${templateName}], [data-template-name=${templateName}]`;
+    if (element.matches(query)) {
+        return true;
+    }
+    let templates = getTemplates();
+    return templateName in templates;
+}
+
 /**
  * Gets the placeholder elements that reference a template via attributes.
  * @param {string} templateName
@@ -58,7 +68,7 @@ function getPlaceholderTemplateName(placeholderEl) {
     return (
         placeholderEl.dataset.templateName ??
         placeholderEl.dataset.template ??
-        (placeholderEl instanceof HTMLUnknownElement ? placeholderEl.tagName.toLowerCase() : null)
+        placeholderEl.tagName.toLowerCase()
     );
 }
 
@@ -130,17 +140,52 @@ function htmlFromString(htmlString) {
     return template.content.firstChild;
 }
 
+function applyAttributes(element, attributes, except = []) {
+    for (const attr of Array.from(attributes)) {
+        if (except.includes(attr.name)) {
+            continue;
+        }
+        if (attr.name == "class") {
+            if (element.className.length) {
+                element.className += " " + attr.value;
+            } else {
+                element.setAttribute(attr.name, attr.value);
+            }
+        } else {
+            element.setAttribute(attr.name, attr.value);
+        }
+    }
+}
+
 // #endregion
 
 // #region ==================== SWAP
 
+function buildInstanceFromTemplate(template, data = {}, attrs = {}) {
+    let instance = null;
+    if (!template || !template.matches("template[data-name]:not([data-name=''])")) {
+        return instance;
+    }
+    let templateString = template.content.firstElementChild.outerHTML;
+    templateString = templateString.replace("&gt;", ">");
+    templateString = templateString.replace("&lt;", "<");
+    templateString = replaceTemplateExpressions(templateString, data);
+    instance = htmlFromString(templateString);
+    if (isPlaceholder(instance)) {
+        instance = buildInstanceFromPlaceholder(instance);
+    }
+    applyAttributes(instance, attrs);
+    renderTemplateInstances(instance);
+    return instance;
+}
+
+function buildInstanceFromTemplateName(templateName, data = {}, attrs = {}) {
+    return buildInstanceFromTemplate(getTemplate(templateName), data, attrs);
+}
+
 function buildInstanceFromPlaceholder(placeholderEl) {
     let instance = null;
     if (!placeholderEl) {
-        return instance;
-    }
-    let template = getTemplate(getPlaceholderTemplateName(placeholderEl));
-    if (!template) {
         return instance;
     }
     let data = placeholderEl.dataset.templateData ?? {};
@@ -148,26 +193,8 @@ function buildInstanceFromPlaceholder(placeholderEl) {
         data = JSON.parse(data);
     }
     data.content = placeholderEl.innerHTML;
-    let templateString = template.content.firstElementChild.outerHTML;
-    templateString = templateString.replace("&gt;", ">");
-    templateString = templateString.replace("&lt;", "<");
-    templateString = replaceTemplateExpressions(templateString, data);
-    instance = htmlFromString(templateString);
-    for (const attr of Array.from(placeholderEl.attributes)) {
-        if (["data-template", "data-template-name", "data-template-data"].includes(attr.name)) {
-            continue;
-        }
-        if (attr.name == "class") {
-            if (instance.className.length) {
-                instance.className += " " + attr.value;
-            } else {
-                instance.setAttribute(attr.name, attr.value);
-            }
-        } else {
-            instance.setAttribute(attr.name, attr.value);
-        }
-    }
-    renderTemplateInstances(instance);
+    let templateName = getPlaceholderTemplateName(placeholderEl);
+    instance = buildInstanceFromTemplateName(templateName, data, placeholderEl.attributes);
     return instance;
 }
 
