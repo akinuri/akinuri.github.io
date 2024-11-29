@@ -1,4 +1,4 @@
-// #region ==================== GETTERS
+// #region ==================== TEMPLATES
 
 /**
  * Gets the template elements that has non-empty "data-name" attribute.
@@ -8,11 +8,9 @@
 function getTemplates(parentEl) {
     parentEl ??= document.body;
     let templates = {};
-    let elements = Array.from(parentEl.querySelectorAll("template[data-name]"));
+    let elements = Array.from(parentEl.querySelectorAll("template[data-name]:not([data-name=''])"));
     for (const element of elements) {
-        if (element.dataset.name.length) {
-            templates[element.dataset.name] = element;
-        }
+        templates[element.dataset.name] = element;
     }
     return templates;
 }
@@ -22,12 +20,16 @@ function getTemplates(parentEl) {
  * @param {Element?} parentEl
  * @returns {HTMLTemplateElement}
  */
-function getTemplate(templateName, parentEl) {
+function getTemplateByName(templateName, parentEl) {
     if (!templateName) {
         return null;
     }
     return (parentEl ?? document.body).querySelector(`template[data-name=${templateName}]`);
 }
+
+// #endregion
+
+// #region ==================== PLACEHOLDERS
 
 function getPlaceholders(parentEl) {
     parentEl ??= document.body;
@@ -36,16 +38,6 @@ function getPlaceholders(parentEl) {
         placeholders = placeholders.concat(getPlaceholdersByTemplateName(templateName, parentEl));
     }
     return placeholders;
-}
-
-function isPlaceholder(element) {
-    let templateName = getPlaceholderTemplateName(element);
-    let query = `[data-template=${templateName}], [data-template-name=${templateName}]`;
-    if (element.matches(query)) {
-        return true;
-    }
-    let templates = getTemplates();
-    return templateName in templates;
 }
 
 /**
@@ -62,6 +54,16 @@ function getPlaceholdersByTemplateName(templateName, parentEl) {
             `${templateName}, [data-template=${templateName}], [data-template-name=${templateName}]`
         )
     );
+}
+
+function isPlaceholder(element) {
+    let templateName = getPlaceholderTemplateName(element);
+    let query = `[data-template=${templateName}], [data-template-name=${templateName}]`;
+    if (element.matches(query)) {
+        return true;
+    }
+    let templates = getTemplates();
+    return templateName in templates;
 }
 
 function getPlaceholderTemplateName(placeholderEl) {
@@ -127,7 +129,7 @@ function evaluateExpression(expression, context) {
 
 // #endregion
 
-// #region ==================== HELPER
+// #region ==================== HELPERS
 
 /**
  * Converts a raw HTML string into an element.
@@ -159,18 +161,17 @@ function applyAttributes(element, attributes, except = []) {
 
 // #endregion
 
-// #region ==================== SWAP
+// #region ==================== BUILD
 
 function buildInstanceFromTemplate(template, data = {}, attrs = {}) {
-    let instance = null;
-    if (!template || !template.matches("template[data-name]:not([data-name=''])")) {
-        return instance;
+    if (!template) {
+        return null;
     }
     let templateString = template.content.firstElementChild.outerHTML;
     templateString = templateString.replace("&gt;", ">");
     templateString = templateString.replace("&lt;", "<");
     templateString = replaceTemplateExpressions(templateString, data);
-    instance = htmlFromString(templateString);
+    let instance = htmlFromString(templateString);
     if (isPlaceholder(instance)) {
         instance = buildInstanceFromPlaceholder(instance);
     }
@@ -179,14 +180,9 @@ function buildInstanceFromTemplate(template, data = {}, attrs = {}) {
     return instance;
 }
 
-function buildInstanceFromTemplateName(templateName, data = {}, attrs = {}) {
-    return buildInstanceFromTemplate(getTemplate(templateName), data, attrs);
-}
-
 function buildInstanceFromPlaceholder(placeholderEl) {
-    let instance = null;
     if (!placeholderEl) {
-        return instance;
+        return null;
     }
     let data = placeholderEl.dataset.templateData ?? {};
     if (typeof data == "string") {
@@ -194,9 +190,16 @@ function buildInstanceFromPlaceholder(placeholderEl) {
     }
     data.content = placeholderEl.innerHTML;
     let templateName = getPlaceholderTemplateName(placeholderEl);
-    instance = buildInstanceFromTemplateName(templateName, data, placeholderEl.attributes);
-    return instance;
+    return buildInstanceFromTemplateName(templateName, data, placeholderEl.attributes);
 }
+
+function buildInstanceFromTemplateName(templateName, data = {}, attrs = {}) {
+    return buildInstanceFromTemplate(getTemplateByName(templateName), data, attrs);
+}
+
+// #endregion
+
+// #region ==================== REPLACE
 
 /**
  * Creates an instance from the template and replaces the placeholder with the instance.
