@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>String Ops</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-100">
+
+    <div class="p-4">
+        <textarea class="px-2 py-1 rounded w-[400px] h-[300px] border block" placeholder="text"></textarea>
+        <div class="flex gap-4 mt-4">
+            <my-button id="sort-asc">Sort ASC</my-button>
+            <my-button id="sort-desc">Sort DESC</my-button>
+            <my-button id="randomize">Randomize</my-button>
+            <my-button id="latinize">Latinize</my-button>
+        </div>
+        <div class="flex gap-4 mt-4">
+            <my-button id="copy">Copy</my-button>
+            <my-button id="paste">Paste</my-button>
+            <my-button id="clear">Clear</my-button>
+        </div>
+    </div>
+
+    <div hidden>
+        <template data-name="my-button">
+            <button class="px-2 py-1 rounded bg-slate-300 hover:bg-slate-400/60 active:bg-slate-400/80">
+                {{ content }}
+            </button>
+        </template>
+    </div>
+
+    <script src="lib/template.js"></script>
+    <script src="lib/qs.js"></script>
+    <script src="lib/on.js"></script>
+    <script src="lib/latinize.js"></script>
+
+    <script>
+        function compareLatinized(a, b, dir = -1) {
+            const latinA = latinize(a);
+            const latinB = latinize(b);
+            return latinA.localeCompare(latinB) * (-dir);
+        }
+        function shuffle(array) {
+            const shuffled = array.slice();
+            for (let i = array.length - 1; i > 0; i--) {
+                let randomIndex = Math.floor(Math.random() * (i + 1));
+                let temp = shuffled[i];
+                shuffled[i] = shuffled[randomIndex];
+                shuffled[randomIndex] = temp;
+            }
+            return shuffled;
+        }
+        window.addEventListener("load", () => {
+            renderTemplateInstances();
+            let textarea = qs("textarea");
+            on("#sort-asc", "click", () => {
+                let output = "";
+                let lines = textarea.value.split(/\r?\n/);
+                lines.sort(compareLatinized);
+                output = lines.join("\n");
+                textarea.value = output;
+            });
+            on("#sort-desc", "click", () => {
+                let output = "";
+                let lines = textarea.value.split(/\r?\n/);
+                lines.sort((a, b) => compareLatinized(a, b, 1));
+                output = lines.join("\n");
+                textarea.value = output;
+            });
+            on("#randomize", "click", () => {
+                let output = "";
+                let lines = textarea.value.split(/\r?\n/);
+                lines = shuffle(lines);
+                output = lines.join("\n");
+                textarea.value = output;
+            });
+            on("#latinize", "click", () => {
+                textarea.value = latinize(textarea.value);
+            });
+            on("#copy", "click", () => {
+                navigator.clipboard.writeText(textarea.value);
+            });
+            on("#paste", "click", async () => {
+                let output = "";
+                try {
+                    output = await navigator.clipboard.readText();
+                } catch (error) {
+                    console.warn("Failed to read the clipboard.");
+                }
+                textarea.value = output;
+            });
+            on("#clear", "click", () => {
+                textarea.value = "";
+            });
+        });
+    </script>
+
+</body>
+
+</html>
