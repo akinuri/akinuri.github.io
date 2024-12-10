@@ -188,13 +188,29 @@ function buildInstanceFromPlaceholder(placeholderEl) {
     if (typeof data == "string") {
         data = JSON.parse(data);
     }
-    data.content = placeholderEl.innerHTML;
+    let content = placeholderEl.innerHTML;
+    let slot = getPlaceholderSlots(placeholderEl);
+    data.content = content;
+    data.slot = slot;
     let templateName = getPlaceholderTemplateName(placeholderEl);
     return buildInstanceFromTemplateName(templateName, data, placeholderEl.attributes);
 }
 
 function buildInstanceFromTemplateName(templateName, data = {}, attrs = {}) {
     return buildInstanceFromTemplate(getTemplateByName(templateName), data, attrs);
+}
+
+function getPlaceholderSlots(placeholderEl) {
+    let slots = {};
+    let slotEls = placeholderEl.querySelectorAll(":scope > slot[data-name]:not([data-name=''])");
+    for (const slotEl of slotEls) {
+        let slot = {
+            name: slotEl.dataset.name,
+            content: slotEl.innerHTML.trim(),
+        };
+        slots[slot.name] = slot.content;
+    }
+    return slots;
 }
 
 // #endregion

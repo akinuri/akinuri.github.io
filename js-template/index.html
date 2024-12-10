@@ -93,6 +93,20 @@
         </div>
     </template>
 
+    <template data-name="card">
+        <div class="card bg-white shadow rounded">
+            <div class="bg-slate-400/30 rounded-tr rounded-tl px-4 py-2 border-b border-b-slate-300/50">
+                <div class="flex gap-4 justify-between">
+                    <h2>{{ slot.title }}</h2>
+                    <div class="flex gap-2">
+                        {{ slot.actions }}
+                    </div>
+                </div>
+            </div>
+            <div class="p-4">{{ slot.body }}</div>
+        </div>
+    </template>
+
     <div class="flex gap-4 p-4 rounded border border-dashed border-slate-500">
         <div data-template="mybutton">
             <svg-plus></svg-plus> Add
@@ -115,6 +129,45 @@
         <mylist class="!bg-cyan-200/80">
             <p class="mt-4">It has no passed items.</p>
         </mylist>
+    </div>
+
+    <div class="flex gap-4 p-4 rounded border border-dashed border-slate-500 mt-6">
+        <card>
+            <slot data-name="title">Colors</slot>
+            <slot data-name="actions">
+                <button onclick="this.closest('.card').remove()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </slot>
+            <slot data-name="body">
+                <ul class="list-disc pl-6">
+                    <li>red</li>
+                    <li>green</li>
+                    <li>blue</li>
+                </ul>
+            </slot>
+        </card>
+        <card>
+            <slot data-name="title">Random</slot>
+            <slot data-name="actions">
+                <button onclick="this.closest('.card').remove()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-4">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </slot>
+            <slot data-name="body">
+                <ul class="list-disc pl-6">
+                    <li>foo</li>
+                    <li>bar</li>
+                    <li>baz</li>
+                </ul>
+            </slot>
+        </card>
     </div>
 
     <script src="template.js"></script>
