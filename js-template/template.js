@@ -1,9 +1,9 @@
-// #region ==================== TEMPLATES
+// #region ==================== TEMPLATE
 
 /**
  * Gets the template elements that has non-empty "data-name" attribute.
- * @param {Element?} parentEl
- * @returns {HTMLTemplateElement[]}
+ * @param {Element?} parentEl The parent element to search for the templates. Defaults to `document.body` if not provided.
+ * @returns {Object.<string, HTMLTemplateElement>} The templates with the "data-name" attribute as the key.
  */
 function getTemplates(parentEl) {
     parentEl ??= document.body;
@@ -17,19 +17,20 @@ function getTemplates(parentEl) {
 
 /**
  * Gets the template element with the specified name as the "data-name" attribute value.
- * @param {Element?} parentEl
- * @returns {HTMLTemplateElement}
+ * @param {string} templateName The name of the template to search for.
+ * @param {Element?} parentEl The parent element to search for the template.
+ * @returns {HTMLTemplateElement|null} The template element with the specified name or `null` if not found.
  */
 function getTemplateByName(templateName, parentEl) {
     if (!templateName) {
         return null;
     }
-    return (parentEl ?? document.body).querySelector(`template[data-name=${templateName}]`);
+    return (parentEl ?? document.body).querySelector(`template[data-name="${templateName}"]`);
 }
 
 // #endregion
 
-// #region ==================== PLACEHOLDERS
+// #region ==================== PLACEHOLDER
 
 function getPlaceholders(parentEl) {
     parentEl ??= document.body;
@@ -67,11 +68,7 @@ function isPlaceholder(element) {
 }
 
 function getPlaceholderTemplateName(placeholderEl) {
-    return (
-        placeholderEl.dataset.templateName ??
-        placeholderEl.dataset.template ??
-        placeholderEl.tagName.toLowerCase()
-    );
+    return placeholderEl.dataset.templateName ?? placeholderEl.dataset.template ?? placeholderEl.tagName.toLowerCase();
 }
 
 // #endregion
@@ -122,14 +119,12 @@ function replaceTemplateExpressions(templateString, data = {}) {
  * @returns {*} The expression result.
  */
 function evaluateExpression(expression, context) {
-    return new Function(...Object.keys(context), `return ${expression};`)(
-        ...Object.values(context)
-    );
+    return new Function(...Object.keys(context), `return ${expression};`)(...Object.values(context));
 }
 
 // #endregion
 
-// #region ==================== HELPERS
+// #region ==================== UTILS
 
 /**
  * Converts a raw HTML string into an element.
@@ -156,6 +151,29 @@ function applyAttributes(element, attributes, except = []) {
         } else {
             element.setAttribute(attr.name, attr.value);
         }
+    }
+}
+
+async function fetchTemplatesFromUrl(url) {
+    return fetch(url)
+        .then((response) => response.text())
+        .then((html) => html);
+}
+
+async function loadTemplatesFromUrl(url, useNewContainer = true) {
+    let html = await fetchTemplatesFromUrl(url);
+    if (useNewContainer) {
+        const container = document.createElement("div");
+        container.hidden = true;
+        container.classList.add("template-container");
+        container.innerHTML = html;
+        document.body.append(container);
+    } else {
+        const container = document.querySelector(".template-container");
+        if (!container) {
+            throw new Error("No .template-container found.");
+        }
+        container.innerHTML += html;
     }
 }
 
