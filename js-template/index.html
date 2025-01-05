@@ -76,8 +76,12 @@
     <script src="template.js"></script>
     <script>
         window.addEventListener("load", async () => {
-
-            await loadTemplatesFromUrl("/js-template/templates.html");
+            
+            let templates_url = "/templates.html";
+            if (location.hostname == "akinuri.github.io") {
+                templates_url = "/js-template" + url;
+            }
+            await loadTemplatesFromUrl(templates_url);
             
             templates = getTemplates();
             console.log("templates:", templates);
