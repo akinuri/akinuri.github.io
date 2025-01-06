@@ -3,7 +3,10 @@
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Templating in JS</title>
 </head>
@@ -11,37 +14,70 @@
 <body class="bg-slate-100 p-6">
 
     <div class="flex gap-4 p-4 rounded border border-dashed border-slate-500">
+
         <div data-template="mybutton">
             <svg-plus></svg-plus> Add
         </div>
-        <div data-template="mybutton" class="!bg-yellow-400/50 hover:!bg-yellow-400/75 active:!bg-yellow-400/90">
+
+        <div
+            data-template="mybutton"
+            class="!bg-yellow-400/50 hover:!bg-yellow-400/75 active:!bg-yellow-400/90"
+        >
             <svg-eye></svg-eye> View
         </div>
-        <div data-template-name="mybutton" class="!bg-blue-300 hover:!bg-blue-400/75 active:!bg-blue-400/90">
+
+        <div
+            data-template-name="mybutton"
+            class="!bg-blue-300 hover:!bg-blue-400/75 active:!bg-blue-400/90"
+        >
             <svg-pen></svg-pen> Edit
         </div>
+
         <mybutton class="!bg-red-300 hover:!bg-red-400/75 active:!bg-red-400/90">
             <svg-trash></svg-trash> Delete
         </mybutton>
+
         <refresh-button onclick="location.reload()">Reload</refresh-button>
+
     </div>
 
     <div class="flex gap-4 p-4 rounded border border-dashed border-slate-500 mt-6">
-        <div data-template-name="mylist" data-template-data='{"name": "color", "items":["red", "green", "blue"]}'></div>
-        <mylist data-template-data='{"name": "random", "items":["foo", "bar", "baz"]}' class="!bg-green-200"></mylist>
+
+        <div
+            data-template-name="mylist"
+            data-template-data='{"name": "color", "items":["red", "green", "blue"]}'
+        ></div>
+
+        <mylist
+            data-template-data='{"name": "random", "items":["foo", "bar", "baz"]}'
+            class="!bg-green-200"
+        ></mylist>
+
         <mylist class="!bg-cyan-200/80">
             <p class="mt-4">It has no passed items.</p>
         </mylist>
+
     </div>
 
     <div class="flex gap-4 p-4 rounded border border-dashed border-slate-500 mt-6">
+
         <card>
             <slot data-name="title">Colors</slot>
             <slot data-name="actions">
                 <button onclick="this.closest('.card').remove()">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="size-4"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M6 18 18 6M6 6l12 12"
+                        />
                     </svg>
                 </button>
             </slot>
@@ -53,13 +89,24 @@
                 </ul>
             </slot>
         </card>
+
         <card>
             <slot data-name="title">Random</slot>
             <slot data-name="actions">
                 <button onclick="this.closest('.card').remove()">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                        class="size-4"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M6 18 18 6M6 6l12 12"
+                        />
                     </svg>
                 </button>
             </slot>
@@ -71,18 +118,19 @@
                 </ul>
             </slot>
         </card>
+
     </div>
 
     <script src="template.js"></script>
     <script>
         window.addEventListener("load", async () => {
-            
+
             let templates_url = "/templates.html";
             if (location.hostname == "akinuri.github.io") {
                 templates_url = "/js-template" + url;
             }
             await loadTemplatesFromUrl(templates_url);
-            
+
             templates = getTemplates();
             console.log("templates:", templates);
 

@@ -2,6 +2,7 @@
 
 /**
  * Gets the template elements that has non-empty "data-name" attribute.
+ * 
  * @param {HTMLElement?} parentEl The parent element to search for the templates. Defaults to `document.body` if not provided.
  * @returns {Object.<string, HTMLTemplateElement>} The templates with the "data-name" attribute as the key.
  */
@@ -17,6 +18,7 @@ function getTemplates(parentEl) {
 
 /**
  * Gets the template element with the specified name as the "data-name" attribute value.
+ * 
  * @param {string} templateName The name of the template to search for.
  * @param {HTMLElement?} parentEl The parent element to search for the template.
  * @returns {HTMLTemplateElement|null} The template element with the specified name or `null` if not found.
@@ -35,6 +37,7 @@ function getTemplateByName(templateName, parentEl) {
 
 /**
  * Gets the placeholder elements that reference a template via attributes.
+ *
  * @param {HTMLElement?} parentEl The parent element to search for the placeholders. Defaults to `document.body` if not provided.
  * @returns {HTMLElement[]} A list of custom elements with a template name as the tag,
  * or a normal element with a data-template="name" attribute.
@@ -50,6 +53,7 @@ function getPlaceholders(parentEl) {
 
 /**
  * Gets the placeholder elements (by template name) that reference a template via attributes.
+ *
  * @param {string} templateName The name of the template to search for.
  * @param {HTMLElement?} parentEl The parent element to search for the placeholders. Defaults to `document.body` if not provided.
  * @returns {HTMLElement[]} A list of custom elements with a template name as the tag,
@@ -65,27 +69,22 @@ function getPlaceholdersByTemplateName(templateName, parentEl) {
 }
 
 /**
- * Checks if the element is a placeholder element for a template.
+ * Checks if an element is a placeholder for a template.
+ *
  * @param {HTMLElement} element
  * @returns {boolean}
  */
 function isPlaceholder(element) {
     const templateName = getPlaceholderTemplateName(element);
-    if (!templateName) {
-        return false;
-    }
     let query = `[data-template="${templateName}"], [data-template-name="${templateName}"]`;
-    if (element.matches(query)) {
-        return true;
-    }
-    const templates = getTemplates();
-    return templateName in templates;
+    return element.matches(query) || templateName in getTemplates();
 }
 
 /**
- * Gets the template name from the placeholder element.
+ * Gets the template name or tag name of the placeholder element.
+ *
  * @param {HTMLElement} placeholderEl
- * @returns {string} The template name or tag name of the placeholder element.
+ * @returns {string}
  */
 function getPlaceholderTemplateName(placeholderEl) {
     return placeholderEl.dataset.templateName ?? placeholderEl.dataset.template ?? placeholderEl.tagName.toLowerCase();
@@ -109,6 +108,7 @@ class OutputBuffer {
 
 /**
  * Renders the expressions in the template string.
+ * 
  * @param {string} templateString Raw HTML string with expressions.
  * @param {object} [data={}] Key-value pairs to be used in the expressions. The keys are the variable names and the values are their corresponding values.
  * @returns {*} The processed HTML string with expressions replaced.
@@ -135,6 +135,7 @@ function replaceTemplateExpressions(templateString, data = {}) {
 
 /**
  * Evaluates the expression with the given context.
+ * 
  * @param {string} expression The expression to evaluate.
  * @param {object} context The context object containing the variables used in the expression.
  * @returns {*} The result of the expression.
@@ -151,7 +152,7 @@ function evaluateExpression(expression, context) {
  * Converts an HTML string into an array of DOM elements.
  *
  * @param {string} htmlString - The HTML string to convert.
- * @returns {Array<Node|HTMLElement>} An array of child nodes/elements of the created DOM element.
+ * @returns {Array<Node|Element>} An array of child nodes/elements of the created DOM element.
  */
 function htmlFromString(htmlString, onlyElements = false) {
     const template = document.createElement("template");
@@ -166,7 +167,7 @@ function htmlFromString(htmlString, onlyElements = false) {
 /**
  * Applies a set of attributes to a given DOM element, with an option to exclude specific attributes.
  *
- * @param {HTMLElement} element - The DOM element to which the attributes will be applied.
+ * @param {Element} element - The DOM element to which the attributes will be applied.
  * @param {NamedNodeMap} attributes - `attributes` object of an element.
  * @param {Array<string>} [except=[]] - An optional array of attribute names to be excluded from being applied.
  */
@@ -186,12 +187,10 @@ function applyAttributes(element, attributes, except = []) {
 /**
  * Replaces a target DOM element with a new set of DOM elements.
  *
- * @param {HTMLElement} targetEl - The target element to be replaced.
+ * @param {Element} targetEl - The target element to be replaced.
  * @param {Array<Element>|Element} newEls - An array of new elements to replace the target element.
  */
 function replaceElement(targetEl, newEls) {
-    // NOTE: used Element instead of HTMLElement to allow for svg elements
-    // TODO: might need to switch to Element in other places as well
     if (!Array.isArray(newEls) && newEls instanceof Element) {
         newEls = [newEls];
     }
@@ -226,9 +225,10 @@ async function fetchTemplatesFromUrl(url) {
 /**
  * Loads HTML templates from a given URL and inserts them into the document.
  *
+ * @async
  * @param {string} url - The URL to fetch the templates from.
  * @param {boolean} [useNewContainer=true] - Whether to use a new container for the templates or append to an existing one.
- * @throws Will throw an error if no .template-container is found when useNewContainer is false.
+ * @throws Will throw an error if no `.template-container` is found when useNewContainer is false.
  */
 async function loadTemplatesFromUrl(url, useNewContainer = true) {
     const html = await fetchTemplatesFromUrl(url);
@@ -343,13 +343,13 @@ function getPlaceholderSlots(placeholderEl) {
  * 
  * @param {HTMLElement} placeholder - The placeholder element to be replaced.
  */
-function replacePlaceholderWithInstance(placeholder) {
-    if (!placeholder) {
+function replacePlaceholderWithInstance(placeholderEl) {
+    if (!placeholderEl) {
         return;
     }
-    let instance = buildInstanceFromPlaceholder(placeholder);
-    if (instance) {
-        replaceElement(placeholder, instance);
+    let instanceEl = buildInstanceFromPlaceholder(placeholderEl);
+    if (instanceEl) {
+        replaceElement(placeholderEl, instanceEl);
     }
 }
 
@@ -362,8 +362,8 @@ function replacePlaceholderWithInstance(placeholder) {
 function renderTemplateInstances(parentEl) {
     parentEl ??= document.body;
     let placeholders = getPlaceholders(parentEl);
-    for (const placeholder of placeholders) {
-        replacePlaceholderWithInstance(placeholder);
+    for (const placeholderEl of placeholders) {
+        replacePlaceholderWithInstance(placeholderEl);
     }
 }
 
