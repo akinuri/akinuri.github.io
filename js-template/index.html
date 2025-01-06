@@ -127,7 +127,7 @@
 
             let templates_url = "/templates.html";
             if (location.hostname == "akinuri.github.io") {
-                templates_url = "/js-template" + url;
+                templates_url = "/js-template" + templates_url;
             }
             await loadTemplatesFromUrl(templates_url);
 
