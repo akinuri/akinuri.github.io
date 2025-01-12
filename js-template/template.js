@@ -95,13 +95,13 @@ function getPlaceholderTemplateName(placeholderEl) {
 // #region ==================== RENDER
 
 /**
- * Renders the expressions in the template string.
+ * Replaces the expressions in a template string with their resolved values.
  *
  * @param {string} templateString Raw HTML string with expressions.
  * @param {object} [data={}] Key-value pairs to be used in the expressions. The keys are the variable names and the values are their corresponding values.
  * @returns {*} The processed HTML string with expressions replaced.
  */
-function replaceTemplateExpressions(templateString, data = {}) {
+function renderTemplateExpressions(templateString, data = {}) {
     let expressionPattern = /{{\s*(.*?)\s*}}/gs;
     return templateString.replace(expressionPattern, (match, expression) => {
         let ob = new OutputBuffer();
@@ -172,7 +172,7 @@ function htmlFromString(htmlString, onlyElements = false) {
  * @param {Array<string>} [except=[]] - An optional array of attribute names to be excluded from being applied.
  */
 function applyAttributes(element, attributes, except = []) {
-    for (const attr of attributes) {
+    for (const attr of Object.values(attributes)) {
         if (except.includes(attr.name)) {
             continue;
         }
@@ -241,10 +241,8 @@ function buildInstanceFromTemplate(templateEl, data = {}, attributes = {}) {
     if (!templateEl) {
         return null;
     }
-    let templateString = templateEl.content.firstElementChild.outerHTML;
-    templateString = templateString.replaceAll("&gt;", ">");
-    templateString = templateString.replaceAll("&lt;", "<");
-    templateString = replaceTemplateExpressions(templateString, data);
+    let templateString = getTemplateString(templateEl);
+    templateString = renderTemplateExpressions(templateString, data);
     let instance = htmlFromString(templateString, true)[0];
     if (isPlaceholder(instance)) {
         instance = buildInstanceFromPlaceholder(instance);
@@ -252,6 +250,22 @@ function buildInstanceFromTemplate(templateEl, data = {}, attributes = {}) {
     applyAttributes(instance, attributes);
     renderTemplateInstances(instance);
     return instance;
+}
+
+/**
+ * Extracts the outer HTML of the first element child of a template element's content.
+ * Also does some processing.
+ *
+ * @param {HTMLTemplateElement} templateEl - The template element from which to extract the string.
+ * @returns {string} The processed template string.
+ */
+function getTemplateString(templateEl) {
+    let templateString = templateEl.content.firstElementChild.outerHTML;
+    // < and > in the JS context (i.e. {{ block }}) are espcated to &lt; and &gt;
+    // we need to convert them back to < and >
+    templateString = templateString.replaceAll("&gt;", ">");
+    templateString = templateString.replaceAll("&lt;", "<");
+    return templateString;
 }
 
 /**
@@ -272,10 +286,9 @@ function buildInstanceFromPlaceholder(placeholderEl) {
             console.error("Error parsing JSON data:", e);
         }
     }
-    let content = placeholderEl.innerHTML;
-    let slot = getPlaceholderSlots(placeholderEl);
-    data.content = content;
-    data.slot = slot;
+    data.content = placeholderEl.innerHTML;
+    let props = getPlaceholderContentProps(placeholderEl);
+    data = { ...data, ...props };
     let templateName = getPlaceholderTemplateName(placeholderEl);
     let instance = buildInstanceFromTemplateName(templateName, data, placeholderEl.attributes);
     return instance;
@@ -294,22 +307,22 @@ function buildInstanceFromTemplateName(templateName, data = {}, attributes = {})
 }
 
 /**
- * Extracts and returns the content of named slots from a given placeholder element.
+ * Extracts and returns the content of named props from a given placeholder element.
  *
- * @param {HTMLElement} placeholderEl - The placeholder element containing the slots.
- * @returns {object} An object where the keys are the slot names and the values are the slot contents.
+ * @param {HTMLElement} placeholderEl - The placeholder element containing the props.
+ * @returns {object} An object where the keys are the prop names and the values are the prop contents.
  */
-function getPlaceholderSlots(placeholderEl) {
-    let slots = {};
-    let slotEls = placeholderEl.querySelectorAll(":scope > slot[data-name]:not([data-name=''])");
-    for (const slotEl of slotEls) {
-        let slot = {
-            name: slotEl.dataset.name,
-            content: slotEl.innerHTML.trim(),
+function getPlaceholderContentProps(placeholderEl) {
+    let props = {};
+    let propEls = placeholderEl.querySelectorAll(":scope > prop[data-name]:not([data-name=''])");
+    for (const propEl of propEls) {
+        let prop = {
+            name: propEl.dataset.name,
+            content: propEl.innerHTML.trim(),
         };
-        slots[slot.name] = slot.content;
+        props[prop.name] = prop.content;
     }
-    return slots;
+    return props;
 }
 
 // #endregion

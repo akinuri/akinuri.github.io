@@ -13,21 +13,31 @@
 
 <body class="bg-slate-100 p-6">
 
-    <div class="flex gap-4 p-4 rounded border border-dashed border-slate-500">
+    <div class="flex gap-4 items-center p-4 rounded border border-dashed border-slate-500">
 
-        <div data-template="mybutton">
+        <div data-template-name="svg-plus"></div>
+
+        <div data-template="svg-eye"></div>
+
+        <svg-pen></svg-pen>
+
+    </div>
+
+    <div class="flex gap-4 items-center p-4 rounded border border-dashed border-slate-500 mt-6">
+
+        <div data-template-name="mybutton">
             <svg-plus></svg-plus> Add
         </div>
 
         <div
-            data-template="mybutton"
+            data-template-name="mybutton"
             class="!bg-yellow-400/50 hover:!bg-yellow-400/75 active:!bg-yellow-400/90"
         >
             <svg-eye></svg-eye> View
         </div>
 
         <div
-            data-template-name="mybutton"
+            data-template="mybutton"
             class="!bg-blue-300 hover:!bg-blue-400/75 active:!bg-blue-400/90"
         >
             <svg-pen></svg-pen> Edit
@@ -54,7 +64,7 @@
         ></mylist>
 
         <mylist class="!bg-cyan-200/80">
-            <p class="mt-4">It has no passed items.</p>
+            <p class="mt-4">This has no passed items.</p>
         </mylist>
 
     </div>
@@ -62,8 +72,8 @@
     <div class="flex gap-4 p-4 rounded border border-dashed border-slate-500 mt-6">
 
         <card>
-            <slot data-name="title">Colors</slot>
-            <slot data-name="actions">
+            <prop data-name="title">Colors</prop>
+            <prop data-name="actions">
                 <button onclick="this.closest('.card').remove()">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -80,19 +90,19 @@
                         />
                     </svg>
                 </button>
-            </slot>
-            <slot data-name="body">
+            </prop>
+            <prop data-name="body">
                 <ul class="list-disc pl-6">
                     <li>red</li>
                     <li>green</li>
                     <li>blue</li>
                 </ul>
-            </slot>
+            </prop>
         </card>
 
         <card>
-            <slot data-name="title">Random</slot>
-            <slot data-name="actions">
+            <prop data-name="title">Random</prop>
+            <prop data-name="actions">
                 <button onclick="this.closest('.card').remove()">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -109,14 +119,14 @@
                         />
                     </svg>
                 </button>
-            </slot>
-            <slot data-name="body">
+            </prop>
+            <prop data-name="body">
                 <ul class="list-disc pl-6">
                     <li>foo</li>
                     <li>bar</li>
                     <li>baz</li>
                 </ul>
-            </slot>
+            </prop>
         </card>
 
     </div>
@@ -143,7 +153,7 @@
 
             console.log("evaluate:", evaluateExpression("(num_1 / num_2).toFixed(2)", { num_1: 12, num_2: 34 }));
 
-            console.log("replace:", replaceTemplateExpressions("The result is: {{ (num_1 / num_2).toFixed(2) }}", { num_1: 12, num_2: 34 }));
+            console.log("replace:", renderTemplateExpressions("The result is: {{ (num_1 / num_2).toFixed(2) }}", { num_1: 12, num_2: 34 }));
 
             for (const templateName in templates) {
                 placeholders = getPlaceholdersByTemplateName(templateName);
