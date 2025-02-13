@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Nested Placeholders</title>
+</head>
+
+<body class="bg-slate-100 p-6 flex gap-8 w-[100vw] h-[100vh]">
+
+    <menu></menu>
+
+    <main class="grow">
+
+        <template data-name="svg-x">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="size-6"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18 18 6M6 6l12 12"
+                />
+            </svg>
+        </template>
+
+        <template data-name="mybutton">
+            <button class="px-2 py-1 bg-slate-300/60 rounded hover:bg-slate-300 active:bg-slate-400/55 flex gap-2">
+                {{ content }}
+            </button>
+        </template>
+
+        <template data-name="myli">
+            <li>
+                <span class="hover:underline hover:text-blue-600 hover:cursor-pointer active:text-blue-900">
+                    {{ content }}
+                </span>
+            </li>
+        </template>
+
+        <template data-name="mylist">
+            <div class="bg-slate-200 px-3 py-2 rounded pr-16 relative">
+                This is a {{ name }} list.
+                <ul class="list-disc pl-6 mt-2">
+                    <myli>default item</myli>
+                    {{ items.forEach(item => write(`<myli>${item}</myli>`)) }}
+                </ul>
+                {{ content }}
+                <mybutton
+                    class="!bg-red-300/50 hover:!bg-red-300/75 active:!bg-red-300 absolute right-1 top-1 !px-1"
+                    onclick="this.closest('div').remove()"
+                >
+                    <svg-x class="!size-4"></svg-x>
+                </mybutton>
+            </div>
+        </template>
+
+        <div class="flex gap-4 items-start p-8 rounded border border-dashed border-slate-300">
+
+            <div
+                data-template-name="mylist"
+                data-template-data='{"name": "color", "items":["red", "green", "blue"]}'
+            ></div>
+
+            <mylist
+                data-template-data='{"name": "random", "items":["foo", "bar", "baz"]}'
+                class="!bg-green-200"
+            ></mylist>
+
+            <mylist class="!bg-cyan-200/80">
+                <p class="mt-4">This has no passed items.</p>
+            </mylist>
+
+        </div>
+
+    </main>
+
+    <script src="../dist/template.js"></script>
+    <script src="demo.js"></script>
+
+</body>
+
+</html>

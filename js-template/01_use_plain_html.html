@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Use Plain HTML</title>
+    <!-- 01_use_plain_html -->
+</head>
+
+<body class="bg-slate-100 p-6 flex gap-8 w-[100vw] h-[100vh]">
+
+    <menu></menu>
+
+    <main class="grow">
+
+        <template data-name="svg-plus">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="size-6"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 4.5v15m7.5-7.5h-15"
+                />
+            </svg>
+        </template>
+
+        <div class="flex gap-4 items-center p-8 rounded border border-dashed border-slate-300">
+
+            <div data-template-name="svg-plus"></div>
+
+            <div data-template="svg-plus"></div>
+
+            <svg-plus></svg-plus>
+
+        </div>
+
+    </main>
+
+    <script src="../dist/template.js"></script>
+    <script src="demo.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Nested Placeholders</title>
+</head>
+
+<body class="bg-slate-100 p-6 flex gap-8 w-[100vw] h-[100vh]">
+
+    <menu></menu>
+
+    <main class="grow">
+
+        <template data-name="svg-x">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="size-6"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18 18 6M6 6l12 12"
+                />
+            </svg>
+        </template>
+
+        <template data-name="mybutton">
+            <button class="px-2 py-1 bg-slate-300/60 rounded hover:bg-slate-300 active:bg-slate-400/55 flex gap-2">
+                {{ content }}
+            </button>
+        </template>
+
+        <template data-name="close-button">
+            <mybutton
+                class="!bg-red-300/50 hover:!bg-red-300/75 active:!bg-red-300 !px-1"
+                onclick="this.closest('.card').remove()"
+            >
+                <svg-x class="!size-4"></svg-x>
+            </mybutton>
+        </template>
+
+        <template data-name="card">
+            <div class="card bg-white shadow rounded">
+                <div class="bg-slate-400/30 rounded-tr rounded-tl px-4 py-2 border-b border-b-slate-300/50">
+                    <div class="flex gap-8 justify-between">
+                        <h2>{{ title }}</h2>
+                        <div class="flex gap-2">
+                            {{ actions }}
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4">{{ body }}</div>
+            </div>
+        </template>
+
+        <div class="flex gap-4 items-start p-8 rounded border border-dashed border-slate-300">
+
+            <card>
+                <prop data-name="title">Colors</prop>
+                <prop data-name="actions">
+                    <close-button></close-button>
+                </prop>
+                <prop data-name="body">
+                    <ul class="list-disc pl-6">
+                        <li>red</li>
+                        <li>green</li>
+                        <li>blue</li>
+                    </ul>
+                </prop>
+            </card>
+
+            <card>
+                <prop data-name="title">Random</prop>
+                <prop data-name="actions">
+                    <close-button></close-button>
+                </prop>
+                <prop data-name="body">
+                    <ul class="list-disc pl-6">
+                        <li>foo</li>
+                        <li>bar</li>
+                        <li>baz</li>
+                    </ul>
+                </prop>
+            </card>
+
+        </div>
+
+    </main>
+
+    <script src="../dist/template.js"></script>
+    <script src="demo.js"></script>
+
+</body>
+
+</html>

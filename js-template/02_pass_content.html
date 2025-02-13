@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Pass Content</title>
+</head>
+
+<body class="bg-slate-100 p-6 flex gap-8 w-[100vw] h-[100vh]">
+
+    <menu></menu>
+
+    <main class="grow">
+
+        <template data-name="mybutton">
+            <button class="px-2 py-1 bg-slate-300/60 rounded hover:bg-slate-300 active:bg-slate-400/55 flex gap-2">
+                {{ content || "Default Text" }}
+            </button>
+        </template>
+
+        <div class="flex gap-4 items-center p-8 rounded border border-dashed border-slate-300">
+
+            <div data-template-name="mybutton"></div>
+
+            <div data-template="mybutton">Add</div>
+
+            <mybutton>Edit</mybutton>
+
+        </div>
+
+    </main>
+
+    <script src="../dist/template.js"></script>
+    <script src="demo.js"></script>
+
+</body>
+
+</html>

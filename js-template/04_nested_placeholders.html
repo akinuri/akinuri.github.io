@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Nested Placeholders</title>
+</head>
+
+<body class="bg-slate-100 p-6 flex gap-8 w-[100vw] h-[100vh]">
+
+    <menu></menu>
+
+    <main class="grow">
+
+        <template data-name="svg-plus">
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="size-6"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 4.5v15m7.5-7.5h-15"
+                />
+            </svg>
+        </template>
+
+        <template data-name="mybutton">
+            <button class="px-2 py-1 bg-slate-300/60 rounded hover:bg-slate-300 active:bg-slate-400/55 flex gap-2">
+                {{ content || "Default Text" }}
+            </button>
+        </template>
+
+        <template data-name="add-button">
+            <mybutton>
+                <svg-plus></svg-plus>
+                {{ content || "Add Default" }}
+            </mybutton>
+        </template>
+
+        <div class="flex gap-4 items-center p-8 rounded border border-dashed border-slate-300">
+
+            <mybutton title="Just add">
+                <svg-plus></svg-plus>
+                Add
+            </mybutton>
+
+            <add-button title="Default content"></add-button>
+
+            <add-button title="Add another entity">Add Another</add-button>
+
+            <mybutton onclick="location.reload()" title="A click will reload the page">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="size-6"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
+                    />
+                </svg>
+                Reload Page
+            </mybutton>
+
+        </div>
+
+    </main>
+
+    <script src="../dist/template.js"></script>
+    <script src="demo.js"></script>
+
+</body>
+
+</html>
