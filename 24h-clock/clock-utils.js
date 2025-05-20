@@ -7,7 +7,7 @@ function drawLinearClock(context) {
         x += offsetPx;
         x = loop(x, 0, context.canvas.width, "close");
 
-        const gradient = context.createLinearGradient(0, 0, 0, context.canvas.height);
+        const gradient = context.createLinearGradient(0, 0, 0, context.canvas.height / 2);
         gradient.addColorStop(0, "hsla(0, 0%, 50%, 0.5)");
         gradient.addColorStop(1, "hsla(0, 0%, 50%, 0)");
 
@@ -30,13 +30,32 @@ function drawLinearClock(context) {
         context.fillText(hour, x + 5, 20);
     }
 
+    for (let minute = 0; minute < 60; minute++) {
+        let x = minute * oneMinuteWidthPx;
+        x += offsetPx;
+        x = loop(x, 0, context.canvas.width, "close");
+
+        const gradient = context.createLinearGradient(0, context.canvas.height / 2, 0, context.canvas.height);
+        gradient.addColorStop(0, "hsla(0, 0%, 50%, 0)");
+        gradient.addColorStop(1, "hsla(0, 0%, 50%, 0.5)");
+
+        context.save();
+        context.beginPath();
+        context.moveTo(x + 0.5, context.canvas.height / 2);
+        context.lineTo(x + 0.5, context.canvas.height);
+        context.strokeStyle = gradient;
+        context.lineWidth = 1;
+        context.stroke();
+        context.restore();
+    }
+
     let date = new Date();
     let second = date.getSeconds();
     let secondX = (context.canvas.width / 60) * second;
     secondX += offsetPx;
     secondX = loop(secondX, 0, context.canvas.width, "close");
 
-    const gradient = context.createLinearGradient(0, 0, 0, context.canvas.height);
+    const gradient = context.createLinearGradient(0, context.canvas.height / 3, 0, context.canvas.height);
     gradient.addColorStop(0, "hsla(0, 100%, 50%, 0)");
     gradient.addColorStop(1, "hsla(0, 100%, 50%, 0.5)");
 
