@@ -9,20 +9,15 @@ linearClockCanvas.height = 200;
 
 drawLinearClock(linearClockContext);
 
+linearClockCanvas.addEventListener("wheel", (event) => {
+    event.preventDefault();
+    offsetPx += 25 * Math.sign(event.deltaY) * -1;
+});
+
 let rafHandle = null;
 function draw() {
     drawLinearClock(linearClockContext);
     rafHandle = requestAnimationFrame(draw);
 }
 
-linearClockCanvas.addEventListener("mouseenter", draw);
-
-linearClockCanvas.addEventListener("wheel", (event) => {
-    event.preventDefault();
-    offsetPx += 25 * Math.sign(event.deltaY) * -1;
-});
-
-linearClockCanvas.addEventListener("mouseleave", () => {
-    cancelAnimationFrame(rafHandle);
-    rafHandle = null;
-});
+draw();
