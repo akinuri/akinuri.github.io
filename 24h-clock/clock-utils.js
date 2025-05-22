@@ -2,6 +2,18 @@ function drawLinearClock(context) {
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     context.save();
 
+    dayBg: {
+        const gradient = context.createLinearGradient(0, 0, context.canvas.width, 0);
+        gradient.addColorStop(0.0, "hsl(240, 50%, 50%, 0.1)");
+        gradient.addColorStop(0.4, "hsl( 60, 50%, 50%, 0.1)");
+        gradient.addColorStop(0.5, "hsl( 60, 50%, 50%, 0.1)");
+        gradient.addColorStop(0.75, "hsl( 60, 50%, 50%, 0.1)");
+        gradient.addColorStop(1.0, "hsl(240, 50%, 50%, 0.1)");
+
+        context.fillStyle = gradient;
+        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+    }
+
     hourMarks: {
         for (let hour = 0; hour < 24; hour++) {
             let x = hour * oneHourWidthPx;
