@@ -3,15 +3,9 @@ function drawLinearClock(context) {
     context.save();
 
     dayBg: {
-        const gradient = context.createLinearGradient(0, 0, context.canvas.width, 0);
-        gradient.addColorStop(0.0, "hsl(240, 50%, 50%, 0.1)");
-        gradient.addColorStop(0.4, "hsl( 60, 50%, 50%, 0.1)");
-        gradient.addColorStop(0.5, "hsl( 60, 50%, 50%, 0.1)");
-        gradient.addColorStop(0.75, "hsl( 60, 50%, 50%, 0.1)");
-        gradient.addColorStop(1.0, "hsl(240, 50%, 50%, 0.1)");
-
-        context.fillStyle = gradient;
-        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+        let dayGradientCanvas = buildDayGradient(context.canvas.width, context.canvas.height);
+        dayGradientCanvas = loopCanvas(dayGradientCanvas, offsetPx * -1);
+        context.drawImage(dayGradientCanvas, 0, 0, context.canvas.width, context.canvas.height);
     }
 
     hourMarks: {
@@ -95,7 +89,7 @@ function drawLinearClock(context) {
     let second = now.getSeconds();
 
     hourHand: {
-        let hourX = (context.canvas.width / 24) * (hour + (minute / 60) + (second / 3600));
+        let hourX = (context.canvas.width / 24) * (hour + minute / 60 + second / 3600);
         hourX += offsetPx;
         hourX = loop(hourX, 0, context.canvas.width, "close");
 
@@ -114,7 +108,7 @@ function drawLinearClock(context) {
     }
 
     minuteHand: {
-        let minuteX = (context.canvas.width / 60) * (minute + (second / 60));
+        let minuteX = (context.canvas.width / 60) * (minute + second / 60);
         minuteX += offsetPx;
         minuteX = loop(minuteX, 0, context.canvas.width, "close");
 
@@ -152,4 +146,42 @@ function drawLinearClock(context) {
     }
 
     context.restore();
+}
+
+function buildDayGradient(width, height) {
+    let canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+
+    let context = canvas.getContext("2d");
+
+    const gradient = context.createLinearGradient(0, 0, context.canvas.width, 0);
+    gradient.addColorStop(0.0, "hsl(240, 50%, 50%, 0.2)");
+    gradient.addColorStop(0.4, "hsl( 60, 50%, 50%, 0.2)");
+    gradient.addColorStop(0.5, "hsl( 60, 50%, 50%, 0.2)");
+    gradient.addColorStop(0.75, "hsl( 60, 50%, 50%, 0.2)");
+    gradient.addColorStop(1.0, "hsl(240, 50%, 50%, 0.2)");
+
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+
+    return canvas;
+}
+
+function loopCanvas(canvas, offsetX) {
+    const width = canvas.width;
+    const height = canvas.height;
+
+    const loopedCanvas = document.createElement("canvas");
+    loopedCanvas.width = width;
+    loopedCanvas.height = height;
+
+    const ctx = loopedCanvas.getContext("2d");
+
+    offsetX = ((offsetX % width) + width) % width;
+    const rightWidth = width - offsetX;
+    ctx.drawImage(canvas, offsetX, 0, rightWidth, height, 0, 0, rightWidth, height);
+    ctx.drawImage(canvas, 0, 0, offsetX, height, rightWidth, 0, offsetX, height);
+
+    return loopedCanvas;
 }
