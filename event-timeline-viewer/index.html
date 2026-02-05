@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Timeline Viewer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .timeline-hour-line {
+            border-top: 1px solid rgba(229, 231, 235, 0.5);
+        }
+        .event-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 1px solid white;
+            position: absolute;
+            z-index: 10;
+            cursor: pointer;
+        }
+        .event-dot.blue {
+            background-color: #3b82f6;
+        }
+        .event-dot.green {
+            background-color: #10b981;
+        }
+        .event-dot.red {
+            background-color: #ef4444;
+        }
+        .event-dot:hover {
+            transform: scale(1.2);
+        }
+        .event-dot.blue:hover {
+            background-color: #1d4ed8;
+        }
+        .event-dot.green:hover {
+            background-color: #047857;
+        }
+        .event-dot.red:hover {
+            background-color: #dc2626;
+        }
+        .timeline-container {
+            min-height: 600px;
+            position: relative;
+        }
+        .hour-labels {
+            position: absolute;
+            left: 0;
+            top: 38px;
+            width: 50px;
+            background: white;
+            z-index: 30;
+            border-right: 1px solid #e5e7eb;
+        }
+        .day-cycle-bg {
+            --gradient-opacity: 0.1;
+            background: linear-gradient(
+                to bottom,
+                hsla(220, 64%, 33%, var(--gradient-opacity)) 0%,    /* Deep blue - night */
+                hsla(220, 64%, 33%, var(--gradient-opacity)) 35%,    /* Deep blue - night */
+                hsla(43, 96%, 56%, var(--gradient-opacity)) 42%,    /* Yellow - sunrise */
+                hsla(43, 96%, 56%, var(--gradient-opacity)) 73%,    /* Yellow - sunset */
+                hsla(220, 64%, 33%, var(--gradient-opacity)) 80%,   /* Deep blue - night */
+                hsla(220, 64%, 33%, var(--gradient-opacity)) 100%   /* Deep blue - night */
+            );
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-6">
+    <div class="mx-auto mb-[10vh] px-6">
+        <h1 class="text-3xl font-bold text-gray-900 mb-6 max-w-7xl mx-auto">Event Timeline Viewer</h1>
+        
+        <!-- Input Section -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-6 max-w-7xl mx-auto">
+            <div class="grid grid-cols-3 gap-4">
+                <!-- Red Events -->
+                <div>
+                    <label for="redEvents" class="block text-sm font-medium text-red-600 mb-2">
+                        Red Events (Format: YYYY-MM-DD HH:MM:SS +ZZZZ)
+                    </label>
+                    <textarea 
+                        id="redEvents" 
+                        rows="6" 
+                        class="w-full px-3 py-2 border border-red-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500" 
+                        placeholder="2025-09-15 18:15:00 +0300"
+                    ></textarea>
+                </div>
+                
+                <!-- Green Events -->
+                <div>
+                    <label for="greenEvents" class="block text-sm font-medium text-green-600 mb-2">
+                        Green Events (Format: YYYY-MM-DD HH:MM:SS +ZZZZ)
+                    </label>
+                    <textarea 
+                        id="greenEvents" 
+                        rows="6" 
+                        class="w-full px-3 py-2 border border-green-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" 
+                        placeholder="2025-09-15 16:30:00 +0300"
+                    ></textarea>
+                </div>
+                
+                <!-- Blue Events -->
+                <div>
+                    <label for="blueEvents" class="block text-sm font-medium text-blue-600 mb-2">
+                        Blue Events (Format: YYYY-MM-DD HH:MM:SS +ZZZZ)
+                    </label>
+                    <textarea 
+                        id="blueEvents" 
+                        rows="6" 
+                        class="w-full px-3 py-2 border border-blue-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                        placeholder="2025-09-15 14:52:53 +0300"
+                    ></textarea>
+                </div>
+            </div>
+            <div class="mt-4 flex gap-2 justify-center">
+                <button 
+                    onclick="loadAllEvents()" 
+                    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Load All Events
+                </button>
+                <button 
+                    onclick="clearEvents()" 
+                    class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+                    Clear All
+                </button>
+            </div>
+        </div>
+
+        <!-- Timeline -->
+        <div class="bg-white rounded-lg shadow-md p-6 mx-auto" style="width: fit-content; min-width: min(80rem, 100%); max-width: 100vw;">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Timeline</h2>
+            <div id="timelineContainer" class="timeline-container border rounded-lg relative" style="min-height: 600px;">
+                <div id="noEventsMessage" class="flex items-center justify-center h-full text-gray-500 text-lg">
+                    Add some events to see the timeline
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let events = [];
+        
+        // External API for setting events
+        window.setEvents = function(eventArray) {
+            events = eventArray.map(event => ({
+                date: new Date(event.date),
+                name: event.name || 'Event',
+                type: event.type || 'blue',
+                additions: event.additions || 0,
+                deletions: event.deletions || 0,
+                totalChanges: (event.additions || 0) + (event.deletions || 0),
+                id: event.id || Date.now() + Math.random()
+            }));
+            updateTimeline();
+        };
+        
+        window.addEvent = function(event) {
+            events.push({
+                date: new Date(event.date),
+                name: event.name || 'Event',
+                type: event.type || 'blue',
+                additions: event.additions || 0,
+                deletions: event.deletions || 0,
+                totalChanges: (event.additions || 0) + (event.deletions || 0),
+                id: event.id || Date.now() + Math.random()
+            });
+            updateTimeline();
+        };
+        
+        window.clearEvents = function() {
+            events = [];
+            updateTimeline();
+        };
+        
+        function loadAllEvents() {
+            const blueInput = document.getElementById('blueEvents');
+            const greenInput = document.getElementById('greenEvents');
+            const redInput = document.getElementById('redEvents');
+            
+            const newEvents = [];
+            
+            // Load blue events
+            const blueLines = blueInput.value.trim().split('\n');
+            blueLines.forEach(line => {
+                const eventText = line.trim();
+                if (eventText) {
+                    const event = parseEventText(eventText, 'blue');
+                    if (event) {
+                        newEvents.push(event);
+                        console.log('Parsed blue event:', event);
+                    }
+                }
+            });
+            
+            // Load green events
+            const greenLines = greenInput.value.trim().split('\n');
+            greenLines.forEach(line => {
+                const eventText = line.trim();
+                if (eventText) {
+                    const event = parseEventText(eventText, 'green');
+                    if (event) {
+                        newEvents.push(event);
+                        console.log('Parsed green event:', event);
+                    }
+                }
+            });
+            
+            // Load red events
+            const redLines = redInput.value.trim().split('\n');
+            redLines.forEach(line => {
+                const eventText = line.trim();
+                if (eventText) {
+                    const event = parseEventText(eventText, 'red');
+                    if (event) {
+                        newEvents.push(event);
+                        console.log('Parsed red event:', event);
+                    }
+                }
+            });
+            
+            if (newEvents.length > 0) {
+                events = newEvents;
+                updateTimeline();
+                console.log(`Loaded ${newEvents.length} events successfully!`);
+            } else {
+                alert('No valid events found. Please check the format.');
+            }
+        }
+        
+        function parseEventText(text, eventType = 'blue') {
+            // Try to parse different formats
+            let dateTime, additions = 0, deletions = 0;
+            
+            // Format: datetime + change - YYYY-MM-DD HH:MM:SS +ZZZZ, +x -y
+            const gitMatch = text.match(/^(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\s+[+\-]\d{4}),\s*\+?(\d+)\s+\-?(\d+)$/);
+            if (gitMatch) {
+                dateTime = gitMatch[1];
+                additions = parseInt(gitMatch[2]);
+                deletions = parseInt(gitMatch[3]);
+            } else {
+                // Format: ISO datetime - YYYY-MM-DDTHH:MM:SS.sssZ
+                const isoMatch = text.match(/^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{3})?Z)$/);
+                if (isoMatch) {
+                    dateTime = isoMatch[1];
+                } else {
+                    // Format: datetime - YYYY-MM-DD HH:MM:SS +ZZZZ
+                    const dateMatch = text.match(/^(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2}\s+[+\-]\d{4})$/);
+                    if (dateMatch) {
+                        dateTime = dateMatch[1];
+                    } else {
+                        return null;
+                    }
+                }
+            }
+            
+            const date = new Date(dateTime);
+            if (isNaN(date.getTime())) {
+                return null;
+            }
+            
+            const totalChanges = additions + deletions;
+            
+            return {
+                date: date,
+                name: 'Event',
+                type: eventType,
+                additions: additions,
+                deletions: deletions,
+                totalChanges: totalChanges,
+                id: Date.now() + Math.random()
+            };
+        }
+        
+        function updateTimeline() {
+            const container = document.getElementById('timelineContainer');
+            const noEventsMessage = document.getElementById('noEventsMessage');
+            
+            if (events.length === 0) {
+                container.innerHTML = '<div id="noEventsMessage" class="flex items-center justify-center h-full text-gray-500 text-lg">Add some events to see the timeline</div>';
+                return;
+            }
+            
+            // Hide no events message
+            if (noEventsMessage) {
+                noEventsMessage.style.display = 'none';
+            }
+            
+            // Get date range
+            const sortedEvents = [...events].sort((a, b) => a.date - b.date);
+            const startDate = new Date(sortedEvents[0].date);
+            startDate.setHours(0, 0, 0, 0);
+            
+            const endDate = new Date(sortedEvents[sortedEvents.length - 1].date);
+            endDate.setHours(23, 59, 59, 999);
+            
+            // Generate all dates in range
+            const dateRange = [];
+            const currentDate = new Date(startDate);
+            while (currentDate <= endDate) {
+                dateRange.push(new Date(currentDate));
+                currentDate.setDate(currentDate.getDate() + 1);
+            }
+            
+            const dayWidth = 50; // pixels per day
+            const hourHeight = 24; // pixels per hour
+            const totalWidth = dateRange.length * dayWidth;
+            const totalHeight = 24 * hourHeight;
+            
+            // Create timeline HTML with separate hour labels and scrollable content
+            let hourLabelsHtml = `<div class="hour-labels" style="height: ${totalHeight}px;">`;
+            for (let hour = 0; hour < 24; hour++) {
+                const y = hour * hourHeight;
+                hourLabelsHtml += `
+                    <div class="absolute text-xs text-gray-500 bg-white px-1 rounded" style="top: ${y + 10}px; right: 2px;">
+                        ${hour.toString().padStart(2, '0')}:00
+                    </div>
+                `;
+            }
+            hourLabelsHtml += '</div>';
+            
+            // Create simplified timeline with proper positioning
+            let timelineHtml = `
+                <!-- Single scrollable container for both day labels and timeline -->
+                <div style="margin-left: 50px; overflow-x: auto; position: relative;">
+                    <!-- Day cycle gradient background -->
+                    <div class="absolute day-cycle-bg" style="width: ${totalWidth}px; height: ${totalHeight}px; top: 30px; z-index: 1;"></div>
+                    
+                    <div class="relative" style="width: ${totalWidth}px; height: ${totalHeight + 30}px; z-index: 2;">
+                        
+                        <!-- Date labels that scroll with content -->
+                        <div class="absolute w-full" style="top: 0; height: 30px; background: white; border-bottom: 1px solid #e5e7eb;">`;
+            
+            // Add date labels
+            dateRange.forEach((date, index) => {
+                const x = index * dayWidth;
+                const dateStr = String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
+                timelineHtml += `
+                    <div class="absolute text-xs font-medium text-gray-700 px-1 whitespace-nowrap" style="left: ${x + 2}px; top: 8px;">
+                        ${dateStr}
+                    </div>
+                `;
+            });
+            
+            timelineHtml += `</div>`;
+            
+            // Add hour grid lines
+            for (let hour = 0; hour < 24; hour++) {
+                const y = hour * hourHeight + 30; // Offset by 30px for date header
+                timelineHtml += `
+                    <div class="timeline-hour-line absolute w-full" style="top: ${y}px; height: ${hourHeight}px;">
+                    </div>
+                `;
+            }
+            
+            // Add vertical day separators with thicker lines for year boundaries
+            dateRange.forEach((date, index) => {
+                const x = index * dayWidth;
+                let borderClass = "border-l border-gray-300";
+                
+                // Check if this is the start of a new year
+                if (index > 0) {
+                    const prevDate = dateRange[index - 1];
+                    if (date.getFullYear() !== prevDate.getFullYear()) {
+                        borderClass = "border-l-2 border-gray-600";
+                    }
+                }
+                
+                // Add weekend background
+                const isWeekend = date.getDay() === 0 || date.getDay() === 6; // Sunday = 0, Saturday = 6
+                const weekendBg = isWeekend ? 'bg-gray-200/75' : '';
+                
+                timelineHtml += `
+                    <div class="absolute ${borderClass}" style="left: ${x}px; top: 30px; height: ${totalHeight}px;">
+                    </div>
+                `;
+                
+                // Add weekend background overlay
+                if (isWeekend) {
+                    timelineHtml += `
+                        <div class="absolute ${weekendBg}" style="left: ${x}px; top: 30px; width: ${dayWidth}px; height: ${totalHeight}px; pointer-events: none; opacity: 0.5;">
+                        </div>
+                    `;
+                }
+            });
+            
+            // First pass: find min and max changes in the data
+            let minChanges = Infinity;
+            let maxChanges = 0;
+            
+            events.forEach(event => {
+                const totalChanges = event.totalChanges || 0;
+                if (totalChanges > 0) {
+                    minChanges = Math.min(minChanges, totalChanges);
+                    maxChanges = Math.max(maxChanges, totalChanges);
+                }
+            });
+            
+            // If no events have changes, set defaults
+            if (minChanges === Infinity) {
+                minChanges = 0;
+                maxChanges = 1;
+            }
+            
+            // Add events
+            events.forEach(event => {
+                const eventDate = new Date(event.date);
+                eventDate.setHours(0, 0, 0, 0);
+                
+                const dayIndex = dateRange.findIndex(date => date.getTime() === eventDate.getTime());
+                if (dayIndex !== -1) {
+                    const x = dayIndex * dayWidth + dayWidth / 2;
+                    const y = event.date.getHours() * hourHeight + (event.date.getMinutes() / 60) * hourHeight + 30; // Offset by 30px for date header
+                    
+                    const timeStr = event.date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    const eventType = event.type || 'blue';
+                    
+                    // Simple linear mapping: min changes -> 0.2 opacity, max changes -> 1.0 opacity
+                    const totalChanges = event.totalChanges || 0;
+                    let opacity = 0.75; // Default to 0.75 to see overlays
+                    if (totalChanges > 0 && maxChanges > minChanges) {
+                        // Linear mapping for events with change data
+                        const normalized = (totalChanges - minChanges) / (maxChanges - minChanges);
+                        opacity = 0.2 + normalized * 0.8;
+                    }
+                    // If totalChanges is 0 or all changes are the same, use 0.75 opacity
+                    
+                    // Calculate z-index based on change size (bigger changes on top)
+                    let zIndex = 10; // Base z-index
+                    if (totalChanges > 0 && maxChanges > minChanges) {
+                        // Scale z-index from 10 to 100 based on change size
+                        const normalized = (totalChanges - minChanges) / (maxChanges - minChanges);
+                        zIndex = Math.round(10 + normalized * 90);
+                    } else if (totalChanges > 0) {
+                        zIndex = 100; // High z-index for single change value
+                    }
+                    
+                    // Build tooltip text
+                    let tooltipText = `${timeStr}`;
+                    if (event.additions !== undefined || event.deletions !== undefined) {
+                        tooltipText += `, +${event.additions || 0}, -${event.deletions || 0}`;
+                    }
+                    if (event.name && event.name !== 'Event') {
+                        tooltipText = `${event.name} - ${tooltipText}`;
+                    }
+                    
+                    timelineHtml += `
+                        <div class="event-dot ${eventType}" style="left: ${x - 6}px; top: ${y - 6}px; opacity: ${opacity}; z-index: ${zIndex};" 
+                             title="${tooltipText}">
+                        </div>
+                    `;
+                }
+            });
+            
+            timelineHtml += '</div></div>';
+            
+            // Add padding to container with sticky hour labels
+            container.innerHTML = `
+                <div class="relative" style="padding: 1rem;">
+                    ${hourLabelsHtml}
+                    ${timelineHtml}
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>
