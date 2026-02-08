@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .timeline-hour-line {
-            border-top: 1px solid rgba(229, 231, 235, 0.5);
+            border-top: 1px solid hsl(220deg 13% 87% / 50%);
         }
         .event-dot {
             width: 10px;
@@ -112,7 +112,7 @@
                     ></textarea>
                 </div>
             </div>
-            <div class="mt-4 flex gap-2 justify-center">
+            <div class="mt-4 flex gap-2 justify-center items-center">
                 <button 
                     onclick="loadAllEvents()" 
                     class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
@@ -123,6 +123,18 @@
                     class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
                     Clear All
                 </button>
+                
+                <div class="flex items-center gap-2 ml-4">
+                    <input 
+                        type="checkbox" 
+                        id="groupEvents" 
+                        checked 
+                        onchange="updateTimeline()"
+                        class="rounded focus:ring-2 focus:ring-blue-500">
+                    <label for="groupEvents" class="text-sm font-medium text-gray-700">
+                        Group into 15-min slots
+                    </label>
+                </div>
             </div>
         </div>
 
@@ -383,17 +395,96 @@
                 }
             });
             
+            // Create dedicated container for event dots
+            let dotsHtml = '';
+            
+            // Check if grouping is enabled
+            const groupEventsCheckbox = document.getElementById('groupEvents');
+            const shouldGroup = groupEventsCheckbox && groupEventsCheckbox.checked;
+            
             // First pass: find min and max changes in the data
             let minChanges = Infinity;
             let maxChanges = 0;
             
-            events.forEach(event => {
-                const totalChanges = event.totalChanges || 0;
-                if (totalChanges > 0) {
-                    minChanges = Math.min(minChanges, totalChanges);
-                    maxChanges = Math.max(maxChanges, totalChanges);
-                }
-            });
+            let eventsToRender = [];
+            
+            if (shouldGroup) {
+                // Group events into 15-minute time slots
+                const timeSlots = new Map();
+                
+                events.forEach(event => {
+                    const eventDate = new Date(event.date);
+                    const dayKey = `${eventDate.getFullYear()}-${eventDate.getMonth()}-${eventDate.getDate()}`;
+                    const hour = eventDate.getHours();
+                    const minutes = eventDate.getMinutes();
+                    const slot = Math.floor(minutes / 15); // 0, 1, 2, or 3 for each 15-min slot
+                    const slotKey = `${dayKey}_${hour}_${slot}`;
+                    
+                    if (!timeSlots.has(slotKey)) {
+                        timeSlots.set(slotKey, {
+                            date: new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate(), hour, slot * 15, 0),
+                            additions: 0,
+                            deletions: 0,
+                            events: [],
+                            types: new Set()
+                        });
+                    }
+                    
+                    const timeSlot = timeSlots.get(slotKey);
+                    timeSlot.additions += event.additions || 0;
+                    timeSlot.deletions += event.deletions || 0;
+                    timeSlot.events.push(event);
+                    timeSlot.types.add(event.type || 'blue');
+                });
+                
+                // Calculate aggregated events and find min/max
+                timeSlots.forEach(slot => {
+                    const totalChanges = slot.additions + slot.deletions;
+                    if (totalChanges > 0) {
+                        minChanges = Math.min(minChanges, totalChanges);
+                        maxChanges = Math.max(maxChanges, totalChanges);
+                    }
+                    
+                    // Determine dominant event type (most common color)
+                    let dominantType = 'blue';
+                    if (slot.types.size === 1) {
+                        dominantType = Array.from(slot.types)[0];
+                    } else {
+                        // If multiple types, count them
+                        const typeCounts = {};
+                        slot.events.forEach(event => {
+                            const type = event.type || 'blue';
+                            typeCounts[type] = (typeCounts[type] || 0) + 1;
+                        });
+                        dominantType = Object.keys(typeCounts).reduce((a, b) => typeCounts[a] > typeCounts[b] ? a : b);
+                    }
+                    
+                    eventsToRender.push({
+                        date: slot.date,
+                        additions: slot.additions,
+                        deletions: slot.deletions,
+                        totalChanges: totalChanges,
+                        type: dominantType,
+                        eventCount: slot.events.length,
+                        isGrouped: true
+                    });
+                });
+            } else {
+                // Use individual events
+                eventsToRender = events.map(event => ({
+                    ...event,
+                    eventCount: 1,
+                    isGrouped: false
+                }));
+                
+                eventsToRender.forEach(event => {
+                    const totalChanges = event.totalChanges || 0;
+                    if (totalChanges > 0) {
+                        minChanges = Math.min(minChanges, totalChanges);
+                        maxChanges = Math.max(maxChanges, totalChanges);
+                    }
+                });
+            }
             
             // If no events have changes, set defaults
             if (minChanges === Infinity) {
@@ -401,8 +492,8 @@
                 maxChanges = 1;
             }
             
-            // Add events
-            events.forEach(event => {
+            // Add events to dots container
+            eventsToRender.forEach(event => {
                 const eventDate = new Date(event.date);
                 eventDate.setHours(0, 0, 0, 0);
                 
@@ -424,26 +515,23 @@
                     }
                     // If totalChanges is 0 or all changes are the same, use 0.75 opacity
                     
-                    // Calculate z-index based on change size (bigger changes on top)
-                    let zIndex = 10; // Base z-index
-                    if (totalChanges > 0 && maxChanges > minChanges) {
-                        // Scale z-index from 10 to 100 based on change size
-                        const normalized = (totalChanges - minChanges) / (maxChanges - minChanges);
-                        zIndex = Math.round(10 + normalized * 90);
-                    } else if (totalChanges > 0) {
-                        zIndex = 100; // High z-index for single change value
-                    }
+                    // Calculate z-index based on opacity (corresponds directly to visibility)
+                    let zIndex = Math.round(opacity * 1000); // Scale opacity to z-index range
+                    if (zIndex < 10) zIndex = 10; // Ensure minimum z-index
                     
                     // Build tooltip text
                     let tooltipText = `${timeStr}`;
+                    if (event.isGrouped) {
+                        tooltipText += ` (${event.eventCount} events)`;
+                    }
                     if (event.additions !== undefined || event.deletions !== undefined) {
                         tooltipText += `, +${event.additions || 0}, -${event.deletions || 0}`;
                     }
-                    if (event.name && event.name !== 'Event') {
+                    if (!event.isGrouped && event.name && event.name !== 'Event') {
                         tooltipText = `${event.name} - ${tooltipText}`;
                     }
                     
-                    timelineHtml += `
+                    dotsHtml += `
                         <div class="event-dot ${eventType}" style="left: ${x - 6}px; top: ${y - 6}px; opacity: ${opacity}; z-index: ${zIndex};" 
                              title="${tooltipText}">
                         </div>
@@ -451,7 +539,12 @@
                 }
             });
             
-            timelineHtml += '</div></div>';
+            timelineHtml += `
+                        <!-- Event dots container -->
+                        <div class="absolute" style="width: ${totalWidth}px; height: ${totalHeight + 30}px; top: 0; left: 0; z-index: 1000;">
+                            ${dotsHtml}
+                        </div>
+                    </div></div>`;
             
             // Add padding to container with sticky hour labels
             container.innerHTML = `
