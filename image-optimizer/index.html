@@ -1,616 +1,1063 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Image Optimizer</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
 
-<head>
-    <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-    <title>Image Optimizer</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+            body {
+                font-family:
+                    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+                background: #f5f5f5;
+                padding: 20px;
+                min-height: 100vh;
+            }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #f5f5f5;
-            padding: 20px;
-            min-height: 100vh;
-        }
+            .container {
+                max-width: 1920px;
+                margin: 0 auto;
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                overflow: hidden;
+            }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
+            .main-content {
+                padding: 30px;
+            }
 
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
+            .upload-section {
+                margin-bottom: 30px;
+            }
 
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            opacity: 0.9;
-            font-size: 1.1em;
-        }
-
-        .main-content {
-            padding: 30px;
-        }
-
-        .upload-section {
-            margin-bottom: 30px;
-        }
-
-        .preview-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-
-        .drop-area-content {
-            pointer-events: none;
-        }
-
-        .drop-icon {
-            font-size: 3em;
-            color: #667eea;
-            margin-bottom: 20px;
-        }
-
-        .drop-text {
-            font-size: 1.2em;
-            color: #4a5568;
-            margin-bottom: 10px;
-        }
-
-        .drop-subtext {
-            color: #718096;
-            font-size: 0.9em;
-        }
-
-        .right-panel {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-            opacity: 0.5;
-        }
-
-        .right-panel.active {
-            opacity: 1;
-        }
-
-        .control-group {
-            margin: 20px 0;
-            padding: 15px;
-            background: rgba(102, 126, 234, 0.05);
-            border-radius: 6px;
-        }
-
-        .control-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .quality-slider {
-            width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            background: #ddd;
-            outline: none;
-            -webkit-appearance: none;
-        }
-
-        .quality-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #667eea;
-            cursor: pointer;
-        }
-
-        .quality-slider::-moz-range-thumb {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #667eea;
-            cursor: pointer;
-            border: none;
-        }
-
-        .quality-display {
-            text-align: center;
-            font-size: 1.2em;
-            font-weight: 600;
-            color: #667eea;
-        }
-
-        .left-panel {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-            align-self: start;
-        }
-
-        .drop-area {
-            border: 3px dashed #667eea;
-            border-radius: 12px;
-            height: 300px;
-            padding: 20px;
-            text-align: center;
-            background: #f8fafe;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .drop-area:hover {
-            border-color: #5a67d8;
-            background: #f0f7ff;
-        }
-
-        .drop-area.drag-over {
-            border-color: #38a169;
-            background: #f0fff4;
-        }
-
-        .original-content {
-            display: none;
-        }
-
-        .original-content.active {
-            display: block;
-        }
-
-        .original-image {
-            max-width: 100%;
-            max-height: 400px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            display: block;
-            margin: 0 auto 15px auto;
-        }
-
-        .preview-card {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .preview-card h3 {
-            margin-bottom: 15px;
-            color: #333;
-        }
-
-        .preview-image {
-            max-width: 100%;
-            max-height: 400px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            user-select: none;
-            display: block;
-            margin: 0 auto 15px auto;
-        }
-
-        .preview-image.comparing {
-            cursor: pointer;
-        }
-
-        .image-placeholder {
-            width: 100%;
-            height: 300px;
-            border-radius: 8px;
-            background: #f0f0f0;
-            border: 2px dashed #ccc;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #999;
-            font-size: 1.1em;
-            margin-bottom: 15px;
-        }
-
-        .compare-hint {
-            font-size: 0.8em;
-            color: #718096;
-            margin-top: 8px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .preview-card:hover .compare-hint {
-            opacity: 1;
-        }
-
-        .file-info {
-            margin-top: 15px;
-            padding: 10px;
-            background: white;
-            border-radius: 6px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .file-info div {
-            margin: 5px 0;
-        }
-
-        .size {
-            font-weight: 600;
-            color: #3182ce;
-        }
-
-        .size.bigger {
-            color: #e53e3e;
-        }
-
-        .size.smaller {
-            color: #38a169;
-        }
-
-        .download-btn {
-            background: #38a169;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1em;
-            margin-top: 15px;
-            transition: background 0.3s;
-        }
-
-        .download-btn:hover {
-            background: #2f855a;
-        }
-
-        .download-btn:disabled {
-            background: #a0aec0;
-            cursor: not-allowed;
-        }
-
-        @media (max-width: 768px) {
             .preview-section {
-                grid-template-columns: 1fr;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 30px;
             }
-            
-            .header h1 {
-                font-size: 2em;
-            }
-        }
-    </style>
-</head>
 
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Image Optimizer</h1>
-            <p>Convert and optimize your images to JPEG with custom quality settings</p>
-        </div>
-        
-        <div class="main-content">
-            <div class="preview-section">
-                <div class="left-panel">
-                    <h3>Original Image</h3>
-                    <div class="drop-area" id="dropArea">
-                        <div class="drop-area-content" id="dropAreaContent">
-                            <div class="drop-icon">📁</div>
-                            <div class="drop-text">Drop your image here</div>
-                            <div class="drop-subtext">or click to browse files</div>
+            .drop-area-content {
+                pointer-events: none;
+            }
+
+            .drop-icon {
+                font-size: 3em;
+                color: #667eea;
+                margin-bottom: 20px;
+            }
+
+            .drop-text {
+                font-size: 1.2em;
+                color: #4a5568;
+                margin-bottom: 10px;
+            }
+
+            .drop-subtext {
+                color: #718096;
+                font-size: 0.9em;
+            }
+
+            .right-panel {
+                background: #f8f9fa;
+                border-radius: 8px;
+                padding: 20px;
+                text-align: center;
+                opacity: 0.5;
+            }
+
+            .right-panel.active {
+                opacity: 1;
+            }
+
+            .control-group {
+                margin: 20px 0;
+                padding: 15px;
+                background: rgba(102, 126, 234, 0.05);
+                border-radius: 6px;
+            }
+
+            .control-group label {
+                display: block;
+                font-weight: 600;
+                color: #333;
+            }
+
+            .quality-slider {
+                width: 100%;
+                height: 6px;
+                border-radius: 3px;
+                background: #ddd;
+                outline: none;
+                -webkit-appearance: none;
+            }
+
+            .quality-slider::-webkit-slider-thumb {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                background: #667eea;
+                cursor: pointer;
+            }
+
+            .quality-slider::-moz-range-thumb {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                background: #667eea;
+                cursor: pointer;
+                border: none;
+            }
+
+            .quality-display {
+                text-align: center;
+                font-size: 1.2em;
+                font-weight: 600;
+                color: #667eea;
+            }
+
+            .left-panel {
+                background: #f8f9fa;
+                border-radius: 8px;
+                padding: 20px;
+                text-align: center;
+                align-self: start;
+            }
+
+            .drop-area {
+                border: 3px dashed #667eea;
+                border-radius: 12px;
+                height: 300px;
+                padding: 20px;
+                text-align: center;
+                background: #f8fafe;
+                transition: all 0.3s ease;
+                cursor: pointer;
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .drop-area:hover {
+                border-color: #5a67d8;
+                background: #f0f7ff;
+            }
+
+            .drop-area.drag-over {
+                border-color: #38a169;
+                background: #f0fff4;
+            }
+
+            .original-content {
+                display: none;
+            }
+
+            .original-content.active {
+                display: block;
+            }
+
+            .original-image {
+                max-width: 100%;
+                max-height: 400px;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                display: block;
+                margin: 0 auto 15px auto;
+            }
+
+            .preview-card {
+                background: #f8f9fa;
+                border-radius: 8px;
+                padding: 20px;
+                text-align: center;
+            }
+
+            .preview-card h3 {
+                margin-bottom: 15px;
+                color: #333;
+            }
+
+            .preview-image {
+                max-width: 100%;
+                max-height: 400px;
+                border-radius: 8px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                user-select: none;
+                display: block;
+                margin: 0 auto 15px auto;
+            }
+
+            .preview-image.comparing {
+                cursor: pointer;
+            }
+
+            .image-placeholder {
+                width: 100%;
+                height: 300px;
+                border-radius: 8px;
+                background: #f0f0f0;
+                border: 2px dashed #ccc;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #999;
+                font-size: 1.1em;
+                margin-bottom: 15px;
+            }
+
+            .compare-hint {
+                font-size: 0.8em;
+                color: #718096;
+                margin-top: 8px;
+                opacity: 0;
+                transition: opacity 0.3s ease;
+            }
+
+            .preview-card:hover .compare-hint {
+                opacity: 1;
+            }
+
+            .file-info {
+                margin-top: 15px;
+                padding: 10px;
+                background: white;
+                border-radius: 6px;
+                border: 1px solid #e2e8f0;
+            }
+
+            .file-info div {
+                margin: 5px 0;
+            }
+
+            .size {
+                font-weight: 600;
+                color: #3182ce;
+            }
+
+            .size.bigger {
+                color: #e53e3e;
+            }
+
+            .size.smaller {
+                color: #38a169;
+            }
+
+            .download-btn {
+                background: #38a169;
+                color: white;
+                border: none;
+                padding: 12px 24px;
+                border-radius: 6px;
+                cursor: pointer;
+                font-size: 1em;
+                margin-top: 15px;
+                transition: background 0.3s;
+            }
+
+            .download-btn:hover {
+                background: #2f855a;
+            }
+
+            .download-btn:disabled {
+                background: #a0aec0;
+                cursor: not-allowed;
+            }
+
+            /* Photo Viewer Styles */
+            .photo-viewer {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.85);
+                z-index: 1000;
+                cursor: pointer;
+            }
+
+            .photo-viewer.active {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .photo-viewer-content {
+                position: relative;
+                max-width: calc(100vw - 160px);
+                max-height: calc(100vh - 20px);
+                cursor: default;
+            }
+
+            .photo-viewer-image {
+                max-width: 100%;
+                max-height: calc(100vh - 40px);
+                object-fit: contain;
+                border-radius: 8px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            }
+
+            .photo-viewer-nav {
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                background: rgba(255, 255, 255, 0.6);
+                border: none;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                cursor: pointer;
+                font-size: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+            }
+
+            .photo-viewer-nav:hover {
+                background: rgba(255, 255, 255, 0.8);
+                transform: translateY(-50%);
+            }
+
+            .photo-viewer-nav.prev {
+                left: -70px;
+            }
+
+            .photo-viewer-nav.next {
+                right: -70px;
+            }
+
+            .photo-viewer-close {
+                position: absolute;
+                top: 15px;
+                right: 15px;
+                background: rgba(128, 128, 128, 0.8);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                border: none;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                cursor: pointer;
+                font-size: 18px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+                color: white;
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            }
+
+            .photo-viewer-close:hover {
+                background: rgba(96, 96, 96, 0.9);
+                box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+            }
+
+            .photo-viewer-info {
+                position: absolute;
+                bottom: 10px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(0, 0, 0, 0.6);
+                backdrop-filter: blur(10px);
+                -webkit-backdrop-filter: blur(10px);
+                padding: 8px 16px;
+                border-radius: 20px;
+                text-align: center;
+                font-size: 14px;
+                color: #fff;
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+                white-space: nowrap;
+                max-width: 90%;
+            }
+
+            .click-to-view {
+                cursor: pointer;
+                transition: transform 0.2s ease;
+            }
+
+            .click-to-view:hover {
+                transform: none;
+            }
+
+            @media (max-width: 768px) {
+                .preview-section {
+                    grid-template-columns: 1fr;
+                }
+
+                .photo-viewer-nav {
+                    width: 40px;
+                    height: 40px;
+                    font-size: 16px;
+                }
+
+                .photo-viewer-nav.prev {
+                    left: -50px;
+                }
+
+                .photo-viewer-nav.next {
+                    right: -50px;
+                }
+
+                .photo-viewer-content {
+                    max-width: calc(100vw - 100px);
+                    max-height: calc(100vh - 20px);
+                }
+
+                .photo-viewer-image {
+                    max-height: calc(100vh - 30px);
+                }
+
+                .photo-viewer-close {
+                    top: 10px;
+                    right: 10px;
+                }
+
+                .photo-viewer-info {
+                    bottom: 8px;
+                    padding: 6px 12px;
+                    font-size: 12px;
+                }
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="main-content">
+                <div class="preview-section">
+                    <div class="left-panel">
+                        <h3>Original Image</h3>
+                        <div class="drop-area" id="dropArea">
+                            <div class="drop-area-content" id="dropAreaContent">
+                                <div class="drop-icon">📁</div>
+                                <div class="drop-text">Drop your image here</div>
+                                <div class="drop-subtext">or click to browse files</div>
+                            </div>
+                        </div>
+                        <div class="original-content" id="originalContent">
+                            <img id="originalImage" class="original-image" alt="Original" />
+                        </div>
+
+                        <div class="file-info">
+                            <div>Format: <span id="originalFormat">-</span></div>
+                            <div>Dimensions: <span id="originalDimensions">-</span></div>
+                            <div class="size original">Size: <span id="originalSize">-</span></div>
                         </div>
                     </div>
-                    <div class="original-content" id="originalContent">
-                        <img id="originalImage" class="original-image" alt="Original">
-                    </div>
-                    
-                    <div class="file-info">
-                        <div>Format: <span id="originalFormat">-</span></div>
-                        <div>Dimensions: <span id="originalDimensions">-</span></div>
-                        <div class="size original">Size: <span id="originalSize">-</span></div>
+
+                    <div class="right-panel" id="rightPanel">
+                        <h3>Optimized JPEG</h3>
+                        <div class="image-placeholder" id="imagePlaceholder">Optimized image will appear here</div>
+                        <img id="optimizedImage" class="preview-image" alt="Optimized" style="display: none" />
+
+                        <div class="file-info">
+                            <div>Format: JPEG</div>
+                            <div>Dimensions: <span id="optimizedDimensions">-</span></div>
+                            <div class="size optimized">Size: <span id="optimizedSize">-</span></div>
+                            <div>Reduction: <span id="reduction">-</span></div>
+                        </div>
+
+                        <div class="control-group">
+                            <label for="qualitySlider">JPEG Quality</label>
+                            <input
+                                type="range"
+                                id="qualitySlider"
+                                class="quality-slider"
+                                min="1"
+                                max="100"
+                                value="80"
+                            />
+                            <div class="quality-display" id="qualityDisplay">80%</div>
+                            <div
+                                style="margin-top: 15px; text-align: left; display: flex; align-items: center; gap: 5px"
+                            >
+                                <input type="checkbox" id="diffCheckbox" />
+                                <label for="diffCheckbox">Diff View</label>
+                            </div>
+                        </div>
+
+                        <button id="downloadBtn" class="download-btn" disabled>Download Optimized Image</button>
                     </div>
                 </div>
+                <input type="file" id="imageInput" accept="image/*" style="display: none" />
+            </div>
+        </div>
 
-                <div class="right-panel" id="rightPanel">
-                    <h3>Optimized JPEG</h3>
-                    <div class="image-placeholder" id="imagePlaceholder">
-                        Optimized image will appear here
-                    </div>
-                    <img id="optimizedImage" class="preview-image" alt="Optimized" style="display: none;">
-                    
-                    <div class="file-info">
-                        <div>Format: JPEG</div>
-                        <div>Dimensions: <span id="optimizedDimensions">-</span></div>
-                        <div class="size optimized">Size: <span id="optimizedSize">-</span></div>
-                        <div>Reduction: <span id="reduction">-</span></div>
-                    </div>
-                    
-                    <div class="control-group">
-                        <label for="qualitySlider">JPEG Quality</label>
-                        <input type="range" id="qualitySlider" class="quality-slider" min="1" max="100" value="80">
-                        <div class="quality-display" id="qualityDisplay">80%</div>
-                    </div>
-                    
-                    <button id="downloadBtn" class="download-btn" disabled>Download Optimized Image</button>
+        <!-- Photo Viewer Modal -->
+        <div class="photo-viewer" id="photoViewer">
+            <div class="photo-viewer-content">
+                <button class="photo-viewer-close" id="photoViewerClose">×</button>
+                <button class="photo-viewer-nav prev" id="photoViewerPrev">‹</button>
+                <button class="photo-viewer-nav next" id="photoViewerNext">›</button>
+                <img class="photo-viewer-image" id="photoViewerImage" alt="Full size image" />
+                <div class="photo-viewer-info" id="photoViewerInfo">
+                    <div><strong id="photoViewerTitle">Original Image</strong></div>
+                    <div style="opacity: 0.5">Use ← → arrow keys to switch between images • Press ESC to close</div>
                 </div>
             </div>
-            <input type="file" id="imageInput" accept="image/*" style="display: none;">
         </div>
-    </div>
 
-    <script>
-        class ImageOptimizer {
-            constructor() {
-                this.currentFile = null;
-                this.originalImage = null;
-                this.canvas = document.createElement('canvas');
-                this.ctx = this.canvas.getContext('2d');
-                this.debounceTimer = null;
-                
-                this.initializeEventListeners();
-            }
-
-            initializeEventListeners() {
-                const dropArea = document.getElementById('dropArea');
-                const fileInput = document.getElementById('imageInput');
-
-                // File input change event
-                fileInput.addEventListener('change', (e) => {
-                    this.handleFileSelect(e.target.files[0]);
-                });
-
-                // Drag and drop events
-                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                    dropArea.addEventListener(eventName, this.preventDefaults, false);
-                });
-
-                ['dragenter', 'dragover'].forEach(eventName => {
-                    dropArea.addEventListener(eventName, () => {
-                        dropArea.classList.add('drag-over');
-                    }, false);
-                });
-
-                ['dragleave', 'drop'].forEach(eventName => {
-                    dropArea.addEventListener(eventName, () => {
-                        dropArea.classList.remove('drag-over');
-                    }, false);
-                });
-
-                dropArea.addEventListener('drop', (e) => {
-                    const files = e.dataTransfer.files;
-                    if (files.length > 0) {
-                        this.handleFileSelect(files[0]);
-                    }
-                }, false);
-
-                // Click to browse
-                dropArea.addEventListener('click', () => {
-                    fileInput.click();
-                });
-
-                document.getElementById('qualitySlider').addEventListener('input', (e) => {
-                    this.updateQualityWithDebounce(parseInt(e.target.value));
-                });
-
-                document.getElementById('downloadBtn').addEventListener('click', () => {
-                    this.downloadOptimizedImage();
-                });
-            }
-
-            preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-
-            handleFileSelect(file) {
-                if (!file || !file.type.startsWith('image/')) {
-                    alert('Please select a valid image file');
-                    return;
-                }
-
-                this.currentFile = file;
-                const reader = new FileReader();
-                
-                reader.onload = (e) => {
-                    this.loadImage(e.target.result);
-                };
-                
-                reader.readAsDataURL(file);
-            }
-
-            loadImage(imageSrc) {
-                const img = new Image();
-                
-                img.onload = () => {
-                    this.originalImage = img;
-                    this.displayOriginalImage();
-                    this.showControls();
-                    this.optimizeImage();
-                };
-                
-                img.src = imageSrc;
-            }
-
-            displayOriginalImage() {
-                const originalImg = document.getElementById('originalImage');
-                const dropArea = document.getElementById('dropArea');
-                const originalContent = document.getElementById('originalContent');
-                
-                originalImg.src = this.originalImage.src;
-                
-                // Hide entire drop area and show original preview
-                dropArea.style.display = 'none';
-                originalContent.classList.add('active');
-                
-                document.getElementById('originalFormat').textContent = this.currentFile.type.split('/')[1].toUpperCase();
-                document.getElementById('originalDimensions').textContent = `${this.originalImage.width} × ${this.originalImage.height}`;
-                document.getElementById('originalSize').textContent = this.formatFileSize(this.currentFile.size);
-            }
-
-            showControls() {
-                document.getElementById('rightPanel').classList.add('active');
-            }
-
-            updateQuality(quality) {
-                document.getElementById('qualityDisplay').textContent = `${quality}%`;
-                this.optimizeImage();
-            }
-
-            updateQualityWithDebounce(quality) {
-                // Update display immediately for responsive feel
-                document.getElementById('qualityDisplay').textContent = `${quality}%`;
-                
-                // Clear existing timer
-                if (this.debounceTimer) {
-                    clearTimeout(this.debounceTimer);
-                }
-                
-                // Set new timer for optimization
-                this.debounceTimer = setTimeout(() => {
-                    this.optimizeImage();
+        <script>
+            class ImageOptimizer {
+                constructor() {
+                    this.currentFile = null;
+                    this.originalImage = null;
+                    this.canvas = document.createElement("canvas");
+                    this.ctx = this.canvas.getContext("2d");
                     this.debounceTimer = null;
-                }, 100);
-            }
-
-            optimizeImage() {
-                const quality = parseInt(document.getElementById('qualitySlider').value) / 100;
-                
-                // Set canvas dimensions to match image
-                this.canvas.width = this.originalImage.width;
-                this.canvas.height = this.originalImage.height;
-                
-                // Clear and draw image
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                this.ctx.drawImage(this.originalImage, 0, 0);
-                
-                // Convert to JPEG with specified quality
-                this.canvas.toBlob((blob) => {
-                    this.displayOptimizedImage(blob);
-                }, 'image/jpeg', quality);
-            }
-
-            displayOptimizedImage(blob) {
-                const optimizedImg = document.getElementById('optimizedImage');
-                const placeholder = document.getElementById('imagePlaceholder');
-                const optimizedSizeElement = document.querySelector('.size.optimized');
-                const url = URL.createObjectURL(blob);
-                
-                optimizedImg.src = url;
-                
-                // Hide placeholder and show image
-                placeholder.style.display = 'none';
-                optimizedImg.style.display = 'block';
-                
-                document.getElementById('optimizedDimensions').textContent = `${this.canvas.width} × ${this.canvas.height}`;
-                document.getElementById('optimizedSize').textContent = this.formatFileSize(blob.size);
-                
-                // Update optimized size color based on comparison
-                optimizedSizeElement.classList.remove('bigger', 'smaller');
-                if (blob.size > this.currentFile.size) {
-                    optimizedSizeElement.classList.add('bigger');
-                } else if (blob.size < this.currentFile.size) {
-                    optimizedSizeElement.classList.add('smaller');
+                    this.diffMode = false;
+                    this.optimizedBlob = null;
+                    this.optimizedImageUrl = null;
+                    this.optimizedImageDataUrl = null;
+                    this.currentViewerImage = "original"; // 'original', 'optimized', or 'diff'
+                    this.initializeEventListeners();
                 }
-                
-                const reduction = ((this.currentFile.size - blob.size) / this.currentFile.size * 100).toFixed(1);
-                document.getElementById('reduction').textContent = `${reduction}% smaller`;
-                
-                // Store the blob for download
-                this.optimizedBlob = blob;
-                this.optimizedImageUrl = url;
-                document.getElementById('downloadBtn').disabled = false;
-                
-                // Add comparison functionality
-                this.setupImageComparison(optimizedImg);
+
+                initializeEventListeners() {
+                    const dropArea = document.getElementById("dropArea");
+                    const fileInput = document.getElementById("imageInput");
+
+                    // File input change event
+                    fileInput.addEventListener("change", (e) => {
+                        this.handleFileSelect(e.target.files[0]);
+                    });
+
+                    // Drag and drop events
+                    ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
+                        dropArea.addEventListener(eventName, this.preventDefaults, false);
+                    });
+
+                    ["dragenter", "dragover"].forEach((eventName) => {
+                        dropArea.addEventListener(
+                            eventName,
+                            () => {
+                                dropArea.classList.add("drag-over");
+                            },
+                            false,
+                        );
+                    });
+
+                    ["dragleave", "drop"].forEach((eventName) => {
+                        dropArea.addEventListener(
+                            eventName,
+                            () => {
+                                dropArea.classList.remove("drag-over");
+                            },
+                            false,
+                        );
+                    });
+
+                    dropArea.addEventListener(
+                        "drop",
+                        (e) => {
+                            const files = e.dataTransfer.files;
+                            if (files.length > 0) {
+                                this.handleFileSelect(files[0]);
+                            }
+                        },
+                        false,
+                    );
+
+                    // Click to browse
+                    dropArea.addEventListener("click", () => {
+                        fileInput.click();
+                    });
+
+                    document.getElementById("qualitySlider").addEventListener("input", (e) => {
+                        this.updateQualityWithDebounce(parseInt(e.target.value));
+                    });
+
+                    document.getElementById("downloadBtn").addEventListener("click", () => {
+                        this.downloadOptimizedImage();
+                    });
+
+                    document.getElementById("diffCheckbox").addEventListener("change", (e) => {
+                        this.diffMode = e.target.checked;
+                        this.updateDiffMode();
+                    });
+
+                    // Photo viewer event listeners
+                    this.setupPhotoViewer();
+                }
+
+                preventDefaults(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+
+                handleFileSelect(file) {
+                    if (!file || !file.type.startsWith("image/")) {
+                        alert("Please select a valid image file");
+                        return;
+                    }
+
+                    this.currentFile = file;
+                    const reader = new FileReader();
+
+                    reader.onload = (e) => {
+                        this.loadImage(e.target.result);
+                    };
+
+                    reader.readAsDataURL(file);
+                }
+
+                loadImage(imageSrc) {
+                    const img = new Image();
+
+                    img.onload = () => {
+                        this.originalImage = img;
+                        this.displayOriginalImage();
+                        this.showControls();
+                        this.optimizeImage();
+                    };
+
+                    img.src = imageSrc;
+                }
+
+                displayOriginalImage() {
+                    const originalImg = document.getElementById("originalImage");
+                    const dropArea = document.getElementById("dropArea");
+                    const originalContent = document.getElementById("originalContent");
+
+                    originalImg.src = this.originalImage.src;
+
+                    // Hide entire drop area and show original preview
+                    dropArea.style.display = "none";
+                    originalContent.classList.add("active");
+
+                    // Make original image clickable for photo viewer
+                    originalImg.classList.add("click-to-view");
+
+                    document.getElementById("originalFormat").textContent = this.currentFile.type
+                        .split("/")[1]
+                        .toUpperCase();
+                    document.getElementById("originalDimensions").textContent =
+                        `${this.originalImage.width} × ${this.originalImage.height}`;
+                    document.getElementById("originalSize").textContent = this.formatFileSize(this.currentFile.size);
+                }
+
+                showControls() {
+                    document.getElementById("rightPanel").classList.add("active");
+                }
+
+                updateQuality(quality) {
+                    document.getElementById("qualityDisplay").textContent = `${quality}%`;
+                    this.optimizeImage();
+                }
+
+                updateQualityWithDebounce(quality) {
+                    // Update display immediately for responsive feel
+                    document.getElementById("qualityDisplay").textContent = `${quality}%`;
+
+                    // Clear existing timer
+                    if (this.debounceTimer) {
+                        clearTimeout(this.debounceTimer);
+                    }
+
+                    // Set new timer for optimization
+                    this.debounceTimer = setTimeout(() => {
+                        this.optimizeImage();
+                        this.debounceTimer = null;
+                    }, 100);
+                }
+
+                optimizeImage() {
+                    const quality = parseInt(document.getElementById("qualitySlider").value) / 100;
+
+                    // Set canvas dimensions to match image
+                    this.canvas.width = this.originalImage.width;
+                    this.canvas.height = this.originalImage.height;
+
+                    // Clear and draw image
+                    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                    this.ctx.drawImage(this.originalImage, 0, 0);
+
+                    // Convert to JPEG with specified quality
+                    this.canvas.toBlob(
+                        (blob) => {
+                            // Also store a dataURL for diff mode
+                            const reader = new FileReader();
+                            reader.onload = () => {
+                                this.optimizedImageDataUrl = reader.result;
+                                this.displayOptimizedImage(blob);
+                            };
+                            reader.readAsDataURL(blob);
+                        },
+                        "image/jpeg",
+                        quality,
+                    );
+                }
+
+                displayOptimizedImage(blob) {
+                    const optimizedImg = document.getElementById("optimizedImage");
+                    const placeholder = document.getElementById("imagePlaceholder");
+                    const optimizedSizeElement = document.querySelector(".size.optimized");
+                    const url = URL.createObjectURL(blob);
+
+                    // Store for diff mode
+                    this.optimizedImageUrl = url;
+
+                    // If diff mode is active, show diff image
+                    if (this.diffMode) {
+                        this.showDiffImage();
+                    } else {
+                        optimizedImg.src = url;
+                    }
+
+                    // Hide placeholder and show image
+                    placeholder.style.display = "none";
+                    optimizedImg.style.display = "block";
+
+                    // Make optimized image clickable for photo viewer
+                    optimizedImg.classList.add("click-to-view");
+
+                    document.getElementById("optimizedDimensions").textContent =
+                        `${this.canvas.width} × ${this.canvas.height}`;
+                    document.getElementById("optimizedSize").textContent = this.formatFileSize(blob.size);
+
+                    // Update optimized size color based on comparison
+                    optimizedSizeElement.classList.remove("bigger", "smaller");
+                    if (blob.size > this.currentFile.size) {
+                        optimizedSizeElement.classList.add("bigger");
+                    } else if (blob.size < this.currentFile.size) {
+                        optimizedSizeElement.classList.add("smaller");
+                    }
+
+                    const reduction = (((this.currentFile.size - blob.size) / this.currentFile.size) * 100).toFixed(1);
+                    document.getElementById("reduction").textContent = `${reduction}% smaller`;
+
+                    // Store the blob for download
+                    this.optimizedBlob = blob;
+                    document.getElementById("downloadBtn").disabled = false;
+
+                    // Add comparison functionality
+                    this.setupImageComparison(optimizedImg);
+                }
+
+                setupImageComparison(optimizedImg) {
+                    // Remove existing event listeners if any
+                    optimizedImg.removeEventListener("mousedown", this.startComparison);
+                    optimizedImg.removeEventListener("mouseup", this.endComparison);
+                    optimizedImg.removeEventListener("mouseleave", this.endComparison);
+                    optimizedImg.removeEventListener("touchstart", this.startComparison);
+                    optimizedImg.removeEventListener("touchend", this.endComparison);
+                    optimizedImg.removeEventListener("mousemove", this.handleMouseMove);
+
+                    // Bind methods to preserve 'this' context
+                    this.handleMouseMove = this.handleMouseMove.bind(this);
+                    this.handleMouseLeave = this.handleMouseLeave.bind(this);
+
+                    // Add new hover-based comparison
+                    optimizedImg.addEventListener("mousemove", this.handleMouseMove);
+                    optimizedImg.addEventListener("mouseleave", this.handleMouseLeave);
+                }
+
+                handleMouseMove(e) {
+                    const optimizedImg = document.getElementById("optimizedImage");
+                    const panelTitle = document.querySelector("#rightPanel h3");
+                    const rect = optimizedImg.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const imageWidth = rect.width;
+                    const halfWidth = imageWidth / 2;
+
+                    // Left side shows original, right side shows optimized
+                    if (x < halfWidth) {
+                        optimizedImg.src = this.originalImage.src;
+                        panelTitle.textContent = "Original Image";
+                    } else {
+                        if (this.diffMode) {
+                            this.showDiffImage();
+                            panelTitle.textContent = "Difference View";
+                        } else {
+                            optimizedImg.src = this.optimizedImageUrl;
+                            panelTitle.textContent = "Optimized JPEG";
+                        }
+                    }
+                }
+
+                handleMouseLeave(e) {
+                    const optimizedImg = document.getElementById("optimizedImage");
+                    const panelTitle = document.querySelector("#rightPanel h3");
+                    // Restore to optimized or diff view when mouse leaves
+                    if (this.diffMode) {
+                        this.showDiffImage();
+                        panelTitle.textContent = "Difference View";
+                    } else {
+                        optimizedImg.src = this.optimizedImageUrl;
+                        panelTitle.textContent = "Optimized JPEG";
+                    }
+                }
+
+                startComparison(e) {
+                    // Keep for backwards compatibility but no longer used
+                }
+
+                endComparison(e) {
+                    // Keep for backwards compatibility but no longer used
+                }
+
+                downloadOptimizedImage() {
+                    if (!this.optimizedBlob) return;
+
+                    const a = document.createElement("a");
+                    const url = URL.createObjectURL(this.optimizedBlob);
+                    const fileName = this.currentFile.name.replace(/\.[^/.]+$/, "") + "_optimized.jpg";
+
+                    a.href = url;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }
+
+                formatFileSize(bytes) {
+                    if (bytes === 0) return "0 Bytes";
+
+                    const k = 1024;
+                    const sizes = ["Bytes", "KB", "MB", "GB"];
+                    const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+                    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+                }
+
+                updateDiffMode() {
+                    const optimizedImg = document.getElementById("optimizedImage");
+                    if (this.diffMode) {
+                        this.showDiffImage();
+                    } else {
+                        optimizedImg.src = this.optimizedImageUrl;
+                    }
+                }
+
+                showDiffImage() {
+                    // Use difference blend mode
+                    if (!this.originalImage || !this.optimizedImageDataUrl) return;
+                    const w = this.originalImage.width;
+                    const h = this.originalImage.height;
+                    const tempCanvas = document.createElement("canvas");
+                    tempCanvas.width = w;
+                    tempCanvas.height = h;
+                    const tempCtx = tempCanvas.getContext("2d");
+
+                    // Draw original
+                    tempCtx.drawImage(this.originalImage, 0, 0, w, h);
+                    const originalData = tempCtx.getImageData(0, 0, w, h);
+
+                    // Draw optimized
+                    const optimizedImgObj = new window.Image();
+                    optimizedImgObj.onload = () => {
+                        tempCtx.clearRect(0, 0, w, h);
+                        tempCtx.drawImage(optimizedImgObj, 0, 0, w, h);
+                        const optimizedData = tempCtx.getImageData(0, 0, w, h);
+
+                        // Prepare output
+                        const outputData = tempCtx.createImageData(w, h);
+                        const orig = originalData.data;
+                        const opt = optimizedData.data;
+                        const out = outputData.data;
+                        // Brightness and contrast settings
+                        const brightness = 125; // add to each channel
+                        const contrast = 4; // multiply after centering
+
+                        for (let i = 0; i < orig.length; i += 4) {
+                            for (let c = 0; c < 3; ++c) {
+                                // Calculate difference blend mode: |original - optimized|
+                                let v = Math.abs(orig[i + c] - opt[i + c]);
+                                // Brightness
+                                v = v + brightness;
+                                // Contrast
+                                v = (v - 128) * contrast + 128;
+                                // Clamp
+                                out[i + c] = Math.max(0, Math.min(255, v));
+                            }
+                            out[i + 3] = 255; // alpha
+                        }
+                        tempCtx.putImageData(outputData, 0, 0);
+                        const diffDataUrl = tempCanvas.toDataURL("image/png");
+                        document.getElementById("optimizedImage").src = diffDataUrl;
+                    };
+                    optimizedImgObj.src = this.optimizedImageDataUrl;
+                }
+
+                setupPhotoViewer() {
+                    const photoViewer = document.getElementById("photoViewer");
+                    const photoViewerImage = document.getElementById("photoViewerImage");
+                    const photoViewerTitle = document.getElementById("photoViewerTitle");
+                    const photoViewerClose = document.getElementById("photoViewerClose");
+                    const photoViewerPrev = document.getElementById("photoViewerPrev");
+                    const photoViewerNext = document.getElementById("photoViewerNext");
+
+                    // Click events to open viewer
+                    document.addEventListener("click", (e) => {
+                        if (e.target.id === "originalImage" && e.target.classList.contains("click-to-view")) {
+                            this.openPhotoViewer("original");
+                        } else if (e.target.id === "optimizedImage" && e.target.classList.contains("click-to-view")) {
+                            this.openPhotoViewer("optimized");
+                        }
+                    });
+
+                    // Close viewer events
+                    photoViewer.addEventListener("click", (e) => {
+                        if (e.target === photoViewer) {
+                            this.closePhotoViewer();
+                        }
+                    });
+
+                    photoViewerClose.addEventListener("click", () => {
+                        this.closePhotoViewer();
+                    });
+
+                    // Navigation events
+                    photoViewerPrev.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        this.switchViewerImage("prev");
+                    });
+
+                    photoViewerNext.addEventListener("click", (e) => {
+                        e.stopPropagation();
+                        this.switchViewerImage("next");
+                    });
+
+                    // Keyboard events
+                    document.addEventListener("keydown", (e) => {
+                        if (photoViewer.classList.contains("active")) {
+                            switch (e.key) {
+                                case "Escape":
+                                    this.closePhotoViewer();
+                                    break;
+                                case "ArrowLeft":
+                                    this.switchViewerImage("prev");
+                                    break;
+                                case "ArrowRight":
+                                    this.switchViewerImage("next");
+                                    break;
+                            }
+                        }
+                    });
+
+                    // Mouse hover events for image switching
+                    photoViewerImage.addEventListener("mousemove", (e) => {
+                        this.handlePhotoViewerMouseMove(e);
+                    });
+
+                    photoViewerImage.addEventListener("mouseleave", () => {
+                        this.handlePhotoViewerMouseLeave();
+                    });
+                }
+
+                openPhotoViewer(imageType) {
+                    if (!this.originalImage || !this.optimizedImageUrl) return;
+
+                    this.currentViewerImage = imageType;
+                    const photoViewer = document.getElementById("photoViewer");
+                    const photoViewerImage = document.getElementById("photoViewerImage");
+                    const photoViewerTitle = document.getElementById("photoViewerTitle");
+
+                    this.updateViewerImage();
+                    photoViewer.classList.add("active");
+                    document.body.style.overflow = "hidden"; // Prevent background scrolling
+                }
+
+                closePhotoViewer() {
+                    const photoViewer = document.getElementById("photoViewer");
+                    photoViewer.classList.remove("active");
+                    document.body.style.overflow = ""; // Restore scrolling
+                }
+
+                switchViewerImage(direction) {
+                    const images = ["original", "optimized"];
+                    if (this.diffMode) {
+                        images.push("diff");
+                    }
+
+                    let currentIndex = images.indexOf(this.currentViewerImage);
+
+                    if (direction === "next") {
+                        currentIndex = (currentIndex + 1) % images.length;
+                    } else {
+                        currentIndex = currentIndex === 0 ? images.length - 1 : currentIndex - 1;
+                    }
+
+                    this.currentViewerImage = images[currentIndex];
+                    this.updateViewerImage();
+                }
+
+                handlePhotoViewerMouseMove(e) {
+                    if (!this.originalImage || !this.optimizedImageUrl) return;
+
+                    const rect = e.target.getBoundingClientRect();
+                    const mouseX = e.clientX - rect.left;
+                    const width = rect.width;
+                    const position = mouseX / width;
+
+                    let targetImage;
+                    if (this.diffMode) {
+                        // Divide into three zones
+                        if (position < 0.33) {
+                            targetImage = "original";
+                        } else if (position < 0.67) {
+                            targetImage = "optimized";
+                        } else {
+                            targetImage = "diff";
+                        }
+                    } else {
+                        // Divide into two zones
+                        if (position < 0.5) {
+                            targetImage = "original";
+                        } else {
+                            targetImage = "optimized";
+                        }
+                    }
+
+                    if (targetImage !== this.currentViewerImage) {
+                        this.currentViewerImage = targetImage;
+                        this.updateViewerImage();
+                    }
+                }
+
+                handlePhotoViewerMouseLeave() {
+                    // Optionally, you can reset to the original image type when mouse leaves
+                    // For now, we'll keep the last hovered image
+                }
+
+                updateViewerImage() {
+                    const photoViewerImage = document.getElementById("photoViewerImage");
+                    const photoViewerTitle = document.getElementById("photoViewerTitle");
+
+                    switch (this.currentViewerImage) {
+                        case "original":
+                            photoViewerImage.src = this.originalImage.src;
+                            photoViewerTitle.textContent = "Original Image";
+                            break;
+                        case "optimized":
+                            photoViewerImage.src = this.optimizedImageUrl;
+                            photoViewerTitle.textContent = "Optimized JPEG";
+                            break;
+                        case "diff":
+                            // Use the diff image if in diff mode
+                            const optimizedImg = document.getElementById("optimizedImage");
+                            photoViewerImage.src = optimizedImg.src;
+                            photoViewerTitle.textContent = "Difference View";
+                            break;
+                    }
+                }
             }
 
-            setupImageComparison(optimizedImg) {
-                // Remove existing event listeners if any
-                optimizedImg.removeEventListener('mousedown', this.startComparison);
-                optimizedImg.removeEventListener('mouseup', this.endComparison);
-                optimizedImg.removeEventListener('mouseleave', this.endComparison);
-                optimizedImg.removeEventListener('touchstart', this.startComparison);
-                optimizedImg.removeEventListener('touchend', this.endComparison);
-
-                // Bind methods to preserve 'this' context
-                this.startComparison = this.startComparison.bind(this);
-                this.endComparison = this.endComparison.bind(this);
-
-                // Add event listeners
-                optimizedImg.addEventListener('mousedown', this.startComparison);
-                optimizedImg.addEventListener('mouseup', this.endComparison);
-                optimizedImg.addEventListener('mouseleave', this.endComparison);
-                optimizedImg.addEventListener('touchstart', this.startComparison);
-                optimizedImg.addEventListener('touchend', this.endComparison);
-            }
-
-            startComparison(e) {
-                e.preventDefault();
-                const optimizedImg = document.getElementById('optimizedImage');
-                optimizedImg.src = this.originalImage.src;
-                optimizedImg.classList.add('comparing');
-            }
-
-            endComparison(e) {
-                e.preventDefault();
-                const optimizedImg = document.getElementById('optimizedImage');
-                optimizedImg.src = this.optimizedImageUrl;
-                optimizedImg.classList.remove('comparing');
-            }
-
-            downloadOptimizedImage() {
-                if (!this.optimizedBlob) return;
-                
-                const a = document.createElement('a');
-                const url = URL.createObjectURL(this.optimizedBlob);
-                const fileName = this.currentFile.name.replace(/\.[^/.]+$/, '') + '_optimized.jpg';
-                
-                a.href = url;
-                a.download = fileName;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-            }
-
-            formatFileSize(bytes) {
-                if (bytes === 0) return '0 Bytes';
-                
-                const k = 1024;
-                const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(k));
-                
-                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-            }
-        }
-
-        // Initialize the application
-        document.addEventListener('DOMContentLoaded', () => {
-            new ImageOptimizer();
-        });
-    </script>
-</body>
-
+            // Initialize the application
+            document.addEventListener("DOMContentLoaded", () => {
+                new ImageOptimizer();
+            });
+        </script>
+    </body>
 </html>
