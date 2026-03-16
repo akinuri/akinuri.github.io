@@ -4,6 +4,7 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Image Optimizer</title>
+        <script src="https://cdn.tailwindcss.com"></script>
         <style>
             * {
                 margin: 0;
@@ -15,21 +16,11 @@
                 font-family:
                     -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
                 background: #f5f5f5;
-                padding: 20px;
                 min-height: 100vh;
             }
 
             .container {
-                max-width: 1920px;
-                margin: 0 auto;
-                background: white;
-                border-radius: 12px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                overflow: hidden;
-            }
-
-            .main-content {
-                padding: 30px;
+                max-width: 1920px !important;
             }
 
             .upload-section {
@@ -64,8 +55,9 @@
             }
 
             .right-panel {
-                background: #f8f9fa;
-                border-radius: 8px;
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
                 padding: 20px;
                 text-align: center;
                 opacity: 0.5;
@@ -80,40 +72,57 @@
                 padding: 15px;
                 background: rgba(102, 126, 234, 0.05);
                 border-radius: 6px;
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                gap: 3rem;
+            }
+
+            .quality-control {
+                flex: 1;
+            }
+
+            .diff-control {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-top: 26px;
             }
 
             .control-group label {
-                display: block;
-                font-weight: 600;
-                color: #333;
+                display: block !important;
+                font-weight: 600 !important;
+                color: #333 !important;
             }
 
             .quality-slider {
-                width: 100%;
-                height: 6px;
-                border-radius: 3px;
-                background: #ddd;
-                outline: none;
-                -webkit-appearance: none;
+                width: 100% !important;
+                height: 6px !important;
+                border-radius: 3px !important;
+                background: #ddd !important;
+                outline: none !important;
+                -webkit-appearance: none !important;
+                appearance: none !important;
             }
 
             .quality-slider::-webkit-slider-thumb {
-                -webkit-appearance: none;
-                appearance: none;
-                width: 24px;
-                height: 24px;
-                border-radius: 50%;
-                background: #667eea;
-                cursor: pointer;
+                -webkit-appearance: none !important;
+                appearance: none !important;
+                width: 24px !important;
+                height: 24px !important;
+                border-radius: 50% !important;
+                background: #667eea !important;
+                cursor: pointer !important;
+                border: none !important;
             }
 
             .quality-slider::-moz-range-thumb {
-                width: 24px;
-                height: 24px;
-                border-radius: 50%;
-                background: #667eea;
-                cursor: pointer;
-                border: none;
+                width: 24px !important;
+                height: 24px !important;
+                border-radius: 50% !important;
+                background: #667eea !important;
+                cursor: pointer !important;
+                border: none !important;
             }
 
             .quality-display {
@@ -124,8 +133,9 @@
             }
 
             .left-panel {
-                background: #f8f9fa;
-                border-radius: 8px;
+                background: white;
+                border-radius: 12px;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
                 padding: 20px;
                 text-align: center;
                 align-self: start;
@@ -158,10 +168,16 @@
 
             .original-content {
                 display: none;
+                transition: all 0.3s ease;
             }
 
             .original-content.active {
                 display: block;
+            }
+
+            .original-content.drag-over {
+                background: #f0fff4;
+                border-radius: 8px;
             }
 
             .original-image {
@@ -181,8 +197,18 @@
             }
 
             .preview-card h3 {
-                margin-bottom: 15px;
-                color: #333;
+                margin-bottom: 15px !important;
+                color: #333 !important;
+                font-size: 1.125rem !important;
+                font-weight: 600 !important;
+            }
+
+            .left-panel h3,
+            .right-panel h3 {
+                margin-bottom: 15px !important;
+                color: #333 !important;
+                font-size: 1.125rem !important;
+                font-weight: 600 !important;
             }
 
             .preview-image {
@@ -251,24 +277,47 @@
             }
 
             .download-btn {
-                background: #38a169;
-                color: white;
-                border: none;
-                padding: 12px 24px;
-                border-radius: 6px;
-                cursor: pointer;
-                font-size: 1em;
-                margin-top: 15px;
-                transition: background 0.3s;
+                background: #38a169 !important;
+                color: white !important;
+                border: none !important;
+                padding: 12px 24px !important;
+                border-radius: 6px !important;
+                cursor: pointer !important;
+                font-size: 1em !important;
+                margin-top: 15px !important;
+                transition: background 0.3s !important;
+                font-family: inherit !important;
             }
 
             .download-btn:hover {
-                background: #2f855a;
+                background: #2f855a !important;
             }
 
             .download-btn:disabled {
-                background: #a0aec0;
-                cursor: not-allowed;
+                background: #a0aec0 !important;
+                cursor: not-allowed !important;
+            }
+
+            .reset-btn {
+                background: #e53e3e !important;
+                color: white !important;
+                border: none !important;
+                padding: 8px 20px !important;
+                border-radius: 6px !important;
+                cursor: pointer !important;
+                font-size: 0.9em !important;
+                margin-top: 15px !important;
+                transition: background 0.3s !important;
+                font-family: inherit !important;
+            }
+
+            .reset-btn:hover {
+                background: #c53030 !important;
+            }
+
+            .reset-btn:disabled {
+                background: #a0aec0 !important;
+                cursor: not-allowed !important;
             }
 
             /* Photo Viewer Styles */
@@ -281,7 +330,6 @@
                 height: 100%;
                 background: rgba(0, 0, 0, 0.85);
                 z-index: 1000;
-                cursor: pointer;
             }
 
             .photo-viewer.active {
@@ -309,22 +357,23 @@
                 position: absolute;
                 top: 50%;
                 transform: translateY(-50%);
-                background: rgba(255, 255, 255, 0.6);
-                border: none;
-                border-radius: 50%;
-                width: 50px;
-                height: 50px;
-                cursor: pointer;
-                font-size: 20px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: all 0.3s ease;
+                background: rgba(255, 255, 255, 0.6) !important;
+                border: none !important;
+                border-radius: 50% !important;
+                width: 50px !important;
+                height: 50px !important;
+                cursor: pointer !important;
+                font-size: 20px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                transition: all 0.3s ease !important;
+                color: #333 !important;
             }
 
             .photo-viewer-nav:hover {
-                background: rgba(255, 255, 255, 0.8);
-                transform: translateY(-50%);
+                background: rgba(255, 255, 255, 0.8) !important;
+                transform: translateY(-50%) !important;
             }
 
             .photo-viewer-nav.prev {
@@ -339,26 +388,26 @@
                 position: absolute;
                 top: 15px;
                 right: 15px;
-                background: rgba(128, 128, 128, 0.8);
+                background: rgba(128, 128, 128, 0.8) !important;
                 backdrop-filter: blur(10px);
                 -webkit-backdrop-filter: blur(10px);
-                border: none;
-                border-radius: 50%;
-                width: 40px;
-                height: 40px;
-                cursor: pointer;
-                font-size: 18px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: all 0.3s ease;
-                color: white;
+                border: none !important;
+                border-radius: 50% !important;
+                width: 40px !important;
+                height: 40px !important;
+                cursor: pointer !important;
+                font-size: 18px !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                transition: all 0.3s ease !important;
+                color: white !important;
                 text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             }
 
             .photo-viewer-close:hover {
-                background: rgba(96, 96, 96, 0.9);
+                background: rgba(96, 96, 96, 0.9) !important;
                 box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
             }
 
@@ -432,9 +481,8 @@
     </head>
 
     <body>
-        <div class="container">
-            <div class="main-content">
-                <div class="preview-section">
+        <div class="container mx-auto p-4 md:p-8">
+            <div class="preview-section">
                     <div class="left-panel">
                         <h3>Original Image</h3>
                         <div class="drop-area" id="dropArea">
@@ -453,6 +501,8 @@
                             <div>Dimensions: <span id="originalDimensions">-</span></div>
                             <div class="size original">Size: <span id="originalSize">-</span></div>
                         </div>
+                        
+                        <button id="resetBtn" class="reset-btn" disabled>Reset</button>
                     </div>
 
                     <div class="right-panel" id="rightPanel">
@@ -468,28 +518,28 @@
                         </div>
 
                         <div class="control-group">
-                            <label for="qualitySlider">JPEG Quality</label>
-                            <input
-                                type="range"
-                                id="qualitySlider"
-                                class="quality-slider"
-                                min="1"
-                                max="100"
-                                value="80"
-                            />
-                            <div class="quality-display" id="qualityDisplay">80%</div>
-                            <div
-                                style="margin-top: 15px; text-align: left; display: flex; align-items: center; gap: 5px"
-                            >
+                            <div class="quality-control">
+                                <label for="qualitySlider">JPEG Quality</label>
+                                <input
+                                    type="range"
+                                    id="qualitySlider"
+                                    class="quality-slider"
+                                    min="1"
+                                    max="100"
+                                    value="80"
+                                />
+                                <div class="quality-display" id="qualityDisplay">80%</div>
+                            </div>
+                            <div class="diff-control">
                                 <input type="checkbox" id="diffCheckbox" />
                                 <label for="diffCheckbox">Diff View</label>
                             </div>
                         </div>
 
-                        <button id="downloadBtn" class="download-btn" disabled>Download Optimized Image</button>
+                        <button id="downloadBtn" class="download-btn" disabled>Download</button>
                     </div>
                 </div>
-                <input type="file" id="imageInput" accept="image/*" style="display: none" />
+                <input type="file" id="imageInput" accept="image/*" style="display: none !important;" />
             </div>
         </div>
 
@@ -525,6 +575,7 @@
 
                 initializeEventListeners() {
                     const dropArea = document.getElementById("dropArea");
+                    const originalContent = document.getElementById("originalContent");
                     const fileInput = document.getElementById("imageInput");
 
                     // File input change event
@@ -532,32 +583,58 @@
                         this.handleFileSelect(e.target.files[0]);
                     });
 
+                    // Setup drag and drop for both drop area and original content
+                    this.setupDragAndDrop(dropArea);
+                    this.setupDragAndDrop(originalContent);
+
+                    document.getElementById("qualitySlider").addEventListener("input", (e) => {
+                        this.updateQualityWithDebounce(parseInt(e.target.value));
+                    });
+
+                    document.getElementById("downloadBtn").addEventListener("click", () => {
+                        this.downloadOptimizedImage();
+                    });
+
+                    document.getElementById("resetBtn").addEventListener("click", () => {
+                        this.resetState();
+                    });
+
+                    document.getElementById("diffCheckbox").addEventListener("change", (e) => {
+                        this.diffMode = e.target.checked;
+                        this.updateDiffMode();
+                    });
+
+                    // Photo viewer event listeners
+                    this.setupPhotoViewer();
+                }
+
+                setupDragAndDrop(element) {
                     // Drag and drop events
                     ["dragenter", "dragover", "dragleave", "drop"].forEach((eventName) => {
-                        dropArea.addEventListener(eventName, this.preventDefaults, false);
+                        element.addEventListener(eventName, this.preventDefaults, false);
                     });
 
                     ["dragenter", "dragover"].forEach((eventName) => {
-                        dropArea.addEventListener(
+                        element.addEventListener(
                             eventName,
                             () => {
-                                dropArea.classList.add("drag-over");
+                                element.classList.add("drag-over");
                             },
                             false,
                         );
                     });
 
                     ["dragleave", "drop"].forEach((eventName) => {
-                        dropArea.addEventListener(
+                        element.addEventListener(
                             eventName,
                             () => {
-                                dropArea.classList.remove("drag-over");
+                                element.classList.remove("drag-over");
                             },
                             false,
                         );
                     });
 
-                    dropArea.addEventListener(
+                    element.addEventListener(
                         "drop",
                         (e) => {
                             const files = e.dataTransfer.files;
@@ -568,26 +645,12 @@
                         false,
                     );
 
-                    // Click to browse
-                    dropArea.addEventListener("click", () => {
-                        fileInput.click();
-                    });
-
-                    document.getElementById("qualitySlider").addEventListener("input", (e) => {
-                        this.updateQualityWithDebounce(parseInt(e.target.value));
-                    });
-
-                    document.getElementById("downloadBtn").addEventListener("click", () => {
-                        this.downloadOptimizedImage();
-                    });
-
-                    document.getElementById("diffCheckbox").addEventListener("change", (e) => {
-                        this.diffMode = e.target.checked;
-                        this.updateDiffMode();
-                    });
-
-                    // Photo viewer event listeners
-                    this.setupPhotoViewer();
+                    // Click to browse (only for drop area, not original content)
+                    if (element.id === "dropArea") {
+                        element.addEventListener("click", () => {
+                            document.getElementById("imageInput").click();
+                        });
+                    }
                 }
 
                 preventDefaults(e) {
@@ -628,12 +691,14 @@
                     const originalImg = document.getElementById("originalImage");
                     const dropArea = document.getElementById("dropArea");
                     const originalContent = document.getElementById("originalContent");
+                    const resetBtn = document.getElementById("resetBtn");
 
                     originalImg.src = this.originalImage.src;
 
                     // Hide entire drop area and show original preview
                     dropArea.style.display = "none";
                     originalContent.classList.add("active");
+                    resetBtn.disabled = false;
 
                     // Make original image clickable for photo viewer
                     originalImg.classList.add("click-to-view");
@@ -829,6 +894,63 @@
                     const i = Math.floor(Math.log(bytes) / Math.log(k));
 
                     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+                }
+
+                resetState() {
+                    // Reset all state variables
+                    this.currentFile = null;
+                    this.originalImage = null;
+                    this.optimizedBlob = null;
+                    this.optimizedImageUrl = null;
+                    
+                    // Clear debounce timer
+                    if (this.debounceTimer) {
+                        clearTimeout(this.debounceTimer);
+                        this.debounceTimer = null;
+                    }
+
+                    // Reset UI elements
+                    const dropArea = document.getElementById("dropArea");
+                    const originalContent = document.getElementById("originalContent");
+                    const resetBtn = document.getElementById("resetBtn");
+                    const rightPanel = document.getElementById("rightPanel");
+                    const imagePlaceholder = document.getElementById("imagePlaceholder");
+                    const optimizedImage = document.getElementById("optimizedImage");
+                    const downloadBtn = document.getElementById("downloadBtn");
+                    const qualitySlider = document.getElementById("qualitySlider");
+                    const qualityDisplay = document.getElementById("qualityDisplay");
+
+                    // Show drop area, hide original content
+                    dropArea.style.display = "flex";
+                    originalContent.classList.remove("active");
+                    resetBtn.disabled = true;
+
+                    // Reset right panel
+                    rightPanel.classList.remove("active");
+                    imagePlaceholder.style.display = "flex";
+                    optimizedImage.style.display = "none";
+                    downloadBtn.disabled = true;
+
+                    // Reset quality slider to default
+                    qualitySlider.value = "80";
+                    qualityDisplay.textContent = "80%";
+
+                    // Reset file info displays
+                    document.getElementById("originalFormat").textContent = "-";
+                    document.getElementById("originalDimensions").textContent = "-";
+                    document.getElementById("originalSize").textContent = "-";
+                    document.getElementById("optimizedDimensions").textContent = "-";
+                    document.getElementById("optimizedSize").textContent = "-";
+                    document.getElementById("reduction").textContent = "-";
+
+                    // Clear file input
+                    document.getElementById("imageInput").value = "";
+
+                    // Clean up any size comparison classes
+                    const optimizedSizeElement = document.querySelector('.size.optimized');
+                    if (optimizedSizeElement) {
+                        optimizedSizeElement.classList.remove('bigger', 'smaller');
+                    }
                 }
 
                 updateDiffMode() {
