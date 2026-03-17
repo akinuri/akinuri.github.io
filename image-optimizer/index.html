@@ -166,6 +166,11 @@
                 background: #f0fff4;
             }
 
+            .drop-area.global-drag {
+                border-color: #9ca3af;
+                background: #f3f4f6;
+            }
+
             .original-content {
                 display: none;
                 transition: all 0.3s ease;
@@ -178,6 +183,15 @@
             .original-content.drag-over {
                 background: #f0fff4;
                 border-radius: 8px;
+                outline: 2px dashed #38a169;
+                transition: none !important;
+            }
+
+            .original-content.global-drag {
+                background: #f3f4f6;
+                border-radius: 8px;
+                outline: 2px dashed #9ca3af;
+                transition: none !important;
             }
 
             .original-image {
@@ -587,6 +601,9 @@
                     this.setupDragAndDrop(dropArea);
                     this.setupDragAndDrop(originalContent);
 
+                    // Setup global drag detection
+                    this.setupGlobalDragDetection();
+
                     document.getElementById("qualitySlider").addEventListener("input", (e) => {
                         this.updateQualityWithDebounce(parseInt(e.target.value));
                     });
@@ -614,10 +631,12 @@
                         element.addEventListener(eventName, this.preventDefaults, false);
                     });
 
+                    // Local hover effects (green, overrides global gray)
                     ["dragenter", "dragover"].forEach((eventName) => {
                         element.addEventListener(
                             eventName,
                             () => {
+                                element.classList.remove("global-drag");
                                 element.classList.add("drag-over");
                             },
                             false,
@@ -629,6 +648,14 @@
                             eventName,
                             () => {
                                 element.classList.remove("drag-over");
+                                // Restore global drag if still dragging over page
+                                if (eventName === "dragleave") {
+                                    setTimeout(() => {
+                                        if (!element.classList.contains("drag-over")) {
+                                            element.classList.add("global-drag");
+                                        }
+                                    }, 10);
+                                }
                             },
                             false,
                         );
@@ -650,6 +677,59 @@
                         element.addEventListener("click", () => {
                             document.getElementById("imageInput").click();
                         });
+                    }
+                }
+
+                setupGlobalDragDetection() {
+                    let dragCounter = 0;
+
+                    // Prevent default browser behavior for all drag/drop operations
+                    document.addEventListener("dragover", (e) => {
+                        e.preventDefault();
+                    });
+
+                    document.addEventListener("drop", (e) => {
+                        e.preventDefault();
+                    });
+
+                    // Detect when files are dragged over the page
+                    document.addEventListener("dragenter", (e) => {
+                        // Only respond to file drags
+                        if (e.dataTransfer && e.dataTransfer.types.includes("Files")) {
+                            dragCounter++;
+                            this.highlightDropZone(true);
+                        }
+                    });
+
+                    document.addEventListener("dragleave", (e) => {
+                        dragCounter--;
+                        if (dragCounter <= 0) {
+                            dragCounter = 0;
+                            this.highlightDropZone(false);
+                        }
+                    });
+
+                    document.addEventListener("drop", (e) => {
+                        dragCounter = 0;
+                        this.highlightDropZone(false);
+                    });
+                }
+
+                highlightDropZone(highlight) {
+                    const dropArea = document.getElementById("dropArea");
+                    const originalContent = document.getElementById("originalContent");
+                    
+                    if (highlight) {
+                        // Add global drag highlight (gray)
+                        if (dropArea.style.display !== "none") {
+                            dropArea.classList.add("global-drag");
+                        } else if (originalContent.classList.contains("active")) {
+                            originalContent.classList.add("global-drag");
+                        }
+                    } else {
+                        // Remove both global and local highlights
+                        dropArea.classList.remove("global-drag", "drag-over");
+                        originalContent.classList.remove("global-drag", "drag-over");
                     }
                 }
 
