@@ -68,7 +68,7 @@
             }
 
             .control-group {
-                margin: 20px 0;
+                margin-top: 20px;
                 padding: 15px;
                 background: rgba(102, 126, 234, 0.05);
                 border-radius: 6px;
@@ -76,6 +76,70 @@
                 justify-content: space-between;
                 align-items: flex-start;
                 gap: 3rem;
+            }
+
+            .dimensions-inputs {
+                display: block;
+                margin-bottom: 15px;
+            }
+
+            .dimension-input {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 10px;
+            }
+
+            .dimension-input:last-child {
+                margin-bottom: 0;
+            }
+
+            .dimension-input label {
+                font-size: 0.9em !important;
+                color: #666 !important;
+                white-space: nowrap !important;
+                margin: 0 !important;
+            }
+
+            .dimension-field {
+                width: 100px !important;
+                padding: 6px 10px !important;
+                border: 2px solid #e2e8f0 !important;
+                border-radius: 4px !important;
+                font-size: 14px !important;
+                background: white !important;
+                transition: border-color 0.3s !important;
+            }
+
+            .dimension-field:focus {
+                outline: none !important;
+                border-color: #667eea !important;
+            }
+
+            .dimension-reset {
+                text-align: left;
+                margin-top: 5px;
+            }
+
+            .reset-dimensions-btn {
+                background: #667eea !important;
+                color: white !important;
+                border: none !important;
+                padding: 6px 12px !important;
+                border-radius: 4px !important;
+                cursor: pointer !important;
+                font-size: 0.8em !important;
+                transition: background 0.3s !important;
+                font-family: inherit !important;
+            }
+
+            .reset-dimensions-btn:hover {
+                background: #5a67d8 !important;
+            }
+
+            .reset-dimensions-btn:disabled {
+                background: #a0aec0 !important;
+                cursor: not-allowed !important;
             }
 
             .quality-control {
@@ -531,7 +595,48 @@
                             <div>Reduction: <span id="reduction">-</span></div>
                         </div>
 
-                        <div class="control-group">
+
+
+                        <div class="control-group border border-slate-200/50">
+                            <div class="dimensions-control">
+                                <label>Dimensions (px)</label>
+                                <div class="dimensions-inputs">
+                                    <div class="dimension-input">
+                                        <label for="widthInput">Width:</label>
+                                        <input type="number" id="widthInput" class="dimension-field" list="widthSuggestions" min="1" placeholder="Auto" />
+                                        <datalist id="widthSuggestions">
+                                            <option value="500"></option>
+                                            <option value="640"></option>
+                                            <option value="800"></option>
+                                            <option value="1024"></option>
+                                            <option value="1200"></option>
+                                            <option value="1280"></option>
+                                            <option value="1366"></option>
+                                            <option value="1440"></option>
+                                            <option value="1600"></option>
+                                            <option value="1920"></option>
+                                        </datalist>
+                                    </div>
+                                    <div class="dimension-input">
+                                        <label for="heightInput">Height:</label>
+                                        <input type="number" id="heightInput" class="dimension-field" list="heightSuggestions" min="1" placeholder="Auto" />
+                                        <datalist id="heightSuggestions">
+                                            <option value="480"></option>
+                                            <option value="500"></option>
+                                            <option value="600"></option>
+                                            <option value="720"></option>
+                                            <option value="768"></option>
+                                            <option value="800"></option>
+                                            <option value="900"></option>
+                                            <option value="1000"></option>
+                                            <option value="1080"></option>
+                                        </datalist>
+                                    </div>
+                                </div>
+                                <div class="dimension-reset">
+                                    <button id="resetDimensions" class="reset-dimensions-btn">Reset</button>
+                                </div>
+                            </div>
                             <div class="quality-control">
                                 <label for="qualitySlider">JPEG Quality</label>
                                 <input
@@ -584,6 +689,11 @@
                     this.optimizedImageUrl = null;
                     this.optimizedImageDataUrl = null;
                     this.currentViewerImage = "original"; // 'original', 'optimized', or 'diff'
+                    this.originalWidth = null;
+                    this.originalHeight = null;
+                    this.aspectRatio = null;
+                    this.targetWidth = null;
+                    this.targetHeight = null;
                     this.initializeEventListeners();
                 }
 
@@ -619,6 +729,19 @@
                     document.getElementById("diffCheckbox").addEventListener("change", (e) => {
                         this.diffMode = e.target.checked;
                         this.updateDiffMode();
+                    });
+
+                    // Dimensions control event listeners
+                    document.getElementById("widthInput").addEventListener("input", (e) => {
+                        this.handleWidthChange(e.target.value);
+                    });
+
+                    document.getElementById("heightInput").addEventListener("input", (e) => {
+                        this.handleHeightChange(e.target.value);
+                    });
+
+                    document.getElementById("resetDimensions").addEventListener("click", () => {
+                        this.resetDimensions();
                     });
 
                     // Photo viewer event listeners
@@ -759,8 +882,14 @@
 
                     img.onload = () => {
                         this.originalImage = img;
+                        this.originalWidth = img.width;
+                        this.originalHeight = img.height;
+                        this.aspectRatio = img.width / img.height;
+                        this.targetWidth = img.width;
+                        this.targetHeight = img.height;
                         this.displayOriginalImage();
                         this.showControls();
+                        this.initializeDimensionControls();
                         this.optimizeImage();
                     };
 
@@ -819,13 +948,13 @@
                 optimizeImage() {
                     const quality = parseInt(document.getElementById("qualitySlider").value) / 100;
 
-                    // Set canvas dimensions to match image
-                    this.canvas.width = this.originalImage.width;
-                    this.canvas.height = this.originalImage.height;
+                    // Set canvas dimensions to target dimensions
+                    this.canvas.width = this.targetWidth;
+                    this.canvas.height = this.targetHeight;
 
-                    // Clear and draw image
+                    // Clear and draw image with resizing
                     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                    this.ctx.drawImage(this.originalImage, 0, 0);
+                    this.ctx.drawImage(this.originalImage, 0, 0, this.targetWidth, this.targetHeight);
 
                     // Convert to JPEG with specified quality
                     this.canvas.toBlob(
@@ -1014,6 +1143,21 @@
                     // Reset quality slider to default
                     qualitySlider.value = "80";
                     qualityDisplay.textContent = "80%";
+
+                    // Reset dimensions state variables
+                    this.originalWidth = null;
+                    this.originalHeight = null;
+                    this.aspectRatio = null;
+                    this.targetWidth = null;
+                    this.targetHeight = null;
+
+                    // Reset dimension inputs
+                    document.getElementById("widthInput").value = "";
+                    document.getElementById("heightInput").value = "";
+                    document.getElementById("resetDimensions").disabled = true;
+
+                    // Reset diff checkbox
+                    document.getElementById("diffCheckbox").checked = false;
 
                     // Reset file info displays
                     document.getElementById("originalFormat").textContent = "-";
@@ -1253,6 +1397,116 @@
                             photoViewerTitle.textContent = "Difference View";
                             break;
                     }
+                }
+
+                initializeDimensionControls() {
+                    const widthInput = document.getElementById("widthInput");
+                    const heightInput = document.getElementById("heightInput");
+                    const resetBtn = document.getElementById("resetDimensions");
+
+                    // Set max values to original dimensions
+                    widthInput.max = this.originalWidth;
+                    heightInput.max = this.originalHeight;
+
+                    // Set placeholders to show original dimensions
+                    widthInput.placeholder = this.originalWidth.toString();
+                    heightInput.placeholder = this.originalHeight.toString();
+
+                    // Enable reset button
+                    resetBtn.disabled = false;
+
+                    // Apply existing custom dimensions if any are set
+                    if (widthInput.value) {
+                        this.handleWidthChange(widthInput.value);
+                    } else if (heightInput.value) {
+                        this.handleHeightChange(heightInput.value);
+                    }
+                }
+
+                handleWidthChange(value) {
+                    const widthInput = document.getElementById("widthInput");
+                    const heightInput = document.getElementById("heightInput");
+
+                    if (value === "" || value === null) {
+                        // Reset to original dimensions
+                        this.targetWidth = this.originalWidth;
+                        this.targetHeight = this.originalHeight;
+                        heightInput.value = "";
+                    } else {
+                        const width = parseInt(value);
+                        if (width > 0) {
+                            // Constrain to original width
+                            const constrainedWidth = Math.min(width, this.originalWidth);
+                            if (constrainedWidth !== width) {
+                                widthInput.value = constrainedWidth;
+                            }
+
+                            // Calculate height maintaining aspect ratio
+                            const calculatedHeight = Math.round(constrainedWidth / this.aspectRatio);
+                            const constrainedHeight = Math.min(calculatedHeight, this.originalHeight);
+
+                            // If height would exceed original, scale both down
+                            if (constrainedHeight < calculatedHeight) {
+                                const scaledWidth = Math.round(constrainedHeight * this.aspectRatio);
+                                this.targetWidth = scaledWidth;
+                                this.targetHeight = constrainedHeight;
+                                widthInput.value = scaledWidth;
+                                heightInput.value = constrainedHeight;
+                            } else {
+                                this.targetWidth = constrainedWidth;
+                                this.targetHeight = constrainedHeight;
+                                heightInput.value = constrainedHeight;
+                            }
+                        }
+                    }
+                    this.updateQualityWithDebounce(parseInt(document.getElementById("qualitySlider").value));
+                }
+
+                handleHeightChange(value) {
+                    const widthInput = document.getElementById("widthInput");
+                    const heightInput = document.getElementById("heightInput");
+
+                    if (value === "" || value === null) {
+                        // Reset to original dimensions
+                        this.targetWidth = this.originalWidth;
+                        this.targetHeight = this.originalHeight;
+                        widthInput.value = "";
+                    } else {
+                        const height = parseInt(value);
+                        if (height > 0) {
+                            // Constrain to original height
+                            const constrainedHeight = Math.min(height, this.originalHeight);
+                            if (constrainedHeight !== height) {
+                                heightInput.value = constrainedHeight;
+                            }
+
+                            // Calculate width maintaining aspect ratio
+                            const calculatedWidth = Math.round(constrainedHeight * this.aspectRatio);
+                            const constrainedWidth = Math.min(calculatedWidth, this.originalWidth);
+
+                            // If width would exceed original, scale both down
+                            if (constrainedWidth < calculatedWidth) {
+                                const scaledHeight = Math.round(constrainedWidth / this.aspectRatio);
+                                this.targetWidth = constrainedWidth;
+                                this.targetHeight = scaledHeight;
+                                widthInput.value = constrainedWidth;
+                                heightInput.value = scaledHeight;
+                            } else {
+                                this.targetWidth = constrainedWidth;
+                                this.targetHeight = constrainedHeight;
+                                widthInput.value = constrainedWidth;
+                            }
+                        }
+                    }
+                    this.updateQualityWithDebounce(parseInt(document.getElementById("qualitySlider").value));
+                }
+
+                resetDimensions() {
+                    this.targetWidth = this.originalWidth;
+                    this.targetHeight = this.originalHeight;
+                    document.getElementById("widthInput").value = "";
+                    document.getElementById("heightInput").value = "";
+                    this.updateQualityWithDebounce(parseInt(document.getElementById("qualitySlider").value));
                 }
             }
 
