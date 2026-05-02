@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sahibinden Listing Viewer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'sahibinden': '#f39c12',
+                        'sahibinden-dark': '#e67e22'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 min-h-screen pb-[calc(5vh_+_4rem)]">
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <div class="bg-white rounded-lg shadow-md p-6 mb-24">
+            <h1 class="text-3xl font-bold text-gray-800 mb-4">🚗 Sahibinden Listing Viewer</h1>
+            
+            <!-- JSON Input -->
+            <div class="mb-4">
+                <label for="jsonInput" class="block text-sm font-medium text-gray-700 mb-2">
+                    Listing JSON Data:
+                </label>
+                <textarea 
+                    id="jsonInput" 
+                    rows="4" 
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-sahibinden focus:border-sahibinden resize-vertical"
+                    placeholder="Paste the listing JSON data here..."
+                ></textarea>
+            </div>
+            
+            <div class="flex gap-3">
+                <button 
+                    id="parseBtn" 
+                    class="bg-sahibinden hover:bg-sahibinden-dark text-white px-6 py-2 rounded-md font-medium transition-colors"
+                >
+                    Parse & Display
+                </button>
+                <button 
+                    id="loadSampleBtn" 
+                    class="bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-md font-medium transition-colors"
+                >
+                    Load Sample
+                </button>
+                <button 
+                    id="clearBtn" 
+                    class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-md font-medium transition-colors"
+                >
+                    Clear
+                </button>
+            </div>
+            
+            <div id="errorMsg" class="mt-3 text-red-600 text-sm hidden"></div>
+        </div>
+
+        <!-- Listing Display -->
+        <div id="listingDisplay" class="hidden">
+            <!-- Basic Info Card -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="border-b border-gray-200 pb-4 mb-4">
+                    <h2 id="listingTitle" class="text-2xl font-bold text-gray-800 mb-2"></h2>
+                    <p id="breadcrumb" class="text-gray-600 text-sm"></p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="space-y-3">
+                        <div class="flex items-center">
+                            <span class="text-3xl font-bold text-sahibinden" id="price"></span>
+                        </div>
+                        <div class="text-gray-600">
+                            <div class="flex items-center mb-1">
+                                <span class="text-sm">📍</span>
+                                <span class="ml-2 text-sm" id="location"></span>
+                            </div>
+                            <div class="flex items-center">
+                                <span class="text-sm">📅</span>
+                                <span class="ml-2 text-sm" id="listingDate"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <div class="text-sm"><span class="font-semibold">İlan No:</span> <span id="listingId"></span></div>
+                        <div class="text-sm"><span class="font-semibold">Kimden:</span> <span id="lister"></span></div>
+                        <div class="text-sm"><span class="font-semibold">Takas:</span> <span id="trade"></span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Images Card -->
+            <div id="imagesCard" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">📷 Fotoğraflar</h3>
+                <div id="imagesContainer" class="flex gap-4 overflow-x-auto pb-2"></div>
+            </div>
+
+            <!-- Vehicle Details Card -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">🚙 Araç Bilgileri</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="space-y-2">
+                        <div class="text-sm"><span class="font-semibold">Marka:</span> <span id="brand"></span></div>
+                        <div class="text-sm"><span class="font-semibold">Seri:</span> <span id="series"></span></div>
+                        <div class="text-sm"><span class="font-semibold">Model:</span> <span id="model"></span></div>
+                        <div class="text-sm"><span class="font-semibold">Yıl:</span> <span id="year"></span></div>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <div class="text-sm"><span class="font-semibold">Yakıt Tipi:</span> <span id="fuelType"></span></div>
+                        <div class="text-sm"><span class="font-semibold">Vites:</span> <span id="transmission"></span></div>
+                        <div class="text-sm"><span class="font-semibold">KM:</span> <span id="mileage"></span></div>
+                        <div class="text-sm"><span class="font-semibold">Renk:</span> <span id="color"></span></div>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <div class="text-sm"><span class="font-semibold">Kasa Tipi:</span> <span id="bodyType"></span></div>
+                        <div class="text-sm"><span class="font-semibold">Motor Gücü:</span> <span id="enginePower"></span></div>
+                        <div class="text-sm"><span class="font-semibold">Motor Hacmi:</span> <span id="engineVolume"></span></div>
+                        <div class="text-sm"><span class="font-semibold">Çekiş:</span> <span id="cekis"></span></div>
+                    </div>
+                </div>
+                
+                <div class="mt-4 pt-4 border-t border-gray-200">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="text-sm"><span class="font-semibold">Araç Durumu:</span> <span id="state"></span></div>
+                        <div class="text-sm"><span class="font-semibold">Garanti:</span> <span id="warranty"></span></div>
+                        <div class="text-sm"><span class="font-semibold">Ağır Hasar:</span> <span id="heavilyDamaged"></span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Info Card -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">📞 İletişim Bilgileri</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <div class="text-sm"><span class="font-semibold">Kullanıcı:</span> <span id="username"></span></div>
+                        <div class="text-sm"><span class="font-semibold">Üyelik Tarihi:</span> <span id="userRegistrationDate"></span></div>
+                    </div>
+                    <div class="space-y-2">
+                        <div class="text-sm"><span class="font-semibold">Telefon:</span> <span id="userMobilePhone" class="font-mono bg-gray-100 px-2 py-1 rounded"></span></div>
+                        <div class="text-sm"><span class="font-semibold">Plaka:</span> <span id="licencePlate"></span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description Card -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">📝 Açıklama</h3>
+                <div id="description" class="text-sm text-gray-700 leading-relaxed whitespace-pre-line"></div>
+            </div>
+
+            <!-- Features Card -->
+            <div id="featuresCard" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">⭐ Özellikler</h3>
+                <div id="featuresContainer"></div>
+            </div>
+
+            <!-- Damages Card -->
+            <div id="damagesCard" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">⚠️ Hasar Bilgileri</h3>
+                <div id="damagesContainer"></div>
+            </div>
+
+            <!-- Specs Card -->
+            <div id="specsCard" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+                <h3 class="text-xl font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">🔧 Teknik Özellikler</h3>
+                <div id="specsContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Viewer Modal -->
+    <div id="imageViewer" class="hidden fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center">
+        <button id="closeViewer" class="absolute top-4 right-4 text-white text-5xl hover:text-gray-300 z-10 bg-black bg-opacity-50 rounded-full w-16 h-16 flex items-center justify-center">
+            ✕
+        </button>
+        <button id="prevImage" class="absolute left-16 top-1/2 transform -translate-y-1/2 text-white text-8xl hover:text-gray-300 z-10 bg-black bg-opacity-50 rounded-full w-20 h-20 flex items-center justify-center pb-6">
+            ‹
+        </button>
+        <button id="nextImage" class="absolute right-16 top-1/2 transform -translate-y-1/2 text-white text-8xl hover:text-gray-300 z-10 bg-black bg-opacity-50 rounded-full w-20 h-20 flex items-center justify-center pb-6">
+            ›
+        </button>
+        <div class="max-w-full max-h-full p-8 flex flex-col items-center relative">
+            <img id="viewerImage" class="max-w-full max-h-full object-contain" style="transform: scale(2);" src="" alt="">
+            <div id="imageCounter" class="absolute -bottom-28 text-white text-lg font-bold bg-black bg-opacity-70 px-3 py-2 rounded-lg"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentListing = null;
+        let currentImages = [];
+        let currentImageIndex = 0;
+
+        // Image viewer functions
+        function openImageViewer(images, index) {
+            currentImages = images;
+            currentImageIndex = index;
+            showCurrentImage();
+            document.getElementById('imageViewer').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeImageViewer() {
+            document.getElementById('imageViewer').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function showCurrentImage() {
+            if (currentImages.length === 0) return;
+            
+            const image = currentImages[currentImageIndex];
+            const viewerImage = document.getElementById('viewerImage');
+            const counter = document.getElementById('imageCounter');
+            
+            // Use the base64 thumbnail data for viewer too (since we have it locally)
+            viewerImage.src = image.thumb;
+            counter.textContent = `${currentImageIndex + 1} / ${currentImages.length}`;
+        }
+
+        function nextImage() {
+            if (currentImageIndex < currentImages.length - 1) {
+                currentImageIndex++;
+            } else {
+                currentImageIndex = 0; // Loop back to first image
+            }
+            showCurrentImage();
+        }
+
+        function prevImage() {
+            if (currentImageIndex > 0) {
+                currentImageIndex--;
+            } else {
+                currentImageIndex = currentImages.length - 1; // Loop back to last image
+            }
+            showCurrentImage();
+        }
+
+        // Sample data from listing.txt
+        const sampleData = {
+            "title": "DÜŞÜK KM, HATASIZ MOTOR",
+            "images": [],
+            "breadcrumb": "Vasıta > Otomobil > Fiat > Punto > 1.3 Multijet > Pop",
+            "price": "458.000 TL",
+            "location": "Bursa / Nilüfer / Altınşehir Mh.",
+            "listingId": "1234567890",
+            "listingDate": "26 Eylül 2021",
+            "brand": "Fiat",
+            "series": "Punto",
+            "model": "1.3 Multijet Pop",
+            "year": "2013",
+            "fuelType": "Dizel",
+            "transmission": "Manuel",
+            "state": "İkinci El",
+            "mileage": "111.000",
+            "bodyType": "Hatchback 5 kapı",
+            "enginePower": "75 hp",
+            "engineVolume": "1248 cc",
+            "Çekiş": "Önden Çekiş",
+            "color": "Beyaz",
+            "warranty": "Hayır",
+            "heavilyDamaged": "Hayır",
+            "licencePlate": "Türkiye (TR) Plakalı",
+            "lister": "Sahibinden",
+            "trade": "Evet",
+            "username": "Mehmet Yılmaz",
+            "userRegistrationDate": "Mart 2018",
+            "userMobilePhone": "0 (543) 210 98 76",
+            "description": "FİAT PUNTO HATASIZ MOTOR KONDİSYONUNA SAHİPTİR AGIR HASAR KAYDI BULUNMAMAKTADIR YAPILAN TÜM İŞLEMLER ELDE ÖZEL YAPILMIŞTIR\nMOTOR KONDİSYONU 10/10 DUR İSTENİLEN USTAYA GÖSTERİLEBİLİR \n\n-SIFIR DEBRİYAJ SETİ BASKI BALATA\n\n-PARTİKÜL FİLİTRESİ SIFIR VE TEMİZ \n\n-ÖN TAKIM SIFIR\n\n-MUAYENE SIFIR\n-MULTİMEDİA ANDROID EKRAN\n-GERİ GÖRÜŞ KAMERASI\n-SIFIR LASTİK TAKIMI\n-ÇELİK JANT\n\n-SIFIR AKÜ \n\n-Z ROT BAŞLARI\n\n-ÖN TAKIM \n\nŞANZIMAN BASKI BALATA \n\nBÜTÜN AGIR BAKIMLARI ELDEN GEÇMİŞTİR\n\n-64 RENK AMBİYANS AYDINLATMA\n\nEXPER DURUMU\nkaput ve çamurluk değişen tavan bagaj orjinaldir boya olarak yer yer temizlik boyası mevcuttur airbagler işlemlidir\n\nŞEHİR DIŞINDAN GELİCEK OLANLAR GÖNÜL RAHATLIGIYLA GELEBİLİR",
+            "damages": {},
+            "feats": {},
+            "specs": {}
+        };
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMsg');
+            errorDiv.textContent = message;
+            errorDiv.classList.remove('hidden');
+        }
+
+        function hideError() {
+            document.getElementById('errorMsg').classList.add('hidden');
+        }
+
+        function setText(id, value) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.textContent = value || '-';
+            }
+        }
+
+        function displayListing(data) {
+            currentListing = data;
+            hideError();
+
+            // Basic info
+            setText('listingTitle', data.title);
+            setText('breadcrumb', data.breadcrumb);
+            setText('price', data.price);
+            setText('location', data.location);
+            setText('listingDate', data.listingDate);
+            setText('listingId', data.listingId);
+            setText('lister', data.lister);
+            setText('trade', data.trade);
+
+            // Vehicle details
+            setText('brand', data.brand);
+            setText('series', data.series);
+            setText('model', data.model);
+            setText('year', data.year);
+            setText('fuelType', data.fuelType);
+            setText('transmission', data.transmission);
+            setText('mileage', data.mileage);
+            setText('color', data.color);
+            setText('bodyType', data.bodyType);
+            setText('enginePower', data.enginePower);
+            setText('engineVolume', data.engineVolume);
+            setText('cekis', data.Çekiş);
+            setText('state', data.state);
+            setText('warranty', data.warranty);
+            setText('heavilyDamaged', data.heavilyDamaged);
+
+            // Contact info
+            setText('username', data.username);
+            setText('userRegistrationDate', data.userRegistrationDate);
+            setText('userMobilePhone', data.userMobilePhone);
+            setText('licencePlate', data.licencePlate);
+
+            // Description
+            const descElement = document.getElementById('description');
+            if (descElement) {
+                descElement.textContent = data.description || '';
+            }
+
+            // Images
+            if (data.images && data.images.length > 0) {
+                displayImages(data.images);
+            } else {
+                document.getElementById('imagesCard').classList.add('hidden');
+            }
+
+            // Features
+            if (data.feats && Object.keys(data.feats).length > 0) {
+                displayFeatures(data.feats);
+            } else {
+                document.getElementById('featuresCard').classList.add('hidden');
+            }
+
+            // Damages
+            if (data.damages && Object.keys(data.damages).length > 0) {
+                displayDamages(data.damages);
+            } else {
+                document.getElementById('damagesCard').classList.add('hidden');
+            }
+
+            // Specs
+            if (data.specs && Object.keys(data.specs).length > 0) {
+                displaySpecs(data.specs);
+            } else {
+                document.getElementById('specsCard').classList.add('hidden');
+            }
+
+            document.getElementById('listingDisplay').classList.remove('hidden');
+        }
+
+        function displayImages(images) {
+            const container = document.getElementById('imagesContainer');
+            container.innerHTML = '';
+            
+            // Update header with count
+            const imagesCard = document.getElementById('imagesCard');
+            const header = imagesCard.querySelector('h3');
+            header.textContent = `📷 Fotoğraflar (${images.length})`;
+            
+            images.forEach((image, index) => {
+                const imgDiv = document.createElement('div');
+                imgDiv.className = 'relative group cursor-pointer flex-shrink-0 p-1';
+                imgDiv.innerHTML = `
+                    <img src="${image.thumb}" 
+                         alt="Vehicle Image ${index + 1}"
+                         class="h-32 object-contain rounded-lg transition-opacity hover:opacity-80 shadow-md">
+                    <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-opacity rounded-lg flex items-center justify-center">
+                    </div>
+                `;
+                imgDiv.addEventListener('click', () => openImageViewer(images, index));
+                container.appendChild(imgDiv);
+            });
+            
+            document.getElementById('imagesCard').classList.remove('hidden');
+        }
+
+        function displayFeatures(feats) {
+            const container = document.getElementById('featuresContainer');
+            container.innerHTML = '';
+
+            Object.keys(feats).forEach(category => {
+                if (typeof feats[category] === 'object') {
+                    const categoryDiv = document.createElement('div');
+                    categoryDiv.className = 'mb-4';
+                    
+                    const categoryTitle = document.createElement('h4');
+                    categoryTitle.className = 'font-semibold text-gray-800 mb-2 capitalize';
+                    categoryTitle.textContent = category;
+                    categoryDiv.appendChild(categoryTitle);
+                    
+                    const featuresGrid = document.createElement('div');
+                    featuresGrid.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2';
+                    
+                    Object.keys(feats[category]).forEach(feat => {
+                        if (feats[category][feat] === true || feats[category][feat] === 'true') {
+                            const featDiv = document.createElement('div');
+                            featDiv.className = 'text-sm text-green-600 flex items-center';
+                            featDiv.innerHTML = `<span class="mr-2">✓</span>${feat}`;
+                            featuresGrid.appendChild(featDiv);
+                        }
+                    });
+                    
+                    if (featuresGrid.children.length > 0) {
+                        categoryDiv.appendChild(featuresGrid);
+                        container.appendChild(categoryDiv);
+                    }
+                }
+            });
+
+            if (container.children.length > 0) {
+                document.getElementById('featuresCard').classList.remove('hidden');
+            }
+        }
+
+        function displayDamages(damages) {
+            const container = document.getElementById('damagesContainer');
+            container.innerHTML = '';
+
+            Object.keys(damages).forEach(damageType => {
+                if (Array.isArray(damages[damageType]) && damages[damageType].length > 0) {
+                    const damageDiv = document.createElement('div');
+                    damageDiv.className = 'mb-3';
+                    
+                    const damageTitle = document.createElement('h4');
+                    damageTitle.className = 'font-semibold text-red-600 mb-2 capitalize';
+                    damageTitle.textContent = damageType;
+                    damageDiv.appendChild(damageTitle);
+                    
+                    const damageList = document.createElement('div');
+                    damageList.className = 'text-sm text-gray-700';
+                    damageList.textContent = damages[damageType].join(', ');
+                    damageDiv.appendChild(damageList);
+                    
+                    container.appendChild(damageDiv);
+                }
+            });
+
+            if (container.children.length > 0) {
+                document.getElementById('damagesCard').classList.remove('hidden');
+            }
+        }
+
+        function displaySpecs(specs) {
+            const container = document.getElementById('specsContainer');
+            container.innerHTML = '';
+
+            Object.keys(specs).forEach(category => {
+                if (typeof specs[category] === 'object') {
+                    const categoryDiv = document.createElement('div');
+                    categoryDiv.className = 'mb-4';
+                    
+                    const categoryTitle = document.createElement('h4');
+                    categoryTitle.className = 'font-semibold text-gray-800 mb-2 capitalize';
+                    categoryTitle.textContent = category;
+                    categoryDiv.appendChild(categoryTitle);
+                    
+                    const specsGrid = document.createElement('div');
+                    specsGrid.className = 'grid grid-cols-1 md:grid-cols-2 gap-2';
+                    
+                    Object.keys(specs[category]).forEach(spec => {
+                        if (specs[category][spec]) {
+                            const specDiv = document.createElement('div');
+                            specDiv.className = 'text-sm';
+                            specDiv.innerHTML = `<span class="font-medium">${spec}:</span> ${specs[category][spec]}`;
+                            specsGrid.appendChild(specDiv);
+                        }
+                    });
+                    
+                    if (specsGrid.children.length > 0) {
+                        categoryDiv.appendChild(specsGrid);
+                        container.appendChild(categoryDiv);
+                    }
+                }
+            });
+
+            if (container.children.length > 0) {
+                document.getElementById('specsCard').classList.remove('hidden');
+            }
+        }
+
+        // Event listeners
+        document.getElementById('parseBtn').addEventListener('click', function() {
+            const input = document.getElementById('jsonInput').value.trim();
+            
+            if (!input) {
+                showError('Lütfen JSON verisi girin.');
+                return;
+            }
+
+            try {
+                const data = JSON.parse(input);
+                displayListing(data);
+            } catch (error) {
+                showError('Geçersiz JSON formatı: ' + error.message);
+            }
+        });
+
+        document.getElementById('loadSampleBtn').addEventListener('click', function() {
+            document.getElementById('jsonInput').value = JSON.stringify(sampleData, null, 2);
+            displayListing(sampleData);
+        });
+
+        document.getElementById('clearBtn').addEventListener('click', function() {
+            document.getElementById('jsonInput').value = '';
+            document.getElementById('listingDisplay').classList.add('hidden');
+            hideError();
+        });
+
+        // Load sample data on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('jsonInput').value = JSON.stringify(sampleData, null, 2);
+            displayListing(sampleData);
+        });
+
+        // Image viewer event listeners
+        document.getElementById('closeViewer').addEventListener('click', closeImageViewer);
+        document.getElementById('prevImage').addEventListener('click', prevImage);
+        document.getElementById('nextImage').addEventListener('click', nextImage);
+        
+        // Close viewer when clicking outside image
+        document.getElementById('imageViewer').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeImageViewer();
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (!document.getElementById('imageViewer').classList.contains('hidden')) {
+                switch(e.key) {
+                    case 'Escape':
+                        closeImageViewer();
+                        break;
+                    case 'ArrowLeft':
+                        prevImage();
+                        break;
+                    case 'ArrowRight':
+                        nextImage();
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
