@@ -376,6 +376,28 @@
                 cursor: not-allowed !important;
             }
 
+            .copy-base64-btn {
+                background: #667eea !important;
+                color: white !important;
+                border: none !important;
+                padding: 12px 24px !important;
+                border-radius: 6px !important;
+                cursor: pointer !important;
+                font-size: 1em !important;
+                margin-top: 10px !important;
+                transition: background 0.3s !important;
+                font-family: inherit !important;
+            }
+
+            .copy-base64-btn:hover {
+                background: #5a67d8 !important;
+            }
+
+            .copy-base64-btn:disabled {
+                background: #a0aec0 !important;
+                cursor: not-allowed !important;
+            }
+
             .reset-btn {
                 background: #e53e3e !important;
                 color: white !important;
@@ -656,6 +678,7 @@
                         </div>
 
                         <button id="downloadBtn" class="download-btn" disabled>Download</button>
+                        <button id="copyBase64Btn" class="copy-base64-btn" disabled>Copy as base64</button>
                     </div>
                 </div>
                 <input type="file" id="imageInput" accept="image/*" style="display: none !important;" />
@@ -720,6 +743,10 @@
 
                     document.getElementById("downloadBtn").addEventListener("click", () => {
                         this.downloadOptimizedImage();
+                    });
+
+                    document.getElementById("copyBase64Btn").addEventListener("click", () => {
+                        this.copyBase64ToClipboard();
                     });
 
                     document.getElementById("resetBtn").addEventListener("click", () => {
@@ -1013,6 +1040,7 @@
                     // Store the blob for download
                     this.optimizedBlob = blob;
                     document.getElementById("downloadBtn").disabled = false;
+                    document.getElementById("copyBase64Btn").disabled = false;
 
                     // Add comparison functionality
                     this.setupImageComparison(optimizedImg);
@@ -1095,6 +1123,64 @@
                     URL.revokeObjectURL(url);
                 }
 
+                async copyBase64ToClipboard() {
+                    if (!this.optimizedImageDataUrl) {
+                        alert("No optimized image available to copy");
+                        return;
+                    }
+
+                    try {
+                        // Copy the base64 data URL to clipboard
+                        await navigator.clipboard.writeText(this.optimizedImageDataUrl);
+                        
+                        // Provide user feedback
+                        const button = document.getElementById("copyBase64Btn");
+                        const originalText = button.textContent;
+                        button.textContent = "Copied!";
+                        button.style.background = "#38a169";
+                        
+                        // Reset button after 2 seconds
+                        setTimeout(() => {
+                            button.textContent = originalText;
+                            button.style.background = "";
+                        }, 2000);
+                    } catch (err) {
+                        // Fallback for browsers that don't support clipboard API
+                        this.fallbackCopyBase64();
+                    }
+                }
+
+                fallbackCopyBase64() {
+                    // Create a temporary textarea element
+                    const textarea = document.createElement("textarea");
+                    textarea.value = this.optimizedImageDataUrl;
+                    textarea.style.position = "fixed";
+                    textarea.style.left = "-9999px";
+                    document.body.appendChild(textarea);
+                    
+                    // Select and copy the text
+                    textarea.select();
+                    try {
+                        document.execCommand("copy");
+                        
+                        // Provide user feedback
+                        const button = document.getElementById("copyBase64Btn");
+                        const originalText = button.textContent;
+                        button.textContent = "Copied!";
+                        button.style.background = "#38a169";
+                        
+                        // Reset button after 2 seconds
+                        setTimeout(() => {
+                            button.textContent = originalText;
+                            button.style.background = "";
+                        }, 2000);
+                    } catch (err) {
+                        alert("Failed to copy to clipboard. Please try again.");
+                    } finally {
+                        document.body.removeChild(textarea);
+                    }
+                }
+
                 formatFileSize(bytes) {
                     if (bytes === 0) return "0 Bytes";
 
@@ -1139,6 +1225,7 @@
                     imagePlaceholder.style.display = "flex";
                     optimizedImage.style.display = "none";
                     downloadBtn.disabled = true;
+                    document.getElementById("copyBase64Btn").disabled = true;
 
                     // Reset quality slider to default
                     qualitySlider.value = "80";
