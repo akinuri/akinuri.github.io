@@ -15,8 +15,13 @@
                     }
                 }
             }
+        }    </script>
+    <style>
+        /* Ensure row hover overrides cell backgrounds */
+        tr:hover td {
+            background-color: rgb(243 244 246) !important;
         }
-    </script>
+    </style>    </script>
 </head>
 <body class="bg-gray-200/90 min-h-screen pb-[calc(5vh_+_4rem)]">
     <div class="container mx-auto px-4 py-8 max-w-4xl">
@@ -73,33 +78,33 @@
                     </thead>
                     <tbody id="comparisonTableBody">
                         <!-- Basic Info -->
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">📝 Başlık</td>
                             <td class="py-2 px-4" id="title-col1">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">📷 Fotoğraflar</td>
                             <td class="py-2 px-4" id="images-col1">
                                 <div id="imagesContainer" class="flex gap-2 overflow-x-auto pb-2 max-w-[480px]"></div>
                             </td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">📍 Kategori</td>
                             <td class="py-2 px-4" id="breadcrumb-col1">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">💰 Fiyat</td>
                             <td class="py-2 px-4 text-lg font-bold text-sahibinden" id="price-col1">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">📍 Konum</td>
                             <td class="py-2 px-4" id="location-col1">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">📅 İlan Tarihi</td>
                             <td class="py-2 px-4" id="listingDate-col1">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">İlan No</td>
                             <td class="py-2 px-4 " id="listingId-col1">-</td>
                         </tr>
@@ -108,63 +113,63 @@
                         <tr class="border-b border-gray-200 bg-blue-100">
                             <td colspan="2" class="py-2 px-4 font-semibold text-gray-800">🚙 Araç Bilgileri</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">Marka</td>
                             <td class="py-2 px-4" id="brand-col1">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">Seri</td>
                             <td class="py-2 px-4" id="series-col1">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">Model</td>
                             <td class="py-2 px-4" id="model-col1">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">Yıl</td>
                             <td class="py-2 px-4" id="year-col1">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">Yakıt Tipi</td>
                             <td class="py-2 px-4" id="fuelType-col1">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">Vites</td>
                             <td class="py-2 px-4" id="transmission-col1">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">KM</td>
                             <td class="py-2 px-4" id="mileage-col1">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">Renk</td>
                             <td class="py-2 px-4" id="color-col1">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">Kasa Tipi</td>
                             <td class="py-2 px-4" id="bodyType-col1">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">Motor Gücü</td>
                             <td class="py-2 px-4" id="enginePower-col1">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">Motor Hacmi</td>
                             <td class="py-2 px-4" id="engineVolume-col1">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">Çekiş</td>
                             <td class="py-2 px-4" id="cekis-col1">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">Araç Durumu</td>
                             <td class="py-2 px-4" id="state-col1">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">Garanti</td>
                             <td class="py-2 px-4" id="warranty-col1">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">Ağır Hasar</td>
                             <td class="py-2 px-4" id="heavilyDamaged-col1">-</td>
                         </tr>
@@ -173,42 +178,42 @@
                         <tr class="border-b border-gray-200 bg-green-100">
                             <td colspan="2" class="py-2 px-4 font-semibold text-gray-800">📞 İletişim Bilgileri</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">Kimden</td>
                             <td class="py-2 px-4" id="lister-col1">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">Kullanıcı</td>
                             <td class="py-2 px-4" id="username-col1">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">Üyelik Tarihi</td>
                             <td class="py-2 px-4" id="userRegistrationDate-col1">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">Telefon</td>
                             <td class="py-2 px-4 " id="userMobilePhone-col1">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">Plaka</td>
                             <td class="py-2 px-4" id="licencePlate-col1">-</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">Takas</td>
                             <td class="py-2 px-4" id="trade-col1">-</td>
                         </tr>
+
+                        <!-- Parts Section -->
+                        <tr class="border-b border-gray-200 bg-red-100" id="partsHeader" style="display: none;">
+                            <td colspan="2" class="py-2 px-4 font-semibold text-gray-800">⚠️ Parça Bilgileri</td>
+                        </tr>
+                        <tbody id="partsRows" style="display: none;"></tbody>
 
                         <!-- Features Section -->
                         <tr class="border-b border-gray-200 bg-purple-100" id="featuresHeader" style="display: none;">
                             <td colspan="2" class="py-2 px-4 font-semibold text-gray-800">⭐ Özellikler</td>
                         </tr>
                         <tbody id="featuresRows" style="display: none;"></tbody>
-
-                        <!-- Damages Section -->
-                        <tr class="border-b border-gray-200 bg-red-100" id="damagesHeader" style="display: none;">
-                            <td colspan="2" class="py-2 px-4 font-semibold text-gray-800">⚠️ Hasar Bilgileri</td>
-                        </tr>
-                        <tbody id="damagesRows" style="display: none;"></tbody>
 
                         <!-- Specs Section -->
                         <tr class="border-b border-gray-200 bg-blue-100" id="specsHeader" style="display: none;">
@@ -220,7 +225,7 @@
                         <tr class="border-b border-gray-200 bg-yellow-100">
                             <td colspan="2" class="py-2 px-4 font-semibold text-gray-800">📝 Açıklama</td>
                         </tr>
-                        <tr class="border-b border-gray-100">
+                        <tr class="border-b border-gray-100 hover:bg-gray-100">
                             <td class="py-2 px-4 font-medium text-gray-700 bg-gray-50">Açıklama</td>
                             <td class="py-2 px-4  leading-relaxed" id="description-col1" style="white-space: pre-line; max-width: 500px;">-</td>
                         </tr>
@@ -365,10 +370,22 @@
             }
         };
 
-        const damageNames = {
-            locallyPainted: "Lokal Boyalı Parçalar",
-            painted: "Boyalı Parçalar",
-            changed: "Değişen Parçalar"
+        const partNames = {
+            frontBumper: "Ön Tampon",
+            frontHood: "Motor Kaputu",
+            hood: "Motor Kaputu",
+            roof: "Tavan", 
+            rearHood: "Bagaj Kapağı",
+            trunk: "Bagaj Kapağı",
+            rearBumper: "Arka Tampon",
+            frontLeftFender: "Sol Ön Çamurluk",
+            frontLeftDoor: "Sol Ön Kapı",
+            rearLeftDoor: "Sol Arka Kapı",
+            rearLeftFender: "Sol Arka Çamurluk",
+            frontRightFender: "Sağ Ön Çamurluk",
+            frontRightDoor: "Sağ Ön Kapı",
+            rearRightDoor: "Sağ Arka Kapı",
+            rearRightFender: "Sağ Arka Çamurluk"
         };
 
         const categoryNames = {
@@ -465,10 +482,20 @@
             "userRegistrationDate": "Mayıs 2019",
             "userMobilePhone": "0 (532) 456 78 90",
             "description": "YENİ ARAÇ ALACAĞIM TEMİZ KULLANILMIŞ 2012 CLİO 4 İCON\n\n* HATASIZ MOTOR & ŞANZIMAN\n* BOYASIZ KASA\n* MUAYENE YENİ ALINMIŞ\n* TÜM BAKIMLARI YAPILMIŞ\n* SORUNSUZ ARAÇ\n\nÖZELLİKLER:\n- Klima\n- Merkezi Kilit\n- Elektrikli Camlar\n- Hidrolik Direksiyon\n- ABS\n- Hava Yastığı\n\nCİDDİ ALICI İLE GÖRÜŞÜLÜR\nKREDİ İMKANI VARDIR",
-            "damages": {
-                "locallyPainted": ["Sol Ön Çamurluk"],
-                "painted": [],
-                "changed": []
+            "parts": {
+                "hood": "Orijinal",
+                "frontBumper": "Orijinal",
+                "rearBumper": "Orijinal",
+                "roof": "Orijinal",
+                "trunk": "Orijinal",
+                "frontLeftDoor": "Orijinal",
+                "frontRightDoor": "Orijinal",
+                "rearLeftDoor": "Orijinal",
+                "rearRightDoor": "Orijinal",
+                "frontLeftFender": "Değişen",
+                "frontRightFender": "Orijinal",
+                "rearLeftFender": "Orijinal",
+                "rearRightFender": "Orijinal"
             },
             "feats": {
                 "security": {
@@ -647,9 +674,9 @@
                 displayFeatures(data.feats);
             }
 
-            // Damages
-            if (data.damages && Object.keys(data.damages).length > 0) {
-                displayDamages(data.damages);
+            // Parts
+            if (data.parts && Object.keys(data.parts).length > 0) {
+                displayParts(data.parts);
             }
 
             // Specs
@@ -706,7 +733,7 @@
                         const checkmarkColor = isEnabled ? 'text-green-600' : 'text-red-500 opacity-20';
                         
                         const row = document.createElement('tr');
-                        row.className = 'border-b border-gray-100';
+                        row.className = 'border-b border-gray-100 hover:bg-gray-100';
                         row.innerHTML = `
                             <td class="px-4 py-2 pl-8 font-medium text-gray-700 bg-gray-50">${featDisplayName}</td>
                             <td class="px-4 py-2">
@@ -724,30 +751,43 @@
             }
         }
 
-        function displayDamages(damages) {
-            const tbody = document.getElementById('damagesRows');
+        function displayParts(parts) {
+            const tbody = document.getElementById('partsRows');
             tbody.innerHTML = '';
 
-            let hasDamages = false;
-            Object.keys(damages).forEach(damageType => {
-                if (Array.isArray(damages[damageType]) && damages[damageType].length > 0) {
-                    hasDamages = true;
+            let hasParts = false;
+            Object.keys(parts).forEach(partKey => {
+                const partValue = parts[partKey];
+                const partDisplayName = partNames[partKey] || partKey;
+                
+                if (partValue) {
+                    hasParts = true;
                     const row = document.createElement('tr');
-                    row.className = 'border-b border-gray-100';
+                    row.className = 'border-b border-gray-100 hover:bg-gray-100';
                     
-                    const damageTypeDisplayName = damageNames[damageType] || damageType;
-                    const parts = damages[damageType].join(', ');
+                    // Color mapping for different part statuses
+                    let statusClass = '';
+                    const normalizedStatus = partValue.toLowerCase();
+                    if (normalizedStatus.includes('değişen')) {
+                        statusClass = 'font-bold text-red-600';
+                    } else if (normalizedStatus.includes('lokal boyalı')) {
+                        statusClass = 'font-bold text-orange-600';
+                    } else if (normalizedStatus.includes('boyalı') || normalizedStatus.includes('boyal')) {
+                        statusClass = 'font-bold text-blue-600';
+                    } else if (normalizedStatus.includes('orijinal')) {
+                        statusClass = 'text-gray-600';
+                    }
                     
                     row.innerHTML = `
-                        <td class="px-4 py-2 font-medium text-gray-700 bg-gray-50">${damageTypeDisplayName}</td>
-                        <td class="px-4 py-2">${parts}</td>
+                        <td class="px-4 py-2 font-medium text-gray-700 bg-gray-50">${partDisplayName}</td>
+                        <td class="px-4 py-2 ${statusClass}">${partValue}</td>
                     `;
                     tbody.appendChild(row);
                 }
             });
 
-            if (hasDamages) {
-                document.getElementById('damagesHeader').style.display = '';
+            if (hasParts) {
+                document.getElementById('partsHeader').style.display = '';
                 tbody.style.display = '';
             }
         }
@@ -778,7 +818,7 @@
                                 : spec;
                             
                             const row = document.createElement('tr');
-                            row.className = 'border-b border-gray-100';
+                            row.className = 'border-b border-gray-100 hover:bg-gray-100';
                             row.innerHTML = `
                                 <td class="px-4 py-2 pl-8 font-medium text-gray-700 bg-gray-50">${specDisplayName}</td>
                                 <td class="px-4 py-2 text-gray-800">${specs[category][spec]}</td>
