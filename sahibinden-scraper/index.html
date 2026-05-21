@@ -393,6 +393,7 @@
                         <td
                             colspan="2"
                             class="py-1 px-4 font-semibold text-gray-800"
+                            id="specsHeaderTitle"
                         >Teknik Özellikler</td>
                     </tr>
                     <tbody id="specsRows"></tbody>
@@ -918,6 +919,14 @@
             element.appendChild(link);
         }
 
+        function setSpecsHeaderTitle(modelName) {
+            const element = document.getElementById('specsHeaderTitle');
+            if (!element) return;
+
+            const title = modelName ? String(modelName).trim() : '';
+            element.textContent = title ? `${title} Teknik Özellikler` : 'Teknik Özellikler';
+        }
+
         function displayListing(data) {
             currentListing = data;
             hideError();
@@ -936,6 +945,7 @@
             setText('brand', data.brand);
             setText('series', data.series);
             setText('model', data.model);
+            setSpecsHeaderTitle(data.modelName || data.model);
             setText('year', data.year);
             setText('fuelType', data.fuelType);
             setText('transmission', data.transmission);
@@ -1177,6 +1187,7 @@
                 'userRegistrationDate', 'userMobilePhone', 'licencePlate', 'description'];
 
             basicFields.forEach(field => setText(field, '-'));
+            setSpecsHeaderTitle('');
             setListingDateWithElapsed('');
             setListingIdLink('');
             setText('storeAgentName', '-');
